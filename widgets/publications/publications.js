@@ -77,7 +77,7 @@
     var clear = el("button", { type: "button", class: "ax-clear", "aria-label": "검색어 지우기", text: "×", hidden: !state.q });
     refs.clear = clear;
     var search = el("label", { class: "ax-search" }, [
-      el("span", { html: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
+      el("span", { html: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
       refs.q, clear
     ]);
     refs.year = el("select", { class: "ax-select", "aria-label": "연도" });

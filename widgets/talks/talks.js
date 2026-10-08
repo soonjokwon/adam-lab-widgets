@@ -24,7 +24,7 @@
     refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "언어" });
     refs.q = el("input", { type: "search", placeholder: "제목·기관·지역 검색", "aria-label": "초청 강연 검색" });
     var search = el("label", { class: "ax-search" }, [
-      el("span", { html: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
+      el("span", { html: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
       refs.q
     ]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });

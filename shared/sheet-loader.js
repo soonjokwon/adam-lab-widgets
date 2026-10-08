@@ -126,6 +126,37 @@
   ADAM.params = new URLSearchParams(location.search);
   ADAM.debug = ADAM.params.get("debug") === "1";
 
+  /* Phone-embed ("pe") mode. Google Sites keeps an Embed box's DESKTOP aspect
+     ratio on phones (inline padding-top: H/W %; desktop content width 1185px),
+     so a 1185×1150 box becomes ~355×344 on a 390px phone. pe = ≤560px wide
+     and (inside an iframe, or ≤600px tall): one-row sticky bar (chip groups → native selects,
+     search behind a button), denser cards (widget CSS under html.ax-pe),
+     an "open full view" button (new tab, ?full=1). ?pe=1 forces it, ?pe=0 turns
+     it off; ?full=1 (the new-tab view) is never pe. Desktop is unaffected. */
+  ADAM.full = ADAM.params.get("full") === "1";
+  var inFrame = (function () { try { return window.self !== window.top; } catch (err) { return true; } })();
+  function peCheck() {
+    var f = ADAM.params.get("pe"), w = window.innerWidth, h = window.innerHeight;
+    /* framed (= a Sites embed) and narrow → pe at any height; a page opened
+       directly on a phone only when it is also short */
+    var on = f === "1" || (f !== "0" && !ADAM.full && w > 0 && w <= 560 && h > 0 && (inFrame || h <= 600));
+    var de = document.documentElement;
+    de.classList.toggle("ax-pe", on);
+    de.classList.toggle("ax-pe-tiny", on && h <= 150);
+    de.classList.toggle("ax-full", ADAM.full);
+    ADAM.pe = on;
+  }
+  peCheck();
+  window.addEventListener("resize", peCheck);
+  ADAM.fullUrl = function (name) {
+    /* paste builds (dist/*-embed.html) run on a googleusercontent URL → link the Pages page */
+    var paste = window.ADAM_ROOT && name && location.href.indexOf(window.ADAM_ROOT) !== 0;
+    var u = new URL(paste ? window.ADAM_ROOT + name + "/" : location.href);
+    u.searchParams.delete("pe");
+    u.searchParams.set("full", "1");
+    return u.href;
+  };
+
   /* Column signature of every tab — used to say which tab gviz actually
      returned (a missing tab name silently yields the FIRST tab). */
   var SIGNATURES = {
@@ -455,6 +486,99 @@
       sel.value = active;
     }
     return { row: row, select: sel, update: update };
+  };
+
+  /* Phone-embed chrome for one widget root (see ADAM.pe above). Call once from
+     shell(). opts.groups: chip/tile groups to mirror as <select>s (default:
+     every .ax-chips in the bar; data-pe-label="상태" prefixes its options);
+     opts.title: Korean page name for ?full=1.
+     Everything added here is display:none unless html.ax-pe (or .ax-full). */
+  var ICON_SEARCH = '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.6"/></svg>';
+  var ICON_OPEN = '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 8 8M6.5 3.5h-3v9h9v-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+  function chipLabel(b) {
+    var num = b.querySelector(".num, .n");
+    var ko = b.querySelector(".ko");
+    var main = b.classList.contains("pub-tile") && ko ? ko.textContent.trim() : "";   /* tiles: "국제 학술지 34", not "Int'l journal 34 국제 학술지" */
+    if (!main) {
+      main = Array.prototype.filter.call(b.querySelectorAll("span"), function (s) { return s !== num && !s.querySelector("span"); })
+        .map(function (s) { return s.textContent.trim(); }).filter(Boolean).join(" ");
+    }
+    if (!main) main = b.textContent.trim();
+    return main + (num ? " " + num.textContent.trim() : "");
+  }
+  function mirror(group) {
+    var sel = ADAM.el("select", { class: "ax-select ax-pe-sel", "aria-label": group.getAttribute("aria-label") || "분류" });
+    function sync() {
+      var btns = group.querySelectorAll("button"), cur = 0, pre = group.getAttribute("data-pe-label");
+      sel.innerHTML = "";
+      Array.prototype.forEach.call(btns, function (b, i) {
+        sel.appendChild(ADAM.el("option", { value: String(i), text: (pre ? pre + " · " : "") + chipLabel(b), disabled: b.disabled }));
+        if (b.getAttribute("aria-pressed") === "true") cur = i;
+      });
+      sel.value = String(cur);
+      sel.hidden = group.hidden || btns.length < 2;
+    }
+    sel.addEventListener("change", function () {
+      var b = group.querySelectorAll("button")[+sel.value];
+      if (b) b.click();
+    });
+    new MutationObserver(sync).observe(group, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-pressed", "hidden", "disabled"] });
+    sync();
+    return sel;
+  }
+  ADAM.phone = function (root, opts) {
+    opts = opts || {};
+    var mount = root.parentNode, name = mount && mount.id ? mount.id.replace(/^adam-/, "") : "";
+    var el = ADAM.el, bar = opts.bar || root.querySelector(".ax-bar"), url = ADAM.fullUrl(name);
+    var open = el("a", { class: "ax-pe-open", href: url, target: "_blank", rel: "noopener",
+      title: "새 탭에서 크게 보기", "aria-label": "새 탭에서 크게 보기", html: ICON_OPEN });
+    if (bar && !opts.floating) {
+      var groups = opts.groups || Array.prototype.slice.call(bar.querySelectorAll(".ax-chips"));
+      var first = bar.firstChild;
+      groups.forEach(function (g) { bar.insertBefore(mirror(g), first); });
+      var search = bar.querySelector(".ax-search");
+      if (search) {
+        var find = el("button", { type: "button", class: "ax-pe-icon", "aria-label": "검색·필터", title: "검색·필터", "aria-expanded": "false", html: ICON_SEARCH });
+        find.addEventListener("click", function () {
+          var on = !bar.classList.contains("pe-search");
+          bar.classList.toggle("pe-search", on);
+          find.setAttribute("aria-expanded", String(on));
+          var input = search.querySelector("input");
+          if (on && input) input.focus();
+        });
+        bar.appendChild(find);
+        /* dot on the magnifier while a folded control (query, .ax-pe-more) is active */
+        var mark = function () {
+          var on = !!(search.querySelector("input") || {}).value;
+          Array.prototype.forEach.call(bar.querySelectorAll(".ax-pe-more"), function (c) {
+            if (c.tagName === "SELECT" ? c.selectedIndex > 0 : c.getAttribute("aria-pressed") === "true") on = true;
+          });
+          find.classList.toggle("on", on);
+        };
+        bar.addEventListener("input", mark);
+        bar.addEventListener("change", mark);
+        new MutationObserver(mark).observe(bar, { subtree: true, attributes: true, attributeFilter: ["aria-pressed"] });
+      }
+      bar.appendChild(open);
+    } else {
+      open.classList.add("floating");
+      root.appendChild(open);
+    }
+    root.appendChild(el("a", { class: "ax-pe-end", href: url, target: "_blank", rel: "noopener" }, [
+      el("span", { text: "새 탭에서 전체 화면으로 보기" }), el("span", { class: "ar", text: "↗", "aria-hidden": "true" })
+    ]));
+    if (opts.title) {
+      root.insertBefore(el("div", { class: "ax-fullhead" }, [
+        el("span", { class: "ax-kicker", text: "ADAM Lab@PNU" }), el("span", { class: "t", text: opts.title })
+      ]), root.firstChild);
+    }
+    /* fade at the bottom edge while more content is below */
+    var de = document.documentElement;
+    function edge() { de.classList.toggle("ax-pe-below", de.scrollHeight - window.innerHeight - window.pageYOffset > 24); }
+    window.addEventListener("scroll", edge, { passive: true });
+    window.addEventListener("resize", edge);
+    new MutationObserver(ADAM.debounce(edge, 60)).observe(root, { childList: true, subtree: true });
+    edge();
   };
 
   ADAM.status = function (mount, message, kind) {

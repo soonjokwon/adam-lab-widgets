@@ -93,3 +93,54 @@
   .pj-sh { margin-bottom: 8px; padding-bottom: 6px; }
 }
 .pj-period.no-bar .pj-track { display: none; }
+
+/* phone embed (html.ax-pe — ~355×337 Research): no stats head, tighter cards. */
+html.ax-pe .pj-head { display: none; }
+html.ax-pe .pj-sec { margin-top: 8px; }
+html.ax-pe .pj-sh { gap: 8px; margin-bottom: 6px; padding-bottom: 4px; }
+html.ax-pe .pj-sh .t { font-size: 14px; }
+html.ax-pe .pj-sh .ko { font-size: 11.5px; }
+html.ax-pe .pj-grid { gap: 6px; }
+html.ax-pe .pj-card { padding: 9px 10px; gap: 5px; }
+html.ax-pe .pj-card:hover { transform: none; }
+html.ax-pe .pj-top { min-height: 22px; }
+html.ax-pe .pj-logo { height: 22px; max-width: 110px; }
+html.ax-pe .pj-logo img { max-height: 22px; max-width: 110px; }
+html.ax-pe .pj-pill { font-size: 9px; padding: 3px 6px; }
+html.ax-pe .pj-pill .ko { font-size: 10px; }
+html.ax-pe .pj-title { font-size: 13.5px; line-height: 1.4; }
+html.ax-pe .pj-meta { font-size: 11.5px; }
+html.ax-pe .pj-tags .ax-badge { font-size: 9.5px; padding: 3px 5px; }
+html.ax-pe .pj-period { padding-top: 2px; }
+
+/* compact (Team/Recruiting, ?compact=1 — ~355×91 on a phone): one swipeable
+   row of cards; the last stop is the "open full view" link. Horizontal
+   swipes don't fight the page's vertical scroll. */
+html.ax-pe .pj.compact {
+  display: flex; gap: 8px; height: 100vh; padding: 6px 10px;
+  overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-padding: 0 10px;
+  scrollbar-width: none; overscroll-behavior-x: contain;
+}
+html.ax-pe .pj.compact::-webkit-scrollbar { display: none; }
+html.ax-pe .pj.compact .pj-list,
+html.ax-pe .pj.compact .pj-sec,
+html.ax-pe .pj.compact .pj-grid { display: contents; }
+html.ax-pe .pj.compact .pj-card { flex: 0 0 86%; scroll-snap-align: start; overflow: hidden; }
+html.ax-pe .pj.compact .pj-grid > .pj-card:only-child { flex-basis: calc(100% - 96px); }
+html.ax-pe .pj.compact .ax-skel { flex: 0 0 86%; height: auto !important; margin: 0; }
+html.ax-pe .pj.compact .adam-state { flex: 1 0 100%; margin: 0; }
+html.ax-pe .pj.compact .ax-pe-open.floating { display: none; }
+html.ax-pe .pj.compact .ax-pe-end {
+  flex: 0 0 88px; margin: 0; padding: 6px; flex-direction: column; gap: 2px;
+  text-align: center; font-size: 11px; line-height: 1.3;
+}
+html.ax-pe-tiny .pj.compact { padding: 5px 10px; }
+html.ax-pe-tiny .pj.compact .pj-card { padding: 7px 10px; gap: 3px; justify-content: center; }
+html.ax-pe-tiny .pj.compact .pj-top,
+html.ax-pe-tiny .pj.compact .pj-tags,
+html.ax-pe-tiny .pj.compact .pj-period { display: none; }
+html.ax-pe-tiny .pj.compact .pj-title {
+  font-size: 13px; line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+html.ax-pe-tiny .pj.compact .pj-meta { font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

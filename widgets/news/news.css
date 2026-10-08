@@ -415,3 +415,15 @@
   .news-node { display: none; }
   .news-track { padding-top: 6px; }
 }
+/* Very short (≤150px: e.g. Board's 1185×401 box → 355×120 on a phone):
+   thin chip row, 1-line titles, small arrows — the card still fits. */
+@media (max-height: 150px) {
+  .adam-toolbar { padding-top: 4px; }
+  .adam-chip { padding: 3px 8px; }
+  .news-row { margin: 2px 8px 4px; gap: 4px; }
+  .news-track { padding: 4px 2px 2px; }
+  .news-side-nav { padding: 4px 0 2px; gap: 4px; }
+  .news-side-nav button { height: 26px; width: 26px; }
+  .news-card { gap: 3px; padding: 6px 9px; height: 100%; }
+  .news-title { -webkit-line-clamp: 1; }
+}

@@ -33,7 +33,9 @@
     ]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.list = el("div", {});
-    mount.appendChild(el("div", { class: "ax-root tk" }, [refs.head, el("div", { class: "ax-bar" }, [refs.chips, search, el("span", { class: "ax-grow" }), refs.count]), refs.list]));
+    var root = el("div", { class: "ax-root tk" }, [refs.head, el("div", { class: "ax-bar" }, [refs.chips, search, el("span", { class: "ax-grow" }), refs.count]), refs.list]);
+    mount.appendChild(root);
+    A.phone(root, { title: "초청 강연 Invited Talks" });
     refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
     for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true", style: "height:48px" }));
   }

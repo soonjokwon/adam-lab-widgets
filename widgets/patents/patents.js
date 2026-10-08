@@ -62,6 +62,7 @@
       el("div", { class: "ax-bar" }, [search, refs.topic.select, el("span", { class: "ax-grow" }), refs.count]), refs.list
     ]);
     mount.appendChild(refs.root);
+    A.phone(refs.root, { groups: [refs.tiles], title: "특허 Patents" });
     refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
     for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
   }

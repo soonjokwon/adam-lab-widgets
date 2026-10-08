@@ -20,7 +20,7 @@
   var TYPE_BY = {};
   TYPES.forEach(function (t, i) { t.order = i; TYPE_BY[t.id] = t; });
   var STATUS_KO = { "in-press": "게재 예정", "accepted": "게재 승인", "in-revision": "In revision", "in-preparation": "In preparation", "under-review": "Under review" };
-  var PAGE = 60;
+  var PAGE = A.pe ? 20 : 60;   /* phone embeds: shorter list → the inner scroll ends sooner */
 
   var allowed = (A.params.get("types") || "").split(",").map(function (s) { return canonType(s); }).filter(Boolean);
   var state = { items: [], type: canonType(A.params.get("type")) || "all", year: A.params.get("year") || "all",
@@ -91,8 +91,8 @@
       el("span", { html: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
       refs.q, clear
     ]);
-    refs.year = el("select", { class: "ax-select", "aria-label": "연도" });
-    refs.award = el("button", { type: "button", class: "ax-chip", "aria-pressed": "false" }, [el("span", { class: "ko", text: "수상" }), el("span", { text: "★", "aria-hidden": "true" })]);
+    refs.year = el("select", { class: "ax-select ax-pe-more", "aria-label": "연도" });
+    refs.award = el("button", { type: "button", class: "ax-chip ax-pe-more", "aria-pressed": "false" }, [el("span", { class: "ko", text: "수상" }), el("span", { text: "★", "aria-hidden": "true" })]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.list = el("div", { class: "pub-list" });
     refs.topic = A.topicFilter(pickTopic);
@@ -101,6 +101,7 @@
     refs.root = el("div", { class: "ax-root pub" }, [refs.tiles, refs.hist, refs.axis, refs.topic.row, bar, refs.list]);
     var root = refs.root;
     mount.appendChild(root);
+    A.phone(root, { groups: [refs.tiles], title: "논문 Publications" });
 
     refs.q.addEventListener("input", A.debounce(function () {
       state.q = refs.q.value; state.limit = PAGE; clear.hidden = !state.q; render();

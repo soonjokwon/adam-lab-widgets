@@ -291,3 +291,29 @@
     .ax-bar > .ax-count { display: none; }
   }
 }
+
+/* phone embed (html.ax-pe — ~355×300 publications, ~355×234 patents):
+   type tiles/histogram/topic chips are replaced by the bar's selects
+   (sheet-loader ADAM.phone); tighter entries. */
+html.ax-pe .pub-tiles,
+html.ax-pe .pub-hist,
+html.ax-pe .pub-hist-axis,
+html.ax-pe .ax-topics { display: none !important; }
+html.ax-pe .pub-year { margin-top: 6px; padding-top: 4px; }
+html.ax-pe .pub-list > .pub-year:first-child { margin-top: 0; }
+html.ax-pe .pub-yl { font-size: 16px; margin: 4px 0 0; }
+html.ax-pe .pub-item { grid-template-columns: 34px minmax(0, 1fr); gap: 6px; padding: 8px 0; }
+html.ax-pe .pub-item::before { display: none; }
+html.ax-pe .pub-idx { font-size: 9.5px; letter-spacing: 0; padding-top: 3px; }
+html.ax-pe .pub-title { font-size: 13.5px; line-height: 1.4; }
+html.ax-pe .pub-authors,
+html.ax-pe .pub-venue { font-size: 12px; margin-top: 2px; line-height: 1.45; }
+html.ax-pe .pub-venue .dt { font-size: 10.5px; }
+html.ax-pe .pub-meta { margin-top: 5px; gap: 4px; }
+html.ax-pe .pub-meta .ax-badge { font-size: 9.5px; padding: 3px 5px; }
+html.ax-pe .pub-meta .ax-link { font-size: 9.5px; padding: 3px 6px; }
+html.ax-pe .ax-tag { font-size: 10.5px; padding: 3px 6px 3px 5px; }
+html.ax-pe .pub-meta .pub-tags,
+html.ax-pe .pub-meta .pub-tags:not(:first-child) { order: 0; flex-basis: auto; padding-left: 0; margin-left: 0; border-left: 0; }
+html.ax-pe .pub-more { margin-top: 8px; padding: 8px; }
+html.ax-pe .pub-empty { padding: 16px 0; }

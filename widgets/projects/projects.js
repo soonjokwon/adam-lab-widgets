@@ -77,11 +77,13 @@
   function shell() {
     mount.innerHTML = "";
     refs.head = el("div", { class: "pj-head" });
-    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "과제 상태" });
-    refs.gchips = el("div", { class: "ax-chips", role: "group", "aria-label": "소속" });
+    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "과제 상태", "data-pe-label": "상태" });
+    refs.gchips = el("div", { class: "ax-chips", role: "group", "aria-label": "소속", "data-pe-label": "소속" });
     refs.list = el("div", { class: "pj-list" });
     var bar = el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "pj-sep", "aria-hidden": "true" }), refs.gchips]);
-    mount.appendChild(el("div", { class: "ax-root pj" + (compact ? " compact" : "") }, [compact ? null : refs.head, compact ? null : bar, refs.list]));
+    var root = refs.root = el("div", { class: "ax-root pj" + (compact ? " compact" : "") }, [compact ? null : refs.head, compact ? null : bar, refs.list]);
+    mount.appendChild(root);
+    A.phone(root, { title: recruitOnly ? "모집 중인 연구 과제" : "연구 과제 Research Projects" });
     for (var i = 0; i < 3; i++) refs.list.appendChild(el("div", { class: "ax-skel", style: "height:150px", "aria-hidden": "true" }));
   }
 
@@ -181,6 +183,7 @@
       ]);
       refs.list.appendChild(sec);
     });
+    if (compact && refs.root) refs.root.scrollLeft = 0;   /* phone carousel (html.ax-pe): back to the first card */
   }
 
   function boot() {

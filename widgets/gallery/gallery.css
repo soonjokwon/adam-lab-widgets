@@ -72,3 +72,13 @@ html.gl-locked { overflow: hidden; }
   .gl-box-top { padding: 6px 10px; }
   .gl-btn { width: 32px; height: 32px; }
 }
+
+/* phone embed (html.ax-pe — ~355×246): 3-up thumbnails with date only
+   (caption is in the lightbox). */
+html.ax-pe .gl-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 2px; }
+html.ax-pe .gl-card:hover { transform: none; }
+html.ax-pe .gl-cap { padding: 3px 5px 4px; gap: 0; }
+html.ax-pe .gl-text, html.ax-pe .gl-tag { display: none; }
+html.ax-pe .gl-date { font-size: 9.5px; letter-spacing: 0.02em; }
+html.ax-pe .gl-year { font-size: 14px; margin: 4px 0 -1px; }
+html.ax-pe .gl-skel { aspect-ratio: 4 / 3.6; height: auto !important; }

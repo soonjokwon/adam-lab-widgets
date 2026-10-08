@@ -56,11 +56,13 @@
     ]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.list = el("div", { class: "aw-timeline" });
-    mount.appendChild(el("div", { class: "ax-root aw" }, [
+    var root = el("div", { class: "ax-root aw" }, [
       refs.head,
       el("div", { class: "ax-bar" }, [refs.chips, search, el("span", { class: "ax-grow" }), refs.count]),
       refs.list
-    ]));
+    ]);
+    mount.appendChild(root);
+    A.phone(root, { title: "수상 Awards" });
     refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
     for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
   }

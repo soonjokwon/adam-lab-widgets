@@ -326,6 +326,110 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   .ax-search input, .ax-select { height: 30px; }
 }
 
+/* ---------- phone embeds (html.ax-pe, set by sheet-loader.js) ----------
+   Google Sites keeps the desktop box's aspect ratio on phones, so a list
+   widget gets ~355×200–350px. pe mode: decorative heads hidden (per widget),
+   ONE sticky bar row — chip groups become native selects (.ax-pe-sel), search
+   (+ secondary filters marked .ax-pe-more) folds behind the magnifier, and an
+   "open in a new tab" button (.ax-pe-open) is always at the right. The list
+   ends with a full-width "new tab, full screen" link (.ax-pe-end). */
+.ax-pe-sel, .ax-pe-icon, .ax-pe-open, .ax-pe-end, .ax-fullhead { display: none; }
+
+html.ax-pe { background-size: 10vw 10vw; }
+html.ax-pe body { font-size: 13px; }
+html.ax-pe .ax-root { padding: 0 10px 10px; }
+html.ax-pe .ax-bar {
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 6px 0;
+  margin: 0 0 2px;
+  background: rgba(255, 255, 255, 0.96);
+}
+html.ax-pe .ax-bar > .ax-chips,
+html.ax-pe .ax-bar > .ax-count,
+html.ax-pe .ax-bar > .ax-grow,
+html.ax-pe .ax-bar > .ax-search,
+html.ax-pe .ax-bar > .pj-sep { display: none; }
+html.ax-pe .ax-bar > * { flex: 0 0 auto; order: 0; }
+html.ax-pe .ax-bar > .ax-select { display: block; flex: 1 1 0; min-width: 0; max-width: 180px; height: 30px; text-overflow: ellipsis; }
+html.ax-pe .ax-bar > .ax-select[hidden] { display: none; }
+html.ax-pe .ax-bar:not(.pe-search) > .ax-pe-more { display: none; }
+html.ax-pe .ax-bar > .ax-select { font: 500 12.5px var(--font-body); color: var(--ink); }
+html.ax-pe .ax-bar > .ax-chip { padding: 0 8px; height: 30px; }
+html.ax-pe .ax-pe-icon,
+html.ax-pe .ax-pe-open {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--navy);
+  cursor: pointer;
+}
+html.ax-pe .ax-pe-icon { position: relative; }
+html.ax-pe .ax-pe-icon.on::after { content: ""; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+html.ax-pe .ax-pe-icon[aria-expanded="true"] { border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
+html.ax-pe .ax-pe-open { margin-left: auto; border-color: var(--navy); }
+html.ax-pe .ax-pe-open:hover, html.ax-pe .ax-pe-open:focus-visible { background: var(--navy); color: #fff; }
+html.ax-pe .ax-pe-open.floating {
+  position: fixed; top: 6px; right: 6px; z-index: 30;
+  width: 26px; height: 26px; background: rgba(255, 255, 255, 0.94);
+}
+/* magnifier open: search (and .ax-pe-more filters) on a second row */
+html.ax-pe .ax-bar.pe-search { flex-wrap: wrap; }
+html.ax-pe .ax-bar.pe-search::before { content: ""; order: 49; flex: 0 0 100%; height: 0; }   /* line break before the search row */
+html.ax-pe .ax-search input::-webkit-search-cancel-button { -webkit-appearance: none; display: none; }
+html.ax-pe .ax-bar.pe-search > .ax-search { display: block; order: 50; flex: 1 1 150px; min-width: 0; max-width: none; }
+html.ax-pe .ax-bar.pe-search > .ax-search input { height: 30px; }
+html.ax-pe .ax-bar.pe-search > .ax-pe-more { display: block; order: 51; flex: 0 1 auto; max-width: 40%; }
+html.ax-pe .ax-bar.pe-search > .ax-chip.ax-pe-more { display: inline-flex; }
+
+html.ax-pe .ax-pe-end {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 2px;
+  padding: 10px;
+  border: 1px dashed var(--navy);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--navy);
+  font: 600 12.5px var(--font-body);
+  text-decoration: none;
+}
+html.ax-pe .ax-pe-end .ar { font-family: var(--font-mono); }
+html.ax-pe .ax-pe-end:hover { background: #f6f8ff; }
+html.ax-pe .adam-state { margin: 10px 0; padding: 12px; }
+html.ax-pe .ax-skel { height: 48px !important; margin: 6px 0; }
+
+/* "more below" fade at the bottom edge of the iframe */
+html.ax-pe body::after {
+  content: "";
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: 18px;
+  background: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
+  pointer-events: none;
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.2s var(--ease);
+}
+html.ax-pe.ax-pe-below body::after { opacity: 1; }
+
+/* ?full=1 — the new-tab view: page title strip, normal (non-pe) layout */
+html.ax-full .ax-fullhead {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 4px 0 10px;
+  margin-bottom: 4px;
+  border-bottom: 2px solid var(--navy);
+}
+html.ax-full .ax-fullhead .t { font-size: 18px; font-weight: 700; color: var(--ink); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
@@ -475,6 +579,25 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   .aw-split { display: none; }
   .aw-timeline { margin-top: 2px; }
 }
+
+/* phone embed (html.ax-pe — ~355×340): no totals head, no timeline rail. */
+html.ax-pe .aw-head { display: none; }
+html.ax-pe .aw-timeline { margin-top: 0; }
+html.ax-pe .aw-year { padding-left: 0; }
+html.ax-pe .aw-year::before,
+html.ax-pe .aw-ylabel::before,
+html.ax-pe .aw-card::before { display: none; }
+html.ax-pe .aw-ylabel { margin: 10px 0 6px; font-size: 16px; }
+html.ax-pe .aw-year:first-child .aw-ylabel { margin-top: 4px; }
+html.ax-pe .aw-grid { gap: 6px; }
+html.ax-pe .aw-card { padding: 8px 10px; gap: 2px; }
+html.ax-pe .aw-card:hover { transform: none; }
+html.ax-pe .aw-date { font-size: 10.5px; }
+html.ax-pe .aw-cat { font-size: 9px; }
+html.ax-pe .aw-name { font-size: 14px; gap: 5px; }
+html.ax-pe .aw-name svg { width: 14px; height: 14px; }
+html.ax-pe .aw-title { font-size: 12.5px; line-height: 1.45; }
+html.ax-pe .aw-rec, html.ax-pe .aw-event { font-size: 11.5px; }
 
   </style>
 </head>
@@ -654,6 +777,37 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
 
   ADAM.params = new URLSearchParams(location.search);
   ADAM.debug = ADAM.params.get("debug") === "1";
+
+  /* Phone-embed ("pe") mode. Google Sites keeps an Embed box's DESKTOP aspect
+     ratio on phones (inline padding-top: H/W %; desktop content width 1185px),
+     so a 1185×1150 box becomes ~355×344 on a 390px phone. pe = ≤560px wide
+     and (inside an iframe, or ≤600px tall): one-row sticky bar (chip groups → native selects,
+     search behind a button), denser cards (widget CSS under html.ax-pe),
+     an "open full view" button (new tab, ?full=1). ?pe=1 forces it, ?pe=0 turns
+     it off; ?full=1 (the new-tab view) is never pe. Desktop is unaffected. */
+  ADAM.full = ADAM.params.get("full") === "1";
+  var inFrame = (function () { try { return window.self !== window.top; } catch (err) { return true; } })();
+  function peCheck() {
+    var f = ADAM.params.get("pe"), w = window.innerWidth, h = window.innerHeight;
+    /* framed (= a Sites embed) and narrow → pe at any height; a page opened
+       directly on a phone only when it is also short */
+    var on = f === "1" || (f !== "0" && !ADAM.full && w > 0 && w <= 560 && h > 0 && (inFrame || h <= 600));
+    var de = document.documentElement;
+    de.classList.toggle("ax-pe", on);
+    de.classList.toggle("ax-pe-tiny", on && h <= 150);
+    de.classList.toggle("ax-full", ADAM.full);
+    ADAM.pe = on;
+  }
+  peCheck();
+  window.addEventListener("resize", peCheck);
+  ADAM.fullUrl = function (name) {
+    /* paste builds (dist/*-embed.html) run on a googleusercontent URL → link the Pages page */
+    var paste = window.ADAM_ROOT && name && location.href.indexOf(window.ADAM_ROOT) !== 0;
+    var u = new URL(paste ? window.ADAM_ROOT + name + "/" : location.href);
+    u.searchParams.delete("pe");
+    u.searchParams.set("full", "1");
+    return u.href;
+  };
 
   /* Column signature of every tab — used to say which tab gviz actually
      returned (a missing tab name silently yields the FIRST tab). */
@@ -986,6 +1140,99 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
     return { row: row, select: sel, update: update };
   };
 
+  /* Phone-embed chrome for one widget root (see ADAM.pe above). Call once from
+     shell(). opts.groups: chip/tile groups to mirror as <select>s (default:
+     every .ax-chips in the bar; data-pe-label="상태" prefixes its options);
+     opts.title: Korean page name for ?full=1.
+     Everything added here is display:none unless html.ax-pe (or .ax-full). */
+  var ICON_SEARCH = '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.6"/></svg>';
+  var ICON_OPEN = '<svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true"><path d="M9.5 2.5h4v4M13.5 2.5 8 8M6.5 3.5h-3v9h9v-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>';
+  function chipLabel(b) {
+    var num = b.querySelector(".num, .n");
+    var ko = b.querySelector(".ko");
+    var main = b.classList.contains("pub-tile") && ko ? ko.textContent.trim() : "";   /* tiles: "국제 학술지 34", not "Int'l journal 34 국제 학술지" */
+    if (!main) {
+      main = Array.prototype.filter.call(b.querySelectorAll("span"), function (s) { return s !== num && !s.querySelector("span"); })
+        .map(function (s) { return s.textContent.trim(); }).filter(Boolean).join(" ");
+    }
+    if (!main) main = b.textContent.trim();
+    return main + (num ? " " + num.textContent.trim() : "");
+  }
+  function mirror(group) {
+    var sel = ADAM.el("select", { class: "ax-select ax-pe-sel", "aria-label": group.getAttribute("aria-label") || "분류" });
+    function sync() {
+      var btns = group.querySelectorAll("button"), cur = 0, pre = group.getAttribute("data-pe-label");
+      sel.innerHTML = "";
+      Array.prototype.forEach.call(btns, function (b, i) {
+        sel.appendChild(ADAM.el("option", { value: String(i), text: (pre ? pre + " · " : "") + chipLabel(b), disabled: b.disabled }));
+        if (b.getAttribute("aria-pressed") === "true") cur = i;
+      });
+      sel.value = String(cur);
+      sel.hidden = group.hidden || btns.length < 2;
+    }
+    sel.addEventListener("change", function () {
+      var b = group.querySelectorAll("button")[+sel.value];
+      if (b) b.click();
+    });
+    new MutationObserver(sync).observe(group, { childList: true, subtree: true, attributes: true, attributeFilter: ["aria-pressed", "hidden", "disabled"] });
+    sync();
+    return sel;
+  }
+  ADAM.phone = function (root, opts) {
+    opts = opts || {};
+    var mount = root.parentNode, name = mount && mount.id ? mount.id.replace(/^adam-/, "") : "";
+    var el = ADAM.el, bar = opts.bar || root.querySelector(".ax-bar"), url = ADAM.fullUrl(name);
+    var open = el("a", { class: "ax-pe-open", href: url, target: "_blank", rel: "noopener",
+      title: "새 탭에서 크게 보기", "aria-label": "새 탭에서 크게 보기", html: ICON_OPEN });
+    if (bar && !opts.floating) {
+      var groups = opts.groups || Array.prototype.slice.call(bar.querySelectorAll(".ax-chips"));
+      var first = bar.firstChild;
+      groups.forEach(function (g) { bar.insertBefore(mirror(g), first); });
+      var search = bar.querySelector(".ax-search");
+      if (search) {
+        var find = el("button", { type: "button", class: "ax-pe-icon", "aria-label": "검색·필터", title: "검색·필터", "aria-expanded": "false", html: ICON_SEARCH });
+        find.addEventListener("click", function () {
+          var on = !bar.classList.contains("pe-search");
+          bar.classList.toggle("pe-search", on);
+          find.setAttribute("aria-expanded", String(on));
+          var input = search.querySelector("input");
+          if (on && input) input.focus();
+        });
+        bar.appendChild(find);
+        /* dot on the magnifier while a folded control (query, .ax-pe-more) is active */
+        var mark = function () {
+          var on = !!(search.querySelector("input") || {}).value;
+          Array.prototype.forEach.call(bar.querySelectorAll(".ax-pe-more"), function (c) {
+            if (c.tagName === "SELECT" ? c.selectedIndex > 0 : c.getAttribute("aria-pressed") === "true") on = true;
+          });
+          find.classList.toggle("on", on);
+        };
+        bar.addEventListener("input", mark);
+        bar.addEventListener("change", mark);
+        new MutationObserver(mark).observe(bar, { subtree: true, attributes: true, attributeFilter: ["aria-pressed"] });
+      }
+      bar.appendChild(open);
+    } else {
+      open.classList.add("floating");
+      root.appendChild(open);
+    }
+    root.appendChild(el("a", { class: "ax-pe-end", href: url, target: "_blank", rel: "noopener" }, [
+      el("span", { text: "새 탭에서 전체 화면으로 보기" }), el("span", { class: "ar", text: "↗", "aria-hidden": "true" })
+    ]));
+    if (opts.title) {
+      root.insertBefore(el("div", { class: "ax-fullhead" }, [
+        el("span", { class: "ax-kicker", text: "ADAM Lab@PNU" }), el("span", { class: "t", text: opts.title })
+      ]), root.firstChild);
+    }
+    /* fade at the bottom edge while more content is below */
+    var de = document.documentElement;
+    function edge() { de.classList.toggle("ax-pe-below", de.scrollHeight - window.innerHeight - window.pageYOffset > 24); }
+    window.addEventListener("scroll", edge, { passive: true });
+    window.addEventListener("resize", edge);
+    new MutationObserver(ADAM.debounce(edge, 60)).observe(root, { childList: true, subtree: true });
+    edge();
+  };
+
   ADAM.status = function (mount, message, kind) {
     mount.innerHTML = "";
     mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
@@ -1050,11 +1297,13 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
     ]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.list = el("div", { class: "aw-timeline" });
-    mount.appendChild(el("div", { class: "ax-root aw" }, [
+    var root = el("div", { class: "ax-root aw" }, [
       refs.head,
       el("div", { class: "ax-bar" }, [refs.chips, search, el("span", { class: "ax-grow" }), refs.count]),
       refs.list
-    ]));
+    ]);
+    mount.appendChild(root);
+    A.phone(root, { title: "수상 Awards" });
     refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
     for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
   }

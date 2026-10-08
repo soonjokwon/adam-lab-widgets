@@ -52,3 +52,13 @@
   .tk-total b { font-size: 26px; }
   .tk-year { margin-top: 8px; }
 }
+
+/* phone embed (html.ax-pe — ~355×208): no total/sparkline head. */
+html.ax-pe .tk-head { display: none; }
+html.ax-pe .tk-year { margin-top: 8px; }
+html.ax-pe .tk-year:first-child { margin-top: 2px; }
+html.ax-pe .tk-yh { font-size: 15px; margin-bottom: 2px; }
+html.ax-pe .tk-item { grid-template-columns: 40px minmax(0, 1fr); gap: 8px; padding: 7px 0; }
+html.ax-pe .tk-date { font-size: 11px; }
+html.ax-pe .tk-title { font-size: 13px; line-height: 1.4; }
+html.ax-pe .tk-sub { font-size: 11.5px; margin-top: 2px; }

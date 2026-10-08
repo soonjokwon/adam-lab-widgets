@@ -28,12 +28,38 @@ Sites 편집 화면 → **삽입 → 삽입(Embed) → URL**에 아래 주소를
 | Publications · 특허 | `https://soonjokwon.github.io/adam-lab-widgets/patents/` | `patents` | 650px |
 | Board · Photos | `https://soonjokwon.github.io/adam-lab-widgets/gallery/` | `gallery` | 820px |
 
-- **휴대폰에서는 Sites가 위젯 박스 높이를 너비에 맞춰 줄입니다** (PC 400px → 폰에서 약 200–250px). 그래서 모든 위젯은 박스 **안에서 스크롤**되고,
-  키가 작은 박스에서는 자동으로 압축된 모양(작은 통계 줄, 한 줄 필터, 사진·영문 생략 카드)으로 바뀝니다. 필터 줄은 스크롤해도 위에 붙어 있습니다.
-  높이는 위 표를 기준으로 취향껏 조절하세요. 너무 작게(PC 300px 미만) 잡으면 폰에서 한 화면에 1–2개만 보입니다.
+- **휴대폰에서는 Sites가 PC 박스의 가로:세로 비율을 그대로 유지한 채 폭만 화면에 맞춥니다** (1-1 참고). PC 박스 폭은 1185px이므로
+  폰 높이 ≈ **PC 높이 × 0.30** (390px 폰 기준, 360px 폰은 × 0.28). 예: 구성원 1150px → 폰에서 약 344px.
+  그래서 폰(폭 560px 이하)에서는 위젯이 자동으로 **폰 전용 모양**으로 바뀝니다 — 위쪽 한 줄 막대(분류는 드롭다운, 검색은 🔍 버튼 뒤),
+  큰 숫자·그래프 생략, 촘촘한 카드, 오른쪽 위 **↗ 버튼과 목록 끝 “새 탭에서 전체 화면으로 보기”**(새 탭에서 위젯만 크게 열림).
+  Recruiting처럼 아주 낮은 박스는 카드가 **옆으로 넘기는 한 줄**이 됩니다. PC 모양은 바뀌지 않습니다.
+- 위젯 안의 스크롤이 답답하면 **박스를 세로로 더 길게** 잡으세요(1-1의 권장 높이). 폭은 그대로 두는 것이 좋습니다.
 - 같은 페이지의 위젯은 같은 디자인입니다(예: Publications 페이지의 논문·특허). 페이지 제목은 Sites의 제목 블록을 그대로 쓰세요.
 - 위젯 안의 링크는 모두 **새 탭**으로 열립니다.
 - Recruiting 주소는 `projects` 탭에서 `recruit` 칸이 `Y`인 과제만 보여 줍니다(3장 참고). 모집 과제가 바뀌면 시트의 `Y`만 옮기면 됩니다.
+
+### 1-1. 휴대폰에서의 박스 크기 (측정값, 2026-10-09)
+
+Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로 만듭니다. 휴대폰에서는 박스가 화면 폭(390px 폰에서 355px)으로 늘어나고
+**같은 비율**로 높이가 정해집니다. **폰 높이를 따로 정하는 설정은 없습니다** — 폰에서 키우는 방법은 PC 박스의 세로 비율을 키우는 것뿐입니다.
+
+| 위젯 | 지금 PC 박스 (게시본 실측) | 폰 390px에서 | 권장 PC 높이 (폭 그대로) | 권장 시 폰 높이 |
+| --- | --- | --- | --- | --- |
+| Home · news | 1185 × 588 | 355 × 176 | 그대로(560–600) | 168–180 |
+| Board · news | 1185 × 401 | 355 × 120 | 560 | 168 |
+| Research · projects | 1185 × 1125 | 355 × 337 | **1800** (PC에서 안쪽 스크롤 없음) | 539 |
+| Recruiting · projects | 1185 × 305 | 355 × 91 | 그대로 또는 400 | 91 → 120 |
+| Team · members | 1185 × 1149 | 355 × 344 | **1900** (PC에서 안쪽 스크롤 없음) | 569 |
+| Professor · talks | 1185 × 695 | 355 × 208 | 1200–1600 | 360–479 |
+| Awards | 1185 × 1137 | 355 × 341 | 1500 | 449 |
+| Publications · 논문 | 1185 × 999 | 355 × 299 | 1600 | 479 |
+| Publications · 특허 | 1185 × 783 | 355 × 234 | 1100–1750 | 330–524 |
+| Board · gallery | 1185 × 821 | 355 × 246 | 1200 | 360 |
+
+- 폰 높이 = 폰 박스 폭 × (PC 높이 ÷ PC 폭). PC 높이를 **100px 늘릴 때마다 폰에서 약 30px** 커집니다.
+- 폰에서 박스가 화면의 절반–2/3(**약 450–600px**) 정도일 때가 가장 편합니다. 그보다 크면 박스 안·밖 스크롤이 겹칩니다.
+- **폭을 줄이면**(예: 12칸 → 6칸, 폭 ≈ 585px) 같은 높이로도 폰 높이가 2배가 되지만, PC에서는 위젯이 좁은 모양으로 바뀌므로 권하지 않습니다.
+- 위 표의 “지금 PC 박스”는 게시된 클론(adam-pnu-2)에서 잰 값입니다. Research·Awards·특허·Home news는 1장 표의 권장 높이와 다르게 게시돼 있으니 확인하세요.
 
 ### 주소 뒤에 붙이는 옵션 (선택)
 
@@ -45,7 +71,7 @@ Sites 편집 화면 → **삽입 → 삽입(Embed) → URL**에 아래 주소를
 | patents | `?status=registered` 또는 `filed` · `?topic=` | |
 | awards | `?category=paper` / `presentation` / `competition` | |
 | gallery | `?group=PNU` 또는 `KIT` | |
-| 공통 | `?debug=1` 점검 창 (6장) | |
+| 공통 | `?debug=1` 점검 창 (6장) · `?pe=1`/`?pe=0` 폰 전용 모양 강제 켜기/끄기 · `?full=1` 새 탭 전체 화면 보기(제목 줄 표시) | |
 
 ---
 
@@ -372,6 +398,11 @@ python3 scripts/make_preview.py --clean && git add -A && git commit -m "…" && 
 ```
 
 `scripts/phone-preview.html?src=../publications/&w=390&h=350&scroll=600` 은 위젯을 폰 크기 iframe에 넣어 보여 줍니다(로컬 `python3 -m http.server` 또는 Pages).
+폰 실측 크기(390px 폰): news 355×176, projects 355×337, recruiting 355×91, members 355×344, talks 355×208, awards 355×341, publications 355×299, patents 355×234, gallery 355×246.
+
+**폰 전용 모양(pe)** — `shared/sheet-loader.js`의 `ADAM.pe`/`ADAM.phone(root, opts)`: 폭 ≤ 560px이고 (iframe 안이거나 높이 ≤ 600px)이면 `html.ax-pe`
+(높이 ≤ 150px면 `ax-pe-tiny`). 바 안의 `.ax-chips`(또는 `opts.groups`, 예: `.pub-tiles`)를 `<select>`로 미러링(MutationObserver),
+`.ax-search`와 `.ax-pe-more` 요소는 🔍 버튼 뒤 둘째 줄로, `.ax-pe-open`(↗)·`.ax-pe-end`는 `?full=1` 새 탭 링크. 위젯별 밀도는 각 CSS의 `html.ax-pe …` 규칙.
 
 ### 배포 확인
 

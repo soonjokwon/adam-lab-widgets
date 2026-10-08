@@ -45,7 +45,9 @@
     refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "앨범" });
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.grid = el("div", { class: "gl-grid" });
-    mount.appendChild(el("div", { class: "ax-root gl" }, [el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "ax-grow" }), refs.count]), refs.grid]));
+    var root = el("div", { class: "ax-root gl" }, [el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "ax-grow" }), refs.count]), refs.grid]);
+    mount.appendChild(root);
+    A.phone(root, { title: "사진 Photos" });
     for (var i = 0; i < 4; i++) refs.grid.appendChild(el("div", { class: "ax-skel gl-skel", "aria-hidden": "true" }));
   }
 

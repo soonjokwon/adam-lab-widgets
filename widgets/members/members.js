@@ -68,10 +68,12 @@
     refs.alumni = el("button", { type: "button", class: "ax-chip", "aria-pressed": "false" });
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.body = el("div", { class: "mb-body-wrap" });
-    mount.appendChild(el("div", { class: "ax-root mb" }, [
+    var root = el("div", { class: "ax-root mb" }, [
       el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "ax-grow" }), refs.alumni, refs.count]),
       refs.body
-    ]));
+    ]);
+    mount.appendChild(root);
+    A.phone(root, { title: "구성원 Team" });
     refs.alumni.addEventListener("click", function () {
       state.alumni = !state.alumni;
       render();

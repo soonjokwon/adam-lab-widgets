@@ -35,11 +35,11 @@
 
 | 위젯 | 옵션 | 예 |
 | --- | --- | --- |
-| publications | `?types=` 보여줄 분류만 (쉼표) · `?type=` 처음 선택 · `?year=` · `?q=` | 학술지만: `/publications/?types=journal-intl,journal-kr` · 학술대회만: `/publications/?types=conf-intl,conf-kr` |
+| publications | `?types=` 보여줄 분류만 (쉼표) · `?type=` 처음 선택 · `?year=` · `?topic=`(주제 ID, 예 `am`) · `?q=` | 학술지만: `/publications/?types=journal-intl,journal-kr` · 학술대회만: `/publications/?types=conf-intl,conf-kr` |
 | projects | `?status=ongoing\|completed` · `?group=PNU\|KIT` · `?compact=1`(상단 숫자·필터 숨김) | Recruiting 페이지 예시는 위 표 |
 | members | `?alumni=1`(졸업생 펼친 상태) · `?join=0`(“We're looking for you” 카드 숨김) | |
 | awards | `?category=paper\|presentation\|competition` | |
-| patents | `?status=registered\|filed` | |
+| patents | `?status=registered\|filed` · `?topic=` | |
 | gallery | `?group=PNU\|KIT` | |
 | 공통 | `?source=json` 시트를 무시하고 저장소 백업만 표시(점검용) | |
 
@@ -85,6 +85,7 @@
 | `year` | 연도 | `2026` |
 | `authors` | 저자 (쉼표 구분, `*` 교신, `+` 공동 1저자) | `Y. Jeon, K. Kim, H. Kim*, S. Kwon*` (`S. Kwon`/`권순조`는 굵게) |
 | `title` | 제목 (필수) | |
+| `topics` | 연구 주제 태그 (`;` 구분, 아래 표) | `am; rl` · 비워 두면 태그 없음 |
 | `venue` | 학술지/학술대회명 | `Additive Manufacturing` |
 | `details` | 권(호)·쪽·날짜·장소 등 | `114, 105044, Sep 25` / `여수 베네치아, 여수, 2025.08.20~23. (08.22.)` |
 | `date` | 발표일(학술대회) | `2025-08-22` |
@@ -99,11 +100,34 @@
 | --- | --- | --- |
 | `no` | 번호 | `14` → `P14` |
 | `title` | 특허명 (필수) | |
+| `topics` | 연구 주제 태그 (논문과 같은 ID) | `am; assembly` |
 | `status` | 상태 | `registered`(등록) `filed`(출원) |
 | `number` | 등록/출원번호 | `10-3000341` |
 | `date` | 등록일/출원일 | `2026-07-31` |
 | `link` | KIPRIS DOI 등 | `https://doi.org/10.8080/...` |
 | `note` | 비고 | `PCT 국제출원, PCT/KR2024/017655, 2024.11.08.` |
+
+#### 연구 주제 `topics` (논문·특허 공통)
+`topics` 칸에 아래 **ID**를 `;`로 구분해 적습니다 (예: `am; rl`). 영문/한글 이름을 그대로 적어도 인식하며, 목록에 없는 단어는 그대로 별도 태그로 표시됩니다. 애매하면 비워 두세요(태그 없이 표시). 처음 값은 제목 키워드로 보수적으로 자동 지정했습니다(`scripts/tag_topics.py`) — 시트에서 자유롭게 고치면 됩니다.
+
+| ID | 영문 (칩 표시) | 한글 | 논문 | 특허 |
+| --- | --- | --- | ---: | ---: |
+| `cad` | B-rep / CAD Modeling (`CAD Modeling`) | B-rep·CAD 모델링 | 66 | 5 |
+| `assembly` | Assembly & Mates (`Assembly`) | 조립·체결 | 26 | 2 |
+| `am` | Additive Manufacturing (`Additive Mfg.`) | 적층 제조 | 46 | 3 |
+| `kg` | Knowledge Graph / Ontology (`Knowledge Graph`) | 지식 그래프·온톨로지 | 4 | 0 |
+| `llm` | LLM / Generative AI (`LLM · GenAI`) | LLM·생성형 AI | 7 | 1 |
+| `mesh` | Mesh & Point Cloud (`Mesh · Point Cloud`) | 메쉬·점군 | 13 | 0 |
+| `rl` | Reinforcement Learning (`Reinforcement Learning`) | 강화학습 | 23 | 0 |
+| `edu` | CAD Education / Grading (`CAD Education`) | CAD 교육·자동 채점 | 7 | 1 |
+| `dt` | Digital Twin / Smart Manufacturing (`Digital Twin`) | 디지털 트윈·스마트 제조 | 5 | 0 |
+| `lca` | Sustainability / LCA (`Sustainability`) | 지속가능성·LCA | 14 | 1 |
+| `routing` | Cable Routing (`Cable Routing`) | 케이블 라우팅 | 12 | 0 |
+| `safety` | Safety & Evacuation (`Safety`) | 안전·대피 | 11 | 1 |
+| `ship` | Shipbuilding / Ocean (`Ship · Ocean`) | 조선·해양 | 11 | 1 |
+| `std` | Standards (ISO·STEP·AAS) (`Standards`) | 표준 (ISO·STEP·AAS) | 14 | 0 |
+
+각 항목의 `#태그`를 누르면 그 주제로 필터되고(다시 누르면 해제), 상단 `TOPICS` 줄(좁은 화면에선 드롭다운)은 분류·연도·수상·검색과 함께 적용됩니다. 처음부터 한 주제만: `/publications/?topic=am`.
 
 ### `awards` — 수상 (Awards 페이지)
 | 열 | 내용 | 허용값/예 |
@@ -241,8 +265,8 @@ python3 -m http.server 4179
 ## 8. 위젯 조작
 
 - **Latest News:** 이전/다음, 가로 스와이프, ← → / Home / End, 태그 칩 필터
-- **논문:** 분류 타일(개수 표시) · 연도 막대그래프(클릭=연도 필터) · 연도 선택 · 검색(제목/저자/학술지, 일치 부분 강조) · `수상` 필터 · 더 보기
-- **특허:** 전체/등록/출원 타일 · 검색
+- **논문:** 분류 타일(개수 표시) · 연도 막대그래프(클릭=연도 필터) · 연도 선택 · 검색(제목/저자/학술지, 일치 부분 강조) · 연구 주제 칩/드롭다운 + 항목별 `#태그`(클릭=주제 필터) · `수상` 필터 · 더 보기
+- **특허:** 전체/등록/출원 타일 · 연구 주제 칩 + `#태그` · 검색
 - **수상:** 분류 칩 · 검색 · 연도별 타임라인
 - **구성원:** 역할 칩 · 졸업생 보기/숨기기 · 사진이 없으면 이니셜 표시
 - **과제:** 진행중/종료 · @PNU/@KIT · 기간 진행률 막대(오늘 위치 표시)

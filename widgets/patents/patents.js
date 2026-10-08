@@ -1,5 +1,7 @@
 /* Patents — sheet tab `patents`. Same visual system as Publications (same Sites page).
-   Columns: no,title,status,number,date,link,note   status: registered | filed */
+   Columns: no,title,topics,status,number,date,link,note   status: registered | filed
+   topics: semicolon-separated ids/labels from ADAM.TOPICS (same as publications)
+   URL params: ?status= &topic= */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-patents");
@@ -10,7 +12,8 @@
     filed: { lb: "Filed", ko: "출원", num: "출원번호" }
   };
   var ALIAS = { "등록": "registered", granted: "registered", registration: "registered", "출원": "filed", pending: "filed", application: "filed" };
-  var state = { items: [], status: (A.params.get("status") || "all").toLowerCase(), q: "" };
+  var state = { items: [], status: (A.params.get("status") || "all").toLowerCase(), q: "", topic: "all" };
+  var topicParam = A.params.get("topic") || "";
   var refs = {};
 
   function canon(v) {
@@ -24,9 +27,10 @@
       var title = (r.title || "").trim();
       if (!title) return;
       var date = A.normalizeDate(r.date);
-      out.push({ no: String(r.no || "").replace(/\.0$/, ""), title: title, status: canon(r.status) || "filed",
+      var topics = A.topics(r.topics);
+      out.push({ topics: topics, topicIds: topics.map(function (t) { return t.id; }), no: String(r.no || "").replace(/\.0$/, ""), title: title, status: canon(r.status) || "filed",
         number: r.number || "", date: date, link: A.safeUrl(r.link), note: r.note || "", order: i,
-        hay: A.fold([title, r.number, r.note, date].join(" ")) });
+        hay: A.fold([title, r.number, r.note, date].concat(topics.map(function (t) { return t.en + " " + t.ko; })).join(" ")) });
     });
     out.sort(function (a, b) {
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;
@@ -45,15 +49,28 @@
     ]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.list = el("div", { class: "pub-list" });
-    mount.appendChild(el("div", { class: "ax-root pub" }, [
-      refs.tiles, el("div", { class: "ax-bar" }, [search, el("span", { class: "ax-grow" }), refs.count]), refs.list
-    ]));
+    refs.topic = A.topicFilter(function (id) { pickTopic(id); });
+    refs.topic.row.hidden = refs.topic.select.hidden = true;
+    refs.root = el("div", { class: "ax-root pub" }, [
+      refs.tiles, refs.topic.row,
+      el("div", { class: "ax-bar" }, [search, refs.topic.select, el("span", { class: "ax-grow" }), refs.count]), refs.list
+    ]);
+    mount.appendChild(refs.root);
     refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
     for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
   }
 
-  function matches(it, skipStatus) {
-    if (!skipStatus && state.status !== "all" && it.status !== state.status) return false;
+  function pickTopic(id, fromEntry) {
+    state.topic = id || "all"; render();
+    if (fromEntry) {
+      var top = refs.root.getBoundingClientRect().top + window.pageYOffset;
+      if (window.pageYOffset > top) window.scrollTo({ top: top, behavior: "smooth" });
+    }
+  }
+
+  function matches(it, skip) {
+    if (skip !== "status" && skip !== true && state.status !== "all" && it.status !== state.status) return false;
+    if (skip !== "topic" && state.topic !== "all" && it.topicIds.indexOf(state.topic) === -1) return false;
     if (state.q) {
       var words = A.fold(state.q).trim().split(" ");
       for (var i = 0; i < words.length; i++) if (words[i] && it.hay.indexOf(words[i]) === -1) return false;
@@ -73,6 +90,13 @@
         b.addEventListener("click", function () { state.status = t.id; render(); });
         refs.tiles.appendChild(b);
       });
+    var tc = { all: 0 };
+    state.items.forEach(function (it) {
+      if (!matches(it, "topic")) return;
+      tc.all++;
+      it.topicIds.forEach(function (id) { tc[id] = (tc[id] || 0) + 1; });
+    });
+    refs.topic.update(refs.present, tc, state.topic);
 
     var shown = state.items.filter(function (it) { return matches(it); });
     refs.count.textContent = shown.length + " / " + state.items.length;
@@ -98,6 +122,9 @@
         var meta = el("div", { class: "pub-meta" }, [
           el("span", { class: "ax-badge ko " + (it.status === "registered" ? "solid" : "dash"), text: st.ko + " · " + st.lb.toUpperCase() }),
           it.note ? el("span", { class: "ax-badge ko navy", text: it.note }) : null,
+          it.topics.length ? el("span", { class: "pub-tags" }, it.topics.map(function (tp) {
+            return A.topicTag(tp, state.topic === tp.id, function (id) { pickTopic(state.topic === id ? "all" : id, true); });
+          })) : null,
           it.link ? el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: /doi\.org/.test(it.link) ? "DOI" : "LINK" }) : null
         ]);
         ol.appendChild(el("li", { class: "pub-item" }, [
@@ -116,6 +143,11 @@
     A.load("patents", { required: ["title", "status", "number"] }).then(function (res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 특허가 없습니다."); return; }
+      var by = {};
+      state.items.forEach(function (it) { it.topics.forEach(function (t) { by[t.id] = t; }); });
+      refs.present = Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return a.order - b.order; });
+      var tp = A.topic(topicParam);
+      if (tp && by[tp.id]) state.topic = tp.id;
       render();
     }).catch(function () { A.status(refs.list, "특허 목록을 불러오지 못했습니다."); });
   }

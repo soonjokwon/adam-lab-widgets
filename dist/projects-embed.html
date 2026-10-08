@@ -424,10 +424,11 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
   window.ADAM_SHEETS = {
     /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
     news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
-    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
-       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    /* type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep
+       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu dt lca routing safety ship std) */
     publications: gviz("publications"),
-    /* no,title,status,number,date,link,note   status: registered | filed */
+    /* no,title,topics,status,number,date,link,note   status: registered | filed   topics: as publications */
     patents: gviz("patents"),
     /* date,category,award,recipients,title,event,organizer,link
        category: paper | presentation | competition */
@@ -659,6 +660,79 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
       if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
     });
     return frag;
+  };
+
+  /* Research-topic vocabulary for publications/patents (`topics` column,
+     semicolon-separated). Cells may use the id, the English or the Korean
+     label; anything else is shown as a custom tag. Ids match scripts/tag_topics.py. */
+  ADAM.TOPICS = [
+    { id: "cad", en: "B-rep / CAD Modeling", short: "CAD Modeling", ko: "B-rep·CAD 모델링" },
+    { id: "assembly", en: "Assembly & Mates", short: "Assembly", ko: "조립·체결" },
+    { id: "am", en: "Additive Manufacturing", short: "Additive Mfg.", ko: "적층 제조" },
+    { id: "kg", en: "Knowledge Graph / Ontology", short: "Knowledge Graph", ko: "지식 그래프·온톨로지" },
+    { id: "llm", en: "LLM / Generative AI", short: "LLM · GenAI", ko: "LLM·생성형 AI" },
+    { id: "mesh", en: "Mesh & Point Cloud", short: "Mesh · Point Cloud", ko: "메쉬·점군" },
+    { id: "rl", en: "Reinforcement Learning", short: "Reinforcement Learning", ko: "강화학습" },
+    { id: "edu", en: "CAD Education / Grading", short: "CAD Education", ko: "CAD 교육·자동 채점" },
+    { id: "dt", en: "Digital Twin / Smart Manufacturing", short: "Digital Twin", ko: "디지털 트윈·스마트 제조" },
+    { id: "lca", en: "Sustainability / LCA", short: "Sustainability", ko: "지속가능성·LCA" },
+    { id: "routing", en: "Cable Routing", short: "Cable Routing", ko: "케이블 라우팅" },
+    { id: "safety", en: "Safety & Evacuation", short: "Safety", ko: "안전·대피" },
+    { id: "ship", en: "Shipbuilding / Ocean", short: "Ship · Ocean", ko: "조선·해양" },
+    { id: "std", en: "Standards (ISO·STEP·AAS)", short: "Standards", ko: "표준 (ISO·STEP·AAS)" }
+  ];
+  function topicKey(s) { return String(s || "").toLowerCase().replace(/[\s·.\/&()_+-]+/g, ""); }
+  var TOPIC_BY = {};
+  ADAM.TOPICS.forEach(function (t, i) {
+    t.order = i;
+    [t.id, t.en, t.short, t.ko].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
+  });
+  TOPIC_BY[topicKey("B-rep")] = TOPIC_BY[topicKey("CAD")] = ADAM.TOPICS[0];
+  ADAM.topic = function (v) {
+    var raw = String(v || "").trim(), k = topicKey(raw);
+    if (!k) return null;
+    return TOPIC_BY[k] || { id: "x-" + k, en: raw, short: raw, ko: raw, order: 900, custom: true };
+  };
+  ADAM.topics = function (cell) {
+    var out = [], seen = {};
+    String(cell || "").split(/[;,；\n]+/).forEach(function (part) {
+      var t = ADAM.topic(part);
+      if (t && !seen[t.id]) { seen[t.id] = 1; out.push(t); }
+    });
+    return out.sort(function (a, b) { return a.order - b.order; });
+  };
+  /* One clickable tag on an entry. */
+  ADAM.topicTag = function (t, active, onPick) {
+    var b = ADAM.el("button", { type: "button", class: "ax-tag", "aria-pressed": String(active),
+      title: t.custom ? t.en : t.en + " · " + t.ko, text: t.short });
+    b.addEventListener("click", function () { onPick(t.id); });
+    return b;
+  };
+  /* Topic filter: a chip row (wide) + a select (narrow, CSS swaps them). */
+  ADAM.topicFilter = function (onPick) {
+    var el = ADAM.el;
+    var row = el("div", { class: "ax-topics", role: "group", "aria-label": "연구 주제 Topics" });
+    var sel = el("select", { class: "ax-select ax-topic-select", "aria-label": "연구 주제 Topics" });
+    sel.addEventListener("change", function () { onPick(sel.value); });
+    function update(present, counts, active) {
+      row.innerHTML = ""; sel.innerHTML = "";
+      row.hidden = sel.hidden = !present.length;
+      if (!present.length) return;
+      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { text: "Topics" }), el("span", { class: "ko", text: "연구 주제" })]));
+      var list = [{ id: "all", short: "All", en: "All topics", ko: "전체" }].concat(present);
+      list.forEach(function (t) {
+        var n = counts[t.id] || 0, on = active === t.id;
+        var b = el("button", { type: "button", class: "ax-topic" + (t.id === "all" ? " all" : ""), "aria-pressed": String(on),
+          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.en + " · " + t.ko }, [
+          el("span", { text: t.short }), el("span", { class: "n", text: String(n) })
+        ]);
+        b.addEventListener("click", function () { onPick(on && t.id !== "all" ? "all" : t.id); });
+        row.appendChild(b);
+        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "ALL TOPICS · 전체 주제 (" + n + ")" : "# " + t.short + " · " + t.ko + " (" + n + ")" }));
+      });
+      sel.value = active;
+    }
+    return { row: row, select: sel, update: update };
   };
 
   ADAM.status = function (mount, message, kind) {

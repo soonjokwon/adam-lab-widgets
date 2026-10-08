@@ -5,8 +5,8 @@
 | 탭 이름 | 파일 | 열 | 위젯 |
 | --- | --- | --- | --- |
 | `news` | `news.csv` | `date,title_ko,title_en,tag,link,image` | `/news/` (이미 사용 중) |
-| `publications` | `publications.csv` | `type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link` | `/publications/` |
-| `patents` | `patents.csv` | `no,title,status,number,date,link,note` | `/patents/` |
+| `publications` | `publications.csv` | `type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link` | `/publications/` |
+| `patents` | `patents.csv` | `no,title,topics,status,number,date,link,note` | `/patents/` |
 | `awards` | `awards.csv` | `date,category,award,recipients,title,event,organizer,link` | `/awards/` |
 | `members` | `members.csv` | `name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab` | `/members/` |
 | `projects` | `projects.csv` | `title,org_role,researcher_role,program,funder,start,end,group,status,logo,link` | `/projects/` |

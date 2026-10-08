@@ -333,3 +333,7 @@ for g in gallery:
     g["caption"] = g["caption"].replace("오픈랩행사", "오픈랩 행사").replace("생일기념", "생일 기념")
 write("gallery", ["date","caption","image","group","link"], gallery,
       "Board page · Photos (single photos and carousel slides). group: PNU | KIT.")
+
+# research-topic tags (publications, patents) from titles; manual cells win
+import tag_topics  # noqa: E402
+tag_topics.main()

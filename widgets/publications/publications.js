@@ -1,6 +1,7 @@
 /* Publications explorer — sheet tab `publications`.
-   Columns: type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
-   URL params: ?types=journal-intl,journal-kr (limit tabs) &type= &year= &q= */
+   Columns: type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
+   topics: semicolon-separated ids/labels from ADAM.TOPICS (e.g. "am; rl")
+   URL params: ?types=journal-intl,journal-kr (limit tabs) &type= &year= &topic= &q= */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-publications");
@@ -22,7 +23,8 @@
 
   var allowed = (A.params.get("types") || "").split(",").map(function (s) { return canonType(s); }).filter(Boolean);
   var state = { items: [], type: canonType(A.params.get("type")) || "all", year: A.params.get("year") || "all",
-    q: A.params.get("q") || "", award: false, limit: PAGE };
+    q: A.params.get("q") || "", award: false, limit: PAGE, topic: "all" };
+  var topicParam = A.params.get("topic") || "";
 
   function canonType(v) {
     var s = String(v || "").trim().toLowerCase().replace(/[\s_]+/g, "-");
@@ -42,6 +44,7 @@
       var date = A.normalizeDate(r.date);
       year = year ? year[0] : (date ? date.slice(0, 4) : "");
       var note = (r.note || "").split(/\s*;\s*/).filter(Boolean);
+      var topics = A.topics(r.topics);
       out.push({
         type: type, no: String(r.no || "").replace(/\.0$/, "").trim(), year: year, date: date,
         authors: r.authors || "", title: title, venue: r.venue || "", details: r.details || "",
@@ -49,8 +52,9 @@
         link: A.safeUrl(r.link), notes: note,
         extraLabel: r.extra_label || "", extraLink: A.safeUrl(r.extra_link),
         award: note.some(function (n) { return /상|award|prize/i.test(n); }),
+        topics: topics, topicIds: topics.map(function (t) { return t.id; }),
         order: i,
-        hay: A.fold([title, r.authors, r.venue, r.details, r.note, year].join(" "))
+        hay: A.fold([title, r.authors, r.venue, r.details, r.note, year].concat(topics.map(function (t) { return t.en + " " + t.ko; })).join(" "))
       });
     });
     out.sort(function (a, b) {
@@ -84,8 +88,11 @@
     refs.award = el("button", { type: "button", class: "ax-chip", "aria-pressed": "false" }, [el("span", { class: "ko", text: "수상" }), el("span", { text: "★", "aria-hidden": "true" })]);
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.list = el("div", { class: "pub-list" });
-    var bar = el("div", { class: "ax-bar" }, [search, refs.year, refs.award, el("span", { class: "ax-grow" }), refs.count]);
-    var root = el("div", { class: "ax-root pub" }, [refs.tiles, refs.hist, refs.axis, bar, refs.list]);
+    refs.topic = A.topicFilter(pickTopic);
+    refs.topic.row.hidden = refs.topic.select.hidden = true;
+    var bar = el("div", { class: "ax-bar" }, [search, refs.year, refs.topic.select, refs.award, el("span", { class: "ax-grow" }), refs.count]);
+    refs.root = el("div", { class: "ax-root pub" }, [refs.tiles, refs.hist, refs.axis, refs.topic.row, bar, refs.list]);
+    var root = refs.root;
     mount.appendChild(root);
 
     refs.q.addEventListener("input", A.debounce(function () {
@@ -96,6 +103,14 @@
     refs.award.addEventListener("click", function () { state.award = !state.award; state.limit = PAGE; render(); });
   }
 
+  function pickTopic(id, fromEntry) {
+    state.topic = id || "all"; state.limit = PAGE; render();
+    if (fromEntry) {   // keep the filters in view after clicking a tag deep in the list
+      var top = refs.root.getBoundingClientRect().top + window.pageYOffset;
+      if (window.pageYOffset > top) window.scrollTo({ top: top, behavior: "smooth" });
+    }
+  }
+
   function skeleton() {
     refs.list.innerHTML = "";
     for (var i = 0; i < 5; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
@@ -104,6 +119,7 @@
   function matches(it, skip) {
     if (skip !== "type" && state.type !== "all" && it.type !== state.type) return false;
     if (skip !== "year" && state.year !== "all" && it.year !== state.year) return false;
+    if (skip !== "topic" && state.topic !== "all" && it.topicIds.indexOf(state.topic) === -1) return false;
     if (state.award && !it.award) return false;
     if (state.q) {
       var words = A.fold(state.q).trim().split(" ");
@@ -175,6 +191,22 @@
     [first, mid, last].forEach(function (y) { refs.axis.appendChild(el("span", { text: String(y) })); });
   }
 
+  function topicsPresent() {
+    var by = {};
+    state.items.forEach(function (it) { it.topics.forEach(function (t) { by[t.id] = t; }); });
+    return Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return a.order - b.order || (a.en < b.en ? -1 : 1); });
+  }
+
+  function renderTopics() {
+    var counts = { all: 0 };
+    state.items.forEach(function (it) {
+      if (!matches(it, "topic")) return;
+      counts.all++;
+      it.topicIds.forEach(function (id) { counts[id] = (counts[id] || 0) + 1; });
+    });
+    refs.topic.update(refs.present, counts, state.topic);
+  }
+
   function highlight(text) {
     var frag = document.createDocumentFragment();
     var words = A.fold(state.q).trim().split(" ").filter(function (w) { return w.length > 1; });
@@ -213,6 +245,13 @@
       var isAward = /상|award|prize/i.test(n);
       meta.appendChild(el("span", { class: "ax-badge ko " + (isAward ? "award" : "navy"), text: n }));
     });
+    if (it.topics.length) {
+      var tags = el("span", { class: "pub-tags" });
+      it.topics.forEach(function (tp) {
+        tags.appendChild(A.topicTag(tp, state.topic === tp.id, function (id) { pickTopic(state.topic === id ? "all" : id, true); }));
+      });
+      meta.appendChild(tags);
+    }
     if (it.link) meta.appendChild(el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: /doi\.org/.test(it.link) ? "DOI" : "LINK" }));
     if (it.extraLink) meta.appendChild(el("a", { class: "ax-link", href: it.extraLink, target: "_blank", rel: "noopener", text: it.extraLabel || "LINK" }));
     body.appendChild(meta);
@@ -224,6 +263,7 @@
   function render() {
     renderTiles();
     renderYears();
+    renderTopics();
     refs.award.setAttribute("aria-pressed", String(state.award));
     refs.award.hidden = !state.items.some(function (it) { return it.award; });
     var shown = state.items.filter(function (it) { return matches(it); });
@@ -266,6 +306,9 @@
       var types = {};
       state.items.forEach(function (it) { types[it.type] = 1; });
       if (Object.keys(types).length === 1) state.type = Object.keys(types)[0];
+      refs.present = topicsPresent();
+      var tp = A.topic(topicParam);
+      if (tp && refs.present.some(function (t) { return t.id === tp.id; })) state.topic = tp.id;
       render();
     }).catch(function () {
       A.status(refs.list, "논문 목록을 불러오지 못했습니다.");

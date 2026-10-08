@@ -14,10 +14,11 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
   window.ADAM_SHEETS = {
     /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
     news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
-    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
-       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    /* type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep
+       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu dt lca routing safety ship std) */
     publications: gviz("publications"),
-    /* no,title,status,number,date,link,note   status: registered | filed */
+    /* no,title,topics,status,number,date,link,note   status: registered | filed   topics: as publications */
     patents: gviz("patents"),
     /* date,category,award,recipients,title,event,organizer,link
        category: paper | presentation | competition */

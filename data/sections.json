@@ -1,7 +1,7 @@
 {
  "source": "https://sites.google.com/view/adam-pnu-2",
  "extracted": "2026-10-09",
- "note": "Text blocks of the Sites pages (Professor, Recruiting, Research, Home). One row = one line/item; block = which embed (?block=…). type: bullet | entry | text | lead | fact | card | callout | figure | thumb | profile | contact | button | photo. Markup in text: **굵게**, {{주황 강조}}, [글자](링크).",
+ "note": "Text blocks of the Sites pages (Professor, Recruiting, Research, Home). One row = one line/item; block = which embed (?block=…). type: bullet | entry | text | lead | fact | card | callout | figure | thumb | profile | contact | button | photo (= image). Markup in text: **굵게**, {{주황 강조}}, [글자](링크).",
  "columns": [
   "block",
   "section",
@@ -776,6 +776,15 @@
    "text": "Instagram",
    "link": "https://www.instagram.com/pnu_adam_lab?stkn=eWJlOHk4cHp6MDVt&utm_source=qr",
    "image": "assets/home/icon-instagram.png"
+  },
+  {
+   "block": "home-join",
+   "section": "",
+   "type": "image",
+   "sub": "",
+   "text": "부산대학교 통합기계관",
+   "link": "https://naver.me/F9N44XkL",
+   "image": "assets/home/building.jpg"
   }
  ]
 }

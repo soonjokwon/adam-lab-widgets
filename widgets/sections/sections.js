@@ -4,14 +4,14 @@
    (several: ?block=a,b; none = every block, labelled — handy as a preview).
    section: heading shown above the rows that share it (empty = no heading).
    type: bullet (default) | entry | text | lead | fact | card | callout | figure | thumb |
-         profile | contact | button | photo — see README §2 "sections".
+         profile | contact | button | photo (= image: side photo + caption) — see README §3 "sections".
    text markup: **굵게**  {{주황 강조}}  [글자](https://…)  (줄바꿈은 셀 안 Alt+Enter).
    A cell must not START with = or + when typed in Sheets (formula) — put ' in front. */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-sections");
   if (!mount) return;
-  var TYPES = ["bullet", "entry", "text", "lead", "fact", "card", "callout", "figure", "thumb", "profile", "contact", "button", "photo"];
+  var TYPES = ["bullet", "entry", "text", "lead", "fact", "card", "callout", "figure", "thumb", "profile", "contact", "button", "photo", "image"];
   var TITLES = {
     professor: "Professor · 권순조", "recruit-intro": "Recruiting · 모집 안내", "recruit-topics": "Recruiting · 연구 주제",
     "recruit-benefits": "Recruiting · 참여 혜택", "recruit-apply": "Recruiting · 지원 방법",
@@ -73,6 +73,7 @@
       var txt = String(r.text == null ? "" : r.text).replace(/\r\n?/g, "\n").replace(/^\s+|\s+$/g, "");
       if (!block) { if (txt) T.drop(i, "block 비어 있음"); return; }
       if (TYPES.indexOf(type) === -1) { T.warn(i, "type '" + type + "' 모름 → bullet"); type = "bullet"; }
+      if (type === "image") type = "photo";
       if (!txt && !r.image) { T.drop(i, "text·image 둘 다 비어 있음"); return; }
       out.push({ block: block, section: String(r.section || "").trim(), type: type, sub: String(r.sub || "").trim(),
         text: txt, link: A.safeUrl(r.link), image: String(r.image || "").trim(), order: i });
@@ -209,8 +210,11 @@
     var node = el("section", { class: "sx-sec ax-in" + (photos.length ? " sx-split" : "") + (onlyEntries && sec.k ? " sx-halfable" : "") }, [
       sec.k ? el("h3", { class: "sx-sh" }, [rich("span", "t", sec.k)]) : null,
       photos.length ? el("div", { class: "sx-splitwrap" }, [main, el("aside", { class: "sx-aside" }, photos.map(function (it) {
-        var fig = el("figure", { class: "sx-photo-fig" }, [img(it.image, plain(it.text)), it.text ? rich("figcaption", "", it.text) : null]);
-        return it.link ? linkTo(it.link, fig) : fig;
+        var fig = el("figure", { class: "sx-photo-fig" }, [el("div", { class: "sx-pim" }, [img(it.image, plain(it.text))]), it.text ? rich("figcaption", "", it.text) : null]);
+        if (!it.link) return fig;
+        var a = linkTo(it.link, fig);
+        a.setAttribute("title", plain(it.text) + " — 지도 (새 탭)");
+        return a;
       }))]) : main
     ]);
     return node;

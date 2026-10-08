@@ -77,7 +77,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | Team/Recruiting · 같은 섹션 오른쪽 (지원 방법 + 연락처) | `recruit-apply` | 반쪽 | 420px | 355×257 (369) |
 | Home · Research Pillars 섹션 오른쪽 (왼쪽 3D 그림 슬라이드는 그대로) | `home-pillars` | 반쪽 | 460px | 355×281 (408) |
 | Home · “Growth Pillars” 띠 아래 (Unite·Execute·Share) | `home-growth` | 전체 | 540px | 355×162 (다 보임) |
-| Home · “Join ADAM Lab” 섹션 왼쪽 글 칸 (오른쪽 건물 사진·캡션은 그대로) | `home-join` | 5/12칸 (지금 글 칸 폭) | 480px | 355×355 (451) |
+| Home · “Join ADAM Lab” 띠 아래 (글·연락처 왼쪽 7/12 + 건물 사진·캡션 오른쪽 5/12 — 별도 사진 섹션은 삭제) | `home-join` | 전체 | 삽입 폭 790px이면 **510px**, 1185px이면 440px | 355×229 (사진은 폰에서 작은 한 줄로) |
 
 - 글은 시트 `sections` 탭에서 고칩니다(3장). 블록·줄을 추가하면 새 블록 주소가 바로 생깁니다. `…/sections/` (블록 없이)는 모든 블록을 이름표와 함께 보여 주는 미리보기입니다.
 - 폰(삽입 폭 440px 이하)에서는 글자·여백이 촘촘해지고, 내용이 박스보다 길면 아래쪽 흐림 + 끝에 “새 탭에서 전체 화면으로 보기”가 생깁니다(다 보이면 숨김). 반쪽 칸(480–581px)의 PC 모양은 그대로입니다.
@@ -113,7 +113,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | `projects` | [templates/sheet/projects.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/projects.csv) |
 | `talks` | [templates/sheet/talks.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/talks.csv) |
 | `gallery` | [templates/sheet/gallery.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/gallery.csv) |
-| `sections` | [templates/sheet/sections.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/sections.csv) (글 블록 85줄) |
+| `sections` | [templates/sheet/sections.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/sections.csv) (글 블록 86줄) |
 | `news` (이미 있음) | 아래 2-2 참고 — [news_append.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/news_append.csv) |
 
 1. 시트 열기 → **파일 → 가져오기 → 업로드** → CSV 선택
@@ -156,7 +156,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | `projects` · `recruit`, `hidden` | `Y` |
 | `news` · `tag` | `Paper` `Award` `Project` `Event` `Member` |
 | `gallery` · `group` | `PNU` `KIT` |
-| `sections` · `type` | `bullet` `entry` `text` `lead` `fact` `card` `callout` `figure` `thumb` `profile` `contact` `button` `photo` |
+| `sections` · `type` | `bullet` `entry` `text` `lead` `fact` `card` `callout` `figure` `thumb` `profile` `contact` `button` `photo` `image` |
 
 ### 2-4. 공개 범위 주의
 
@@ -342,7 +342,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | `profile` | 사진 카드: 첫 줄 = 이름, 다음 줄들 = 소개, `link`가 있는 줄 = 버튼 | — |
 | `contact` | 연락처 줄 (라벨 + 내용) | 라벨 (`Office`, `E`, `T`) |
 | `button` | 링크 버튼 (`image`에 아이콘) | — |
-| `photo` | 같은 묶음의 오른쪽에 큰 사진 + 캡션 | — |
+| `photo` (= `image`) | 같은 묶음의 오른쪽 5/12에 사진 + 캡션(`text`), `link`가 있으면 사진·캡션이 새 탭 링크. 폰에서는 글 아래 작은 한 줄(썸네일 + 캡션), 아주 낮은 박스에서는 숨김 | — |
 
 ---
 
@@ -362,7 +362,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 2. **Add file → Upload files** → 사진 끌어 놓기 → **Commit changes**
    - 파일 이름은 영문·숫자로 (`photo-24.jpg`, `member-12.jpg`), 가로 1000px 안팎, JPG 권장
 3. 시트의 `image`/`photo` 칸에 `assets/gallery/photo-24.jpg`처럼 적기
-   (`sections` 탭의 그림은 `assets/research`(연구 분야 그림), `assets/home`(Growth 아이콘·Instagram 아이콘)에 있습니다)
+   (`sections` 탭의 그림은 `assets/research`(연구 분야 그림), `assets/home`(Growth 아이콘·Instagram 아이콘·건물 사진 `building.jpg`)에 있습니다)
 
 갤러리 썸네일(작은 사진)은 개발 담당이 `scripts/make_thumbs.py`로 만듭니다. 썸네일이 아직 없어도 원본으로 보이므로 급하면 그냥 올리면 됩니다.
 

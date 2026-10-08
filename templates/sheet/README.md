@@ -13,6 +13,6 @@
 | `projects` | `projects.csv` | `title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link` |
 | `talks` | `talks.csv` | `date,title,venue,location,link` |
 | `gallery` | `gallery.csv` | `date,caption,image,group,link` |
-| `sections` | `sections.csv` (글 블록 85줄) | `block,section,type,sub,text,link,image` |
+| `sections` | `sections.csv` (글 블록 86줄) | `block,section,type,sub,text,link,image` |
 
 가져오기: **파일 → 가져오기 → 업로드** → **새 시트 삽입** → **“텍스트를 숫자, 날짜, 수식으로 변환” 해제** → 탭 이름을 위 표와 똑같이 변경.

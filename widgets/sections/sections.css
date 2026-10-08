@@ -172,11 +172,22 @@ a.sx-card:hover { border-color: var(--navy); box-shadow: 0 10px 22px rgba(16, 43
 .sx-btn img { width: 20px; height: 20px; display: block; }
 .sx-btn:hover { border-color: var(--navy); background: #f6f8ff; }
 .sx-btn::after { content: "↗"; font-size: 11px; color: var(--ink-dim); }
-.sx-splitwrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+/* text + side photo (type photo/image): 7/12 | 5/12 on wide embeds, stacked on narrow ones */
+.sx-splitwrap { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 28px; align-items: start; }
 .sx-aside > a { color: inherit; text-decoration: none; display: block; }
+.sx-aside > * + * { margin-top: 14px; }
 .sx-photo-fig { margin: 0; }
-.sx-photo-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
-.sx-photo-fig figcaption { margin-top: 10px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--blue); }
+.sx-pim { position: relative; overflow: hidden; background: var(--grid); border: 1px solid var(--line); }
+.sx-pim img { display: block; width: 100%; height: auto; transition: transform 0.35s var(--ease); }
+.sx-photo-fig figcaption {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  margin-top: 10px; text-align: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--blue);
+}
+.sx-aside > a .sx-photo-fig figcaption::after { content: "↗"; font: 500 12px var(--font-mono); color: var(--ink-dim); }
+.sx-aside > a:hover .sx-pim { border-color: var(--navy); }
+.sx-aside > a:hover .sx-pim img { transform: scale(1.03); }
+.sx-aside > a:hover figcaption { text-decoration: underline; text-underline-offset: 3px; }
 @container ax (max-width: 700px) {
   .sx-splitwrap { grid-template-columns: minmax(0, 1fr); gap: 18px; }
   .sx-profile { grid-template-columns: 120px minmax(0, 1fr); gap: 16px; }
@@ -228,4 +239,12 @@ html.ax-pe .sx-thumb figcaption { font-size: 10.5px; line-height: 1.35; margin-t
 html.ax-pe .sx-text { font-size: 12.5px; line-height: 1.6; }
 html.ax-pe .sx-crow { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; font-size: 12px; padding: 5px 0; }
 html.ax-pe .sx-btn { height: 30px; font-size: 11px; }
-html.ax-pe .sx-photo-fig figcaption { font-size: 13px; margin-top: 6px; }
+html.ax-pe .sx-splitwrap { gap: 12px; }
+/* phone: the side photo becomes one compact row under the text (thumb + caption ↗) */
+html.ax-pe .sx-photo-fig { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 12px; align-items: center;
+  padding: 8px; background: rgba(255, 255, 255, 0.96); border: 1px solid var(--line); }
+html.ax-pe .sx-pim { aspect-ratio: 3 / 2; border: 0; }
+html.ax-pe .sx-pim img { height: 100%; object-fit: cover; }
+html.ax-pe .sx-photo-fig figcaption { margin: 0; justify-content: flex-start; text-align: left; font-size: 13.5px; }
+/* very short phone boxes: drop the photo, the text + end link stay */
+html.ax-pe-tiny .sx-aside { display: none; }

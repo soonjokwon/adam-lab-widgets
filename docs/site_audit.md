@@ -44,6 +44,7 @@
 | 30 | Research · 연구과제 (KIT) | `금오공과대학교 LINC3.0 사업단 (22.08~23.01)` / `국립금오공과대학교 LINC3.0 사업단 (24.06~24.11)` | 지원기관 표기를 하나로 통일 (`국립금오공과대학교 LINC3.0 사업단` 등) | 같은 목록에서 같은 기관이 두 가지로 표기됨 (projects 탭 funder 값도 원문 그대로) | **확인필요** (교명 변경 시점 반영일 수 있음) |
 | 31 | Research · 연구과제 (KIT) | `전기추진선박 모델의 매쉬 경량화 알고리즘 현황 분석 용역` | `메시`(mesh) 표기로 통일 검토 — Publications는 `메시`/`Mesh` 사용 | 외래어 표기 `mesh` → `메시`가 표준. 과제 공식명이면 그대로 둠 | **확인필요** (공식 과제명 여부) |
 | 32 | Research / Team·Recruiting / Board · 과제명 | Recruiting `우수연구-신진연구(유형B)` · Research `신진연구(유형B)` · Board `한국연구재단 신진연구(유형B) 과제`; 알키미스트 `산업통상부`(3단계) ↔ `산업통상자원부`(2단계) | 15·16번과 같은 건: 과제 프로그램명·부처명 표기 방침을 한 번에 정해 세 페이지와 projects 탭(program/funder)에 똑같이 적용 | 위젯 projects 탭이 이제 Research·Recruiting 두 곳을 같이 그리므로(`?recruit=1`), 시트 한 칸만 고치면 두 페이지가 같이 바뀜 | **확인필요** |
+| 33 | Team/Professor · Experiences (시트 `sections`, block `professor`) | `연수원구원` | `연수연구원` (Post-doctoral researcher) | 2026-10-09 클론 글 블록을 `sections` 위젯으로 옮기며 원문 그대로 복사함. 오타로 보이므로 시트 `sections` 탭 해당 줄 `text`만 고치면 됨 | **확인필요** (의도한 직함) |
 
 ## 페이지별 참고
 

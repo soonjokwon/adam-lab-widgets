@@ -59,7 +59,7 @@
     if (!raw) return "";
     try {
       var url = new URL(raw, ADAM.root);
-      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:" || url.protocol === "tel:") return url.href;
     } catch (err) { /* ignore */ }
     return "";
   };
@@ -139,7 +139,7 @@
     var f = ADAM.params.get("pe"), w = window.innerWidth, h = window.innerHeight;
     /* framed (= a Sites embed) and narrow → pe at any height; a page opened
        directly on a phone only when it is also short */
-    var on = f === "1" || (f !== "0" && !ADAM.full && w > 0 && w <= 560 && h > 0 && (inFrame || h <= 600));
+    var on = f === "1" || (f !== "0" && !ADAM.full && w > 0 && w <= (ADAM.peMax || 560) && h > 0 && (inFrame || h <= 600));
     var de = document.documentElement;
     de.classList.toggle("ax-pe", on);
     de.classList.toggle("ax-pe-tiny", on && h <= 150);
@@ -147,6 +147,7 @@
     ADAM.pe = on;
   }
   peCheck();
+  ADAM.peCheck = peCheck;   /* a widget may lower ADAM.peMax and re-run this (sections: half-column embeds stay desktop) */
   window.addEventListener("resize", peCheck);
   ADAM.fullUrl = function (name) {
     /* paste builds (dist/*-embed.html) run on a googleusercontent URL → link the Pages page */
@@ -167,7 +168,8 @@
     members: ["name_ko", "role", "status"],
     projects: ["title", "funder", "org_role"],
     talks: ["date", "title", "venue", "location"],
-    gallery: ["caption", "image"]
+    gallery: ["caption", "image"],
+    sections: ["block", "type", "text"]
   };
   function detectTab(header) {
     var best = "";
@@ -532,7 +534,9 @@
     var el = ADAM.el, bar = opts.bar || root.querySelector(".ax-bar"), url = ADAM.fullUrl(name);
     var open = el("a", { class: "ax-pe-open", href: url, target: "_blank", rel: "noopener",
       title: "새 탭에서 크게 보기", "aria-label": "새 탭에서 크게 보기", html: ICON_OPEN });
-    if (bar && !opts.floating) {
+    if (opts.open === false) {
+      /* text blocks: no ↗ button, only the end link (and only when it scrolls) */
+    } else if (bar && !opts.floating) {
       var groups = opts.groups || Array.prototype.slice.call(bar.querySelectorAll(".ax-chips"));
       var first = bar.firstChild;
       groups.forEach(function (g) { bar.insertBefore(mirror(g), first); });
@@ -564,6 +568,8 @@
       open.classList.add("floating");
       root.appendChild(open);
     }
+    var sentinel = el("i", { class: "ax-pe-mark", "aria-hidden": "true" });
+    root.appendChild(sentinel);
     root.appendChild(el("a", { class: "ax-pe-end", href: url, target: "_blank", rel: "noopener" }, [
       el("span", { text: "새 탭에서 전체 화면으로 보기" }), el("span", { class: "ar", text: "↗", "aria-hidden": "true" })
     ]));
@@ -574,7 +580,11 @@
     }
     /* fade at the bottom edge while more content is below */
     var de = document.documentElement;
-    function edge() { de.classList.toggle("ax-pe-below", de.scrollHeight - window.innerHeight - window.pageYOffset > 24); }
+    function edge() {
+      de.classList.toggle("ax-pe-below", de.scrollHeight - window.innerHeight - window.pageYOffset > 24);
+      /* everything above the end link already fits the iframe → hide the end link */
+      de.classList.toggle("ax-pe-fits", sentinel.getBoundingClientRect().top + window.pageYOffset <= window.innerHeight + 2);
+    }
     window.addEventListener("scroll", edge, { passive: true });
     window.addEventListener("resize", edge);
     new MutationObserver(ADAM.debounce(edge, 60)).observe(root, { childList: true, subtree: true });

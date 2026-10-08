@@ -28,6 +28,7 @@ WIDGETS = {
     "projects": ("Research Projects", ["shared/base.css", "widgets/projects/projects.css"], "widgets/projects/projects.js"),
     "talks": ("Invited Talks", ["shared/base.css", "widgets/talks/talks.css"], "widgets/talks/talks.js"),
     "gallery": ("Photos", ["shared/base.css", "widgets/gallery/gallery.css"], "widgets/gallery/gallery.js"),
+    "sections": ("Text blocks", ["shared/base.css", "widgets/sections/sections.css"], "widgets/sections/sections.js"),
 }
 NEWS_STYLE = """  <style>
     /* Standalone URL-embed page: fill the Sites iframe, no chrome. */

@@ -38,6 +38,7 @@ SIGNATURES = {
     "projects": ["title", "funder", "org_role"],
     "talks": ["date", "title", "venue", "location"],
     "gallery": ["caption", "image"],
+    "sections": ["block", "type", "text"],
 }
 
 

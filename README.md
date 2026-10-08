@@ -6,8 +6,9 @@
 - 데이터 시트: [ADAM Lab 위젯 시트](https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw)
 - 위젯 주소: `https://soonjokwon.github.io/adam-lab-widgets/<위젯>/` (이 저장소가 GitHub Pages로 바로 공개됨)
 
-소개 문단·연구 분야·연락처·히어로 애니메이션 같은 **잘 안 바뀌는 내용은 Google Sites에서 직접** 고칩니다.
 자주 바뀌는 **목록**(소식·논문·특허·수상·구성원·과제·초청강연·사진)은 **시트에 한 줄 추가**하면 위젯에 바로 나타납니다.
+교수 이력·모집 안내·연구 분야 소개·Home 연락처 같은 **글 블록**도 같은 디자인의 `sections` 위젯으로 넣고, 문구는 시트 `sections` 탭에서 고칩니다(1-2, 3장).
+Home 히어로 애니메이션, 페이지 제목, 파란 띠 제목(예: Research Area, Invited Talks)은 Google Sites에서 직접 고칩니다.
 코드나 GitHub는 몰라도 됩니다.
 
 ---
@@ -61,6 +62,27 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 - **폭을 줄이면**(예: 12칸 → 6칸, 폭 ≈ 585px) 같은 높이로도 폰 높이가 2배가 되지만, PC에서는 위젯이 좁은 모양으로 바뀌므로 권하지 않습니다.
 - 위 표의 “지금 PC 박스”는 게시된 클론(adam-pnu-2)에서 잰 값입니다. Research·Awards·특허·Home news는 1장 표의 권장 높이와 다르게 게시돼 있으니 확인하세요.
 
+### 1-2. 글 블록 (`sections` 위젯, 시트 `sections` 탭)
+
+주소는 모두 `https://soonjokwon.github.io/adam-lab-widgets/sections/?block=<블록>` 입니다. 블록 하나 = 삽입 박스 하나.
+**폭(칸)** 이 중요합니다 — 짧은 글 블록은 Sites 섹션을 **2단(6칸+6칸)** 으로 나눠 반쪽 칸에 넣어야 폰에서 박스가 2배로 커집니다(폰에서는 두 칸이 위아래로 쌓임).
+
+| Sites 페이지 · 위치 | 블록 (`?block=`) | 칸 | 권장 높이 (PC) | 폰 390px 박스 (안쪽 내용) |
+| --- | --- | --- | --- | --- |
+| Team/Professor · 제목 아래 (사진·이력·학력·학회·표준화 활동 전체) | `professor` | 전체(12칸) | 1290px | 355×386 (1756, 안쪽 스크롤) |
+| Research · “Research Area” 띠 아래 (분야 3개: 소개·그림·사례 3장) | `research` | 전체 | 2650px | 355×794 (1324) |
+| Team/Recruiting · 첫 섹션 왼쪽 (모집 제목·대상·선발 인원·신청 기간) | `recruit-intro` | 반쪽(6칸) | 420px | 355×257 (다 보임) |
+| Team/Recruiting · 첫 섹션 오른쪽 (연구 주제) | `recruit-topics` | 반쪽 | 420px | 355×257 (360) |
+| Team/Recruiting · 연구 프로젝트 아래 섹션 왼쪽 (참여 혜택) | `recruit-benefits` | 반쪽 | 420px | 355×257 (388) |
+| Team/Recruiting · 같은 섹션 오른쪽 (지원 방법 + 연락처) | `recruit-apply` | 반쪽 | 420px | 355×257 (369) |
+| Home · Research Pillars 섹션 오른쪽 (왼쪽 3D 그림 슬라이드는 그대로) | `home-pillars` | 반쪽 | 460px | 355×281 (408) |
+| Home · “Growth Pillars” 띠 아래 (Unite·Execute·Share) | `home-growth` | 전체 | 540px | 355×162 (다 보임) |
+| Home · “Join ADAM Lab” 섹션 왼쪽 글 칸 (오른쪽 건물 사진·캡션은 그대로) | `home-join` | 5/12칸 (지금 글 칸 폭) | 480px | 355×355 (451) |
+
+- 글은 시트 `sections` 탭에서 고칩니다(3장). 블록·줄을 추가하면 새 블록 주소가 바로 생깁니다. `…/sections/` (블록 없이)는 모든 블록을 이름표와 함께 보여 주는 미리보기입니다.
+- 폰(삽입 폭 440px 이하)에서는 글자·여백이 촘촘해지고, 내용이 박스보다 길면 아래쪽 흐림 + 끝에 “새 탭에서 전체 화면으로 보기”가 생깁니다(다 보이면 숨김). 반쪽 칸(480–581px)의 PC 모양은 그대로입니다.
+- 짧은 글을 전체 폭(12칸) 박스에 넣으면 폰에서 박스가 아주 낮아집니다(예: 1185×300 → 폰 355×90). 위 표의 칸 배치를 지켜 주세요.
+
 ### 주소 뒤에 붙이는 옵션 (선택)
 
 | 위젯 | 옵션 | 예 |
@@ -71,6 +93,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | patents | `?status=registered` 또는 `filed` · `?topic=` | |
 | awards | `?category=paper` / `presentation` / `competition` | |
 | gallery | `?group=PNU` 또는 `KIT` | |
+| sections | `?block=`(블록 이름, 쉼표로 여러 개) | `/sections/?block=professor` |
 | 공통 | `?debug=1` 점검 창 (6장) · `?pe=1`/`?pe=0` 폰 전용 모양 강제 켜기/끄기 · `?full=1` 새 탭 전체 화면 보기(제목 줄 표시) | |
 
 ---
@@ -90,6 +113,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | `projects` | [templates/sheet/projects.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/projects.csv) |
 | `talks` | [templates/sheet/talks.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/talks.csv) |
 | `gallery` | [templates/sheet/gallery.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/gallery.csv) |
+| `sections` | [templates/sheet/sections.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/sections.csv) (글 블록 85줄) |
 | `news` (이미 있음) | 아래 2-2 참고 — [news_append.csv](https://github.com/soonjokwon/adam-lab-widgets/blob/main/templates/sheet/news_append.csv) |
 
 1. 시트 열기 → **파일 → 가져오기 → 업로드** → CSV 선택
@@ -132,6 +156,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | `projects` · `recruit`, `hidden` | `Y` |
 | `news` · `tag` | `Paper` `Award` `Project` `Event` `Member` |
 | `gallery` · `group` | `PNU` `KIT` |
+| `sections` · `type` | `bullet` `entry` `text` `lead` `fact` `card` `callout` `figure` `thumb` `profile` `contact` `button` `photo` |
 
 ### 2-4. 공개 범위 주의
 
@@ -285,6 +310,40 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | `group` | 앨범 | `PNU` `KIT` |
 | `link` | 관련 링크 (선택) | |
 
+### `sections` — 글 블록 (교수 이력·모집 안내·연구 분야·Home 소개/연락처)
+
+**한 줄 = 글 한 줄(항목 하나)**, 시트의 행 순서대로 표시됩니다. 보통은 `text` 칸만 고치면 됩니다.
+
+| 칸 | 내용 | 예 |
+| --- | --- | --- |
+| `block` | 어느 삽입 박스에 나올지 (필수, 1-2 표의 블록 이름) | `professor` |
+| `section` | 소제목. 같은 소제목이 이어지는 줄은 한 묶음 (비우면 소제목 없음) | `Experiences` |
+| `type` | 모양 (비우면 `bullet`) — 아래 표 | `entry` |
+| `sub` | 작은 제목·라벨: 묶음 이름, 카드 제목, 정보 라벨 | `Membership` |
+| `text` | 내용 (필수) | `**부산대학교**, 기계공학부, 조교수 (2026.03~현재)` |
+| `link` | 링크 (선택) | `https://orcid.org/…` |
+| `image` | 그림 (선택, `assets/…` 또는 Drive 링크 — 5장) | `assets/research/figure-autonomy.jpg` |
+
+`text` 꾸미기: `**굵게**` · `{{주황 강조}}` · `[글자](https://주소)` (링크) · 셀 안 줄바꿈(Alt+Enter)은 그대로 줄바꿈.
+`entry`에서는 `(2020.09~현재)`처럼 **괄호 안이 연도로 시작하면 날짜 칩**으로 보이고, 맨 끝 날짜는 오른쪽으로 정렬됩니다.
+시트에 직접 칠 때 **`=`나 `+`로 시작하는 칸**(예: `+82-51-…`)은 수식으로 바뀌므로 앞에 `'`를 붙이세요.
+
+| `type` | 모양 | `sub` 쓰임 |
+| --- | --- | --- |
+| `bullet` | 점 목록 | 바뀔 때마다 작은 제목 + 카드 묶음 |
+| `entry` | 이력 줄 (내용 … 날짜 칩) | 같음 (예: Membership / Director) |
+| `text` | 문단 | — |
+| `lead` | 큰 제목 문장 (파랑, `{{…}}` 주황) | — |
+| `fact` | 정보 카드 (라벨 + 값). 같은 라벨이 이어지면 목록 | 라벨 (예: `대상`, `선발 인원`) |
+| `card` | 카드 격자. 같은 `sub`가 이어지면 한 카드 안 목록, `sub`가 없으면 01·02… 번호 카드 | 카드 제목 |
+| `callout` | 강조 상자 | — |
+| `figure` | 큰 그림 + 오른쪽 아래 설명 | — |
+| `thumb` | 작은 그림 3장 격자 + 가운데 설명 | — |
+| `profile` | 사진 카드: 첫 줄 = 이름, 다음 줄들 = 소개, `link`가 있는 줄 = 버튼 | — |
+| `contact` | 연락처 줄 (라벨 + 내용) | 라벨 (`Office`, `E`, `T`) |
+| `button` | 링크 버튼 (`image`에 아이콘) | — |
+| `photo` | 같은 묶음의 오른쪽에 큰 사진 + 캡션 | — |
+
 ---
 
 ## 4. 시트 수정이 반영되는 방식
@@ -303,6 +362,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 2. **Add file → Upload files** → 사진 끌어 놓기 → **Commit changes**
    - 파일 이름은 영문·숫자로 (`photo-24.jpg`, `member-12.jpg`), 가로 1000px 안팎, JPG 권장
 3. 시트의 `image`/`photo` 칸에 `assets/gallery/photo-24.jpg`처럼 적기
+   (`sections` 탭의 그림은 `assets/research`(연구 분야 그림), `assets/home`(Growth 아이콘·Instagram 아이콘)에 있습니다)
 
 갤러리 썸네일(작은 사진)은 개발 담당이 `scripts/make_thumbs.py`로 만듭니다. 썸네일이 아직 없어도 원본으로 보이므로 급하면 그냥 올리면 됩니다.
 
@@ -365,7 +425,7 @@ Google Sites에 올린 사진 주소는 시간이 지나면 만료되므로 쓰�
 | `data/<탭>.json` | 백업 데이터 |
 | `templates/sheet/<탭>.csv` | 시트 가져오기용 CSV (UTF-8 BOM) |
 | `dist/<이름>-embed.html` | Sites “코드 삽입”용 단일 파일 (URL 삽입이 안 될 때만) |
-| `assets/` | 사진·로고 (`assets/gallery/thumbs/*-480.jpg` 썸네일) |
+| `assets/` | 사진·로고 (`assets/gallery/thumbs/*-480.jpg` 썸네일, `assets/research`·`assets/home` = `sections` 그림, 2026-10-09 클론 Sites에서 복사) |
 | `docs/` | `site_audit.md`(사이트 교정 목록), `topic_review.md`(주제 태그 검토표) |
 
 ### 스크립트
@@ -403,6 +463,9 @@ python3 scripts/make_preview.py --clean && git add -A && git commit -m "…" && 
 **폰 전용 모양(pe)** — `shared/sheet-loader.js`의 `ADAM.pe`/`ADAM.phone(root, opts)`: 폭 ≤ 560px이고 (iframe 안이거나 높이 ≤ 600px)이면 `html.ax-pe`
 (높이 ≤ 150px면 `ax-pe-tiny`). 바 안의 `.ax-chips`(또는 `opts.groups`, 예: `.pub-tiles`)를 `<select>`로 미러링(MutationObserver),
 `.ax-search`와 `.ax-pe-more` 요소는 🔍 버튼 뒤 둘째 줄로, `.ax-pe-open`(↗)·`.ax-pe-end`는 `?full=1` 새 탭 링크. 위젯별 밀도는 각 CSS의 `html.ax-pe …` 규칙.
+`.ax-pe-end`는 그 위 내용이 iframe에 다 들어가면 숨김(`html.ax-pe-fits`, `.ax-pe-mark` 위치로 판단). `ADAM.phone(root, {open:false})`는 ↗ 버튼 없이 끝 링크만.
+`sections`는 `ADAM.peMax = 440`으로 낮춰(`ADAM.peCheck()` 재실행) 반쪽 칸(480–581px) 삽입은 PC 모양을 유지합니다.
+`sections` 렌더러: `widgets/sections/sections.js` — 행 → block → section → 같은 type 연속 묶음, 카드·정보·사례 격자는 `data-min`(폰 `data-min-pe`) 폭으로 열 수를 정하고 줄 수를 고르게(4 → 2×2, 5 → 3+2). 시트 글은 innerHTML 없이 DOM으로 만듭니다.
 
 ### 배포 확인
 

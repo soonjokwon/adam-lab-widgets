@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ADAM Lab · Awards</title>
+  <title>ADAM Lab · Text blocks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -437,178 +437,245 @@ html.ax-full .ax-fullhead .t { font-size: 18px; font-weight: 700; color: var(--i
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
 
-/* Awards page (Sites /awards) — year timeline of award cards. */
+/* Text blocks (sheet tab `sections`) — Professor CV, Recruiting, Research areas,
+   Home pillars/contact. Same palette/type as the hero and the list widgets:
+   navy headings with a hairline, white cards with a 1px line border,
+   mono date chips, orange (==…==) accents. */
 
-.aw-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 10px 22px;
-  margin-bottom: 4px;
-}
-.aw-total { display: flex; align-items: baseline; gap: 8px; }
-.aw-total .num {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(34px, 5vw, 48px);
-  line-height: 0.9;
-  color: var(--navy);
-  font-variant-numeric: tabular-nums;
-}
-.aw-total .lb { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--ink-dim); text-transform: uppercase; }
-.aw-split { display: flex; gap: 16px; flex-wrap: wrap; }
-.aw-split div { display: grid; gap: 1px; }
-.aw-split b { font-family: var(--font-display); font-size: 20px; line-height: 1; font-weight: 700; color: var(--ink); }
-.aw-split span { font-size: 11.5px; color: var(--ink-dim); }
-.aw-split i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
-
-.aw-dot-paper { background: var(--navy); }
-.aw-dot-presentation { background: #fff; box-shadow: inset 0 0 0 2px var(--blue); }
-.aw-dot-competition { background: var(--accent); }
-
-.aw-timeline { position: relative; margin-top: 8px; }
-.aw-year {
-  position: relative;
+.sx-blocks { display: block; }
+.sx-block {
   display: grid;
-  grid-template-columns: 1fr;
-  padding-left: 26px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px 32px;
+  align-items: start;
 }
-.aw-year::before {
-  content: "";
-  position: absolute;
-  left: 7px; top: 0; bottom: 0;
-  width: 1px;
-  background: var(--line);
-}
-.aw-ylabel {
-  position: relative;
-  margin: 18px 0 8px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 22px;
-  line-height: 1;
-  color: var(--navy);
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-.aw-ylabel::before {
-  content: "";
-  position: absolute;
-  left: -25px; top: 50%;
-  width: 15px; height: 15px;
-  transform: translateY(-50%);
-  background: #fff;
-  border: 1.5px solid var(--navy);
-}
-.aw-year:first-child .aw-ylabel { margin-top: 6px; }
+.sx-block + .sx-block { margin-top: 36px; padding-top: 18px; border-top: 1px dashed var(--line); }
+.sx-blockid { grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; margin-bottom: -14px; }
+.sx-blockid code { font: 500 12px var(--font-mono); color: var(--ink); background: #fff; border: 1px solid var(--line); padding: 2px 6px; }
+.sx-sec { grid-column: 1 / -1; min-width: 0; }
+.sx-sec.sx-half { grid-column: auto; }
+@container ax (max-width: 760px) { .sx-sec.sx-half { grid-column: 1 / -1; } }
 
-.aw-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.sx-ac { font-style: normal; color: var(--accent-deep); }
+.sx a { color: var(--navy); text-decoration-color: rgba(16, 43, 134, 0.35); text-underline-offset: 2px; }
+.sx a:hover { text-decoration-color: var(--navy); }
 
-.aw-card {
-  position: relative;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--line);
-  padding: 12px 14px 12px;
-  display: grid;
-  gap: 4px;
-  align-content: start;
-  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), transform 0.15s var(--ease);
+/* section heading — like the year heads of the talks/awards ledgers */
+.sx-sh {
+  display: flex; align-items: center; gap: 12px;
+  margin: 0 0 12px;
+  font-family: var(--font-display); font-weight: 700; font-size: 19px; line-height: 1.25;
+  color: var(--navy); letter-spacing: 0.005em;
 }
-.aw-card:hover { border-color: var(--navy); box-shadow: 0 8px 18px rgba(16, 43, 134, 0.07); transform: translateY(-1px); }
-.aw-card::before {
-  content: "";
-  position: absolute;
-  left: -24px; top: 17px;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-}
-.aw-card[data-cat="paper"]::before { background: var(--navy); }
-.aw-card[data-cat="presentation"]::before { background: #fff; box-shadow: inset 0 0 0 2px var(--blue); }
-.aw-card[data-cat="competition"]::before { background: var(--accent); }
-.aw-card[data-cat="competition"] { border-top: 2px solid var(--accent); }
-.aw-card[data-cat="paper"] { border-top: 2px solid var(--navy); }
-.aw-card[data-cat="presentation"] { border-top: 2px solid var(--blue); }
+.sx-sh::before { content: ""; flex: 0 0 auto; width: 4px; height: 1.05em; background: var(--navy); }
+.sx-sh::after { content: ""; flex: 1 1 40px; height: 1px; background: var(--line); }
+.sx-sh .t { min-width: 0; }
+.sx-sh .sx-ac { color: var(--accent); }
+.sx-sh a { color: inherit; }
 
-.aw-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.aw-date { font-family: var(--font-mono); font-size: 11px; color: var(--navy); letter-spacing: 0.04em; font-weight: 500; }
-.aw-cat { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
-.aw-name {
-  margin: 2px 0 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 1.35;
-  color: var(--ink);
-}
-.aw-name svg { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 2px; color: var(--accent); }
-.aw-title { font-size: 13px; color: var(--ink); line-height: 1.5; }
-.aw-rec { font-size: 12.5px; color: var(--ink-dim); }
-.aw-event { font-size: 12.5px; color: var(--ink); }
-.aw-event .org { color: var(--ink-dim); }
-.aw-foot { display: flex; gap: 6px; margin-top: 4px; }
-.aw-foot:empty { display: none; }
+.sx .sx-main > * + * { margin-top: 14px; }
 
-@container ax (min-width: 820px) {
-  .aw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .aw-year { padding-left: 120px; }
-  .aw-year::before { left: 101px; }
-  .aw-ylabel {
-    position: absolute;
-    left: 0; top: 0;
-    width: 86px;
-    margin: 0;
-    padding-top: 10px;
-    flex-direction: column;
-    align-items: flex-end;
-    font-size: 30px;
-    gap: 4px;
-  }
-  .aw-ylabel::before { left: auto; right: -23px; top: 26px; }
-  .aw-year:first-child .aw-ylabel { margin-top: 0; }
-  .aw-year { padding-top: 6px; padding-bottom: 14px; min-height: 90px; }
-  .aw-card::before { display: none; }
+/* bullets */
+.sx-list { list-style: none; margin: 0; padding: 0; }
+.sx-list li { position: relative; padding: 3px 0 3px 16px; font-size: 14px; line-height: 1.65; color: var(--ink); }
+.sx-list li::before { content: ""; position: absolute; left: 2px; top: 0.92em; width: 5px; height: 5px; background: var(--navy); }
+.sx-list strong { font-weight: 700; }
+
+/* CV entries: text … date chip */
+.sx-entries { list-style: none; margin: 0; padding: 0; }
+.sx-entries li {
+  display: flex; align-items: baseline; gap: 6px 14px;
+  padding: 8px 2px 8px 0;
+  border-bottom: 1px dashed var(--line-soft);
+  font-size: 14px; line-height: 1.55;
 }
-@container ax (max-width: 460px) {
-  .aw-split { gap: 12px; }
-  .ax-search { max-width: none; flex-basis: 100%; }
+.sx-entries li:last-child { border-bottom: 0; }
+.sx-what { flex: 1 1 auto; min-width: 0; }
+.sx-what strong { font-weight: 700; color: var(--ink); }
+.sx-when, .sx-date {
+  font-family: var(--font-mono); font-weight: 500; color: var(--navy);
+  background: #fff; border: 1px solid var(--line); white-space: nowrap;
+}
+.sx-when { flex: 0 0 auto; font-size: 11.5px; padding: 2px 7px; letter-spacing: 0.02em; }
+.sx-date { font-size: 11px; padding: 1px 5px; margin: 0 2px; }
+
+/* sub groups (Membership / Director / …) as cards */
+.sx-subgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; align-items: start; }
+.sx-subcard {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--line); border-top: 2px solid var(--navy);
+  padding: 10px 14px 6px;
+}
+.sx-sub {
+  margin: 0 0 2px;
+  font-family: var(--font-display); font-weight: 700; font-size: 12px;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy);
+}
+.sx-subcard .sx-entries li { padding: 6px 0; font-size: 13.5px; }
+
+/* profile (PI) — same card as the PI row of the Team widget */
+.sx-profile {
+  display: grid; grid-template-columns: 168px minmax(0, 1fr); gap: 24px; align-items: center;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--line); border-left: 3px solid var(--navy);
+}
+.sx-profile.no-photo { grid-template-columns: minmax(0, 1fr); }
+.sx-photo { aspect-ratio: 4 / 5; overflow: hidden; background: var(--grid); }
+.sx-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; display: block; }
+.sx-name { margin: 6px 0 8px; font-size: 26px; font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; color: var(--ink); }
+.sx-line { font-size: 14.5px; line-height: 1.6; color: var(--ink-dim); }
+.sx-line strong { color: var(--ink); }
+.sx-plinks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.sx-plinks .ax-link { text-decoration: none; color: var(--navy); }
+
+/* headline */
+.sx-lead {
+  margin: 0;
+  padding: 2px 0 2px 16px;
+  border-left: 4px solid var(--accent);
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(22px, 3vw, 30px); line-height: 1.3;
+  color: var(--blue); letter-spacing: -0.005em;
+}
+.sx-lead .sx-ac { color: var(--accent); }
+
+/* fact cards (label + value) */
+.sx-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.sx-fact {
+  background: rgba(255, 255, 255, 0.96); border: 1px solid var(--line); border-top: 2px solid var(--navy);
+  padding: 12px 16px 12px;
+}
+.sx-fl {
+  display: block; margin-bottom: 6px;
+  font-family: var(--font-body); font-weight: 700; font-size: 13px; color: var(--navy);
+}
+.sx-fv { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 24px; line-height: 1.2; color: var(--ink); }
+.sx-fact .sx-list li { font-size: 13.5px; }
+
+/* cards */
+.sx-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.sx-card {
+  position: relative; display: flex; flex-direction: column; gap: 10px;
+  background: rgba(255, 255, 255, 0.96); border: 1px solid var(--line);
+  padding: 14px 16px 14px; color: inherit; text-decoration: none;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+a.sx-card:hover { border-color: var(--navy); box-shadow: 0 10px 22px rgba(16, 43, 134, 0.08); }
+.sx-cards.has-icon .sx-card { flex-direction: row; align-items: flex-start; gap: 14px; }
+.sx-icon { flex: 0 0 64px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+.sx-cards.has-icon { gap: 14px; }
+.sx-cards.has-icon .sx-card { align-items: center; gap: 28px; padding: 24px 26px; border-left: 3px solid var(--navy); }
+.sx-cards.has-icon .sx-icon { flex-basis: 96px; width: 96px; height: 96px; }
+.sx-cards.has-icon .sx-ct { font-size: 20px; color: var(--navy); }
+.sx-cards.has-icon .sx-body { font-size: 15px; }
+.sx-icon img { max-width: 100%; max-height: 100%; display: block; }
+.sx-cardtxt { min-width: 0; }
+.sx-ct { margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 17px; line-height: 1.3; color: var(--ink); }
+.sx-ct .sx-ac { color: var(--accent); }
+.sx-num { display: block; margin-bottom: 6px; font: 600 12px var(--font-mono); letter-spacing: 0.08em; color: var(--accent-deep); }
+.sx-body { margin: 0; font-size: 14px; line-height: 1.65; color: var(--ink); }
+.sx-card .sx-list li { font-size: 13.5px; }
+
+/* callout */
+.sx-callout {
+  margin: 0; padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.96); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  font-size: 14.5px; line-height: 1.65;
 }
 
-@media (max-height: 520px) {
-  .aw-head { gap: 4px 14px; align-items: baseline; }
-  .aw-total .num { font-size: 26px; }
-  .aw-split { display: none; }
-  .aw-timeline { margin-top: 2px; }
+/* figures */
+.sx-figure { margin: 0; }
+.sx-figure img { display: block; width: 100%; height: auto; background: #fff; border: 1px solid var(--line-soft); }
+.sx-figure figcaption { margin-top: 6px; text-align: right; font-size: 12px; font-weight: 700; color: var(--ink-dim); }
+.sx-thumbs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.sx-thumbs > a { color: inherit; text-decoration: none; }
+.sx-thumb { margin: 0; }
+.sx-tim { aspect-ratio: 4 / 3; background: #fff; border: 1px solid var(--line); overflow: hidden; }
+.sx-tim img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.sx-thumb figcaption { margin-top: 8px; text-align: center; font-size: 13.5px; font-weight: 700; line-height: 1.45; color: var(--ink); }
+.sx-thumb figcaption .sx-ac { color: var(--accent-deep); }
+
+/* contact rows + buttons + side photo */
+.sx-text { margin: 0; font-size: 14.5px; line-height: 1.75; color: var(--ink); }
+.sx-text .sx-ac { font-weight: 700; }
+.sx-contact { margin: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+.sx-crow { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; padding: 7px 0; border-bottom: 1px dashed var(--line-soft); font-size: 13.5px; line-height: 1.55; }
+.sx-crow dt { font-family: var(--font-display); font-weight: 700; color: var(--navy); letter-spacing: 0.04em; }
+.sx-crow dd { margin: 0; }
+.sx-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.sx-btn {
+  display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+  border: 1px solid var(--line); background: #fff; color: var(--ink) !important; text-decoration: none;
+  font: 500 12px var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase;
+}
+.sx-btn img { width: 20px; height: 20px; display: block; }
+.sx-btn:hover { border-color: var(--navy); background: #f6f8ff; }
+.sx-btn::after { content: "↗"; font-size: 11px; color: var(--ink-dim); }
+.sx-splitwrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 32px; align-items: start; }
+.sx-aside > a { color: inherit; text-decoration: none; display: block; }
+.sx-photo-fig { margin: 0; }
+.sx-photo-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--line); }
+.sx-photo-fig figcaption { margin-top: 10px; text-align: center; font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--blue); }
+@container ax (max-width: 700px) {
+  .sx-splitwrap { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+  .sx-profile { grid-template-columns: 120px minmax(0, 1fr); gap: 16px; }
 }
 
-/* phone embed (html.ax-pe — ~355×340): no totals head, no timeline rail. */
-html.ax-pe .aw-head { display: none; }
-html.ax-pe .aw-timeline { margin-top: 0; }
-html.ax-pe .aw-year { padding-left: 0; }
-html.ax-pe .aw-year::before,
-html.ax-pe .aw-ylabel::before,
-html.ax-pe .aw-card::before { display: none; }
-html.ax-pe .aw-ylabel { margin: 10px 0 6px; font-size: 16px; }
-html.ax-pe .aw-year:first-child .aw-ylabel { margin-top: 4px; }
-html.ax-pe .aw-grid { gap: 6px; }
-html.ax-pe .aw-card { padding: 8px 10px; gap: 2px; }
-html.ax-pe .aw-card:hover { transform: none; }
-html.ax-pe .aw-date { font-size: 10.5px; }
-html.ax-pe .aw-cat { font-size: 9px; }
-html.ax-pe .aw-name { font-size: 14px; gap: 5px; }
-html.ax-pe .aw-name svg { width: 14px; height: 14px; }
-html.ax-pe .aw-title { font-size: 12.5px; line-height: 1.45; }
-html.ax-pe .aw-rec, html.ax-pe .aw-event { font-size: 11.5px; }
+/* ---------- phone embed (html.ax-pe) ---------- */
+html.ax-pe .sx { padding-top: 10px; }
+html.ax-pe .sx-block { gap: 16px; }
+html.ax-pe .sx-sh { font-size: 15px; gap: 8px; margin-bottom: 8px; }
+html.ax-pe .sx-sh::before { width: 3px; }
+html.ax-pe .sx .sx-main > * + * { margin-top: 10px; }
+html.ax-pe .sx-list li { font-size: 12.5px; line-height: 1.55; padding: 2px 0 2px 13px; }
+html.ax-pe .sx-list li::before { width: 4px; height: 4px; top: 0.85em; }
+html.ax-pe .sx-entries li { font-size: 12.5px; padding: 6px 0; gap: 2px 8px; flex-wrap: wrap; }
+html.ax-pe .sx-when { font-size: 10px; padding: 1px 5px; }
+html.ax-pe .sx-date { font-size: 10px; padding: 0 4px; }
+html.ax-pe .sx-subgrid { gap: 8px; }
+html.ax-pe .sx-subcard { padding: 7px 10px 3px; }
+html.ax-pe .sx-sub { font-size: 10.5px; }
+html.ax-pe .sx-subcard .sx-entries li { font-size: 12px; padding: 4px 0; }
+html.ax-pe .sx-profile { grid-template-columns: 76px minmax(0, 1fr); gap: 12px; padding: 10px; }
+html.ax-pe .sx-profile .ax-kicker { font-size: 9.5px; }
+html.ax-pe .sx-name { font-size: 16px; margin: 2px 0 4px; }
+html.ax-pe .sx-line { font-size: 12px; line-height: 1.45; }
+html.ax-pe .sx-plinks { margin-top: 8px; gap: 4px; }
+html.ax-pe .sx-plinks .ax-link { font-size: 9.5px; padding: 3px 6px; }
+html.ax-pe .sx-lead { font-size: 18px; padding-left: 10px; border-left-width: 3px; }
+html.ax-pe .sx-facts { gap: 8px; }
+html.ax-pe .sx-fact { padding: 8px 10px; }
+html.ax-pe .sx-fl { font-size: 11.5px; margin-bottom: 3px; }
+html.ax-pe .sx-fv { font-size: 17px; }
+html.ax-pe .sx-fact .sx-list li { font-size: 12px; }
+html.ax-pe .sx-cards { gap: 8px; }
+html.ax-pe .sx-card { padding: 9px 11px; gap: 6px; }
+html.ax-pe .sx-cards.has-icon .sx-card { gap: 10px; }
+html.ax-pe .sx-cards.has-icon { gap: 6px; }
+html.ax-pe .sx-cards.has-icon .sx-card { flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 8px 6px; border-left-width: 1px; border-top: 2px solid var(--navy); }
+html.ax-pe .sx-cards.has-icon .sx-icon { flex-basis: auto; width: 36px; height: 36px; }
+html.ax-pe .sx-cards.has-icon .sx-ct { font-size: 13.5px; margin-bottom: 2px; }
+html.ax-pe .sx-cards.has-icon .sx-body { font-size: 10.5px; line-height: 1.35; }
+html.ax-pe .sx-ct { font-size: 14px; margin-bottom: 3px; }
+html.ax-pe .sx-num { font-size: 10.5px; margin-bottom: 2px; }
+html.ax-pe .sx-body { font-size: 12.5px; line-height: 1.55; }
+html.ax-pe .sx-card .sx-list li { font-size: 12px; }
+html.ax-pe .sx-callout { font-size: 12.5px; padding: 9px 12px; }
+html.ax-pe .sx-figure figcaption { font-size: 10.5px; margin-top: 3px; }
+html.ax-pe .sx-thumbs { gap: 6px; }
+html.ax-pe .sx-thumb figcaption { font-size: 10.5px; line-height: 1.35; margin-top: 4px; }
+html.ax-pe .sx-text { font-size: 12.5px; line-height: 1.6; }
+html.ax-pe .sx-crow { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; font-size: 12px; padding: 5px 0; }
+html.ax-pe .sx-btn { height: 30px; font-size: 11px; }
+html.ax-pe .sx-photo-fig figcaption { font-size: 13px; margin-top: 6px; }
 
   </style>
 </head>
 <body>
-  <div id="adam-awards"></div>
+  <div id="adam-sections"></div>
   <script>
     window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
-    window.ADAM_INLINE = { "awards": [{"date":"2026-02-10","category":"paper","award":"가헌학술상","recipients":"김군찬, 권순조","title":"심층 강화학습을 활용한 3D 전기 패널의 자동 케이블 라우팅","event":"한국CDE학회 논문집, 30(1), 122-135","organizer":"한국CDE학회","link":"https://doi.org/10.7315/CDE.2025.122"},{"date":"2024-11-07","category":"paper","award":"대한기계학회논문집A 우수논문","recipients":"김재연, 이상명, 고민석, 안성익, 신규태, 박재민, 이길용, 권순조","title":"적층 제조 고려 설계에 기반한 연질 소재 유도탄 보호 덮개 설계 및 제작","event":"대한기계학회 논문집 A권, 47(10), 829-840","organizer":"대한기계학회","link":"https://doi.org/10.3795/KSME-A.2023.47.10.829"},{"date":"2026-08-21","category":"presentation","award":"우수포스터상","recipients":"박현석, 김태길, 권순조","title":"산업 디자인 초기 단계에서의 간섭 검증을 위한 지식 기반 강화 학습","event":"한국CDE학회 2026 하계학술대회","organizer":"","link":""},{"date":"2026-02-11","category":"presentation","award":"우수논문상","recipients":"엄태주, 최민주, 김민규, 권순조","title":"비수밀 CAD 데이터의 내부 형상 제거를 위한 NeuS 가이드 하이브리드 레이캐스팅 기법","event":"한국CDE학회 2026 동계학술대회","organizer":"","link":""},{"date":"2025-08-22","category":"presentation","award":"우수포스터상","recipients":"김군찬, 이승현, 김현철, 권순조","title":"화재 확산과 군중 행동을 고려한 강화학습 기반 대피 보조 에이전트 개발","event":"한국CDE학회 2025 하계학술대회","organizer":"","link":""},{"date":"2025-08-22","category":"presentation","award":"우수포스터상","recipients":"이초빈, 전예성, 박재민, 정진호, 신규태, 손현진, 양시훈, 김도희, 위정욱, 김현찬, 권순조","title":"금속 적층 제조 기반 유도 미사일 조종 날개의 최적 격자 구조 선정","event":"한국CDE학회 2025 하계학술대회","organizer":"","link":""},{"date":"2025-02-21","category":"presentation","award":"우수포스터상","recipients":"한서희, 고민석, 권순조","title":"설명 가능한 적정 제조 방식 추천을 위한 LLM의 활용","event":"한국CDE학회 2025 동계학술대회","organizer":"","link":""},{"date":"2024-08-22","category":"presentation","award":"우수포스터상","recipients":"한서희, 고민석, 권순조","title":"적층 제조 적합 부품 식별을 위한 기준 및 절차 수립","event":"한국CDE학회 2024 하계학술대회","organizer":"","link":""},{"date":"2024-05-31","category":"presentation","award":"우수논문상","recipients":"S. Kwon, H. Kim","title":"Saliency-Aware Point Cloud Upsampling Approach for Edge Consolidation","event":"ICMDT 2023","organizer":"","link":""},{"date":"2024-04-12","category":"presentation","award":"특별상(한국기계연구원장상)","recipients":"김군찬, 윤영준, 권순조","title":"케이블 자동 라우팅을 위한 강화학습 기반 최적 케이블 형상 생성 방안","event":"2024년 한국기계가공학회 춘계학술대회","organizer":"","link":""},{"date":"2024-01-31","category":"presentation","award":"우수논문상","recipients":"고민석, 김재연, 권순조","title":"적층 제조의 탄소 배출량 예측을 위한 심층 신경망 활용","event":"한국CDE학회 2024 동계학술대회","organizer":"","link":""},{"date":"2024-01-31","category":"presentation","award":"우수포스터상","recipients":"배대철, 전예성, 정재호, 윤영준, 고민석, 김재연, 김군찬, 권순조","title":"3D 프린팅 품질 및 상태 관찰을 위한 웹 기반 디지털 트윈 구현","event":"한국CDE학회 2024 동계학술대회","organizer":"","link":""},{"date":"2023-12-22","category":"presentation","award":"Best Paper Award","recipients":"M. Ko, S. Kwon","title":"A Review of Lifecycle Assessment (LCA) Cases in the Shipbuilding Industry","event":"AeroNDT 2023","organizer":"","link":""},{"date":"2023-08-25","category":"presentation","award":"우수논문상","recipients":"고민석, 김재연, 한혜련, 권순조","title":"적층 제조에서 설계 및 제조 정보 기반 전생애주기평가 도구 개발","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-08-25","category":"presentation","award":"우수논문상","recipients":"윤영준, 김재연, 최민주, 권순조","title":"3D 프린팅을 위한 커스텀 제품의 최적 모듈화","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-08-24","category":"presentation","award":"우수논문상","recipients":"김재연, 윤영준, 이상명, 김형기, 권순조","title":"기계 3D CAD 모델 자동 채점을 위한 형상 유사도 활용","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-08-25","category":"presentation","award":"우수논문상","recipients":"정동원, 권순조, 김형기","title":"미분 가능한 샘플링과 점군-메쉬 거리를 활용한 QEM 간략화 메쉬의 원본 형상 복원 기법","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-02-10","category":"presentation","award":"우수포스터상","recipients":"김재연, 윤영준, 이상명, 김형기, 권순조","title":"2D 이미지의 특징점을 활용한 3D CAD 모델의 국소 형상 비교","event":"한국CDE학회 2023 동계학술대회","organizer":"","link":""},{"date":"2023-02-10","category":"presentation","award":"우수포스터상","recipients":"윤영준, 김재연, 이상명, 김형기, 권순조","title":"단면도의 형상 분산을 활용한 3D CAD 모델의 형상 유사도 비교","event":"한국CDE학회 2023 동계학술대회","organizer":"","link":""},{"date":"2022-08-25","category":"presentation","award":"우수포스터상","recipients":"김현식, 서규민, 이승현, 노태환, 김현철, 권순조","title":"증강현실 기반 실내 화재 대피 내비게이션 시스템 개발","event":"한국CDE학회 2022 하계학술대회","organizer":"","link":""},{"date":"2020-11-20","category":"presentation","award":"우수논문상","recipients":"오요셉, 고현웅, 권순조","title":"효율적인 3D 프린팅을 위한 부품 분해 최적화","event":"대한기계학회 대구경북지회 2020년 춘추계통합학술대회","organizer":"","link":""},{"date":"2026-02-10","category":"competition","award":"금상","recipients":"권순조, 김형기, 전예성, 박현석, 차준렬","title":"","event":"CDE DX Awards 2025, 대학 부문","organizer":"한국CDE학회","link":""},{"date":"2025-12-12","category":"competition","award":"혁신설계 우수상","recipients":"이초빈, 김동환, 변재호, 남승건","title":"","event":"사용자 중심 융합설계연구회 2025년 적층제조 기반 융합설계 워크숍","organizer":"대한기계학회 생산 및 설계공학부문","link":""},{"date":"2025-11-28","category":"competition","award":"협의회장상","recipients":"이초빈, 김동환, 변재호, 남승건","title":"","event":"적층제조 융합설계 경진대회: Folding Chair","organizer":"첨단분야 혁신융합대학 사업단 협의회","link":""},{"date":"2025-11-21","category":"competition","award":"우수상(한국산업단지공단이사장상)","recipients":"권순조, 전예성, 이초빈, 김윤서, 김현찬, 박재민, 정진호, 신규태, 이동완, 김도희","title":"","event":"제10회 3D프린팅 BIZCON경진대회, 구동 부문","organizer":"3D프린팅산업협회","link":""},{"date":"2025-11-11","category":"competition","award":"대상(과학기술정보통신부장관상)","recipients":"정진호, 박재민, 이동완, 김진우, 전예성","title":"","event":"2025 DfAM 경진대회, 산업부문","organizer":"울산광역시","link":""},{"date":"2025-09-30","category":"competition","award":"최우수상","recipients":"김태길, 김군찬, 전예성, 박현석, 이초빈","title":"","event":"제4회 가상공학 플랫폼 소프트웨어(KIMM Cyber Lab) 활용 경진대회","organizer":"한국기계연구원","link":""},{"date":"2024-11-08","category":"competition","award":"우수 융합설계상","recipients":"전예성, 조용우, 유정현, 피영민, 이동준, 배경근","title":"","event":"사용자 중심 융합설계연구회 2024 첨단 융합설계 워크숍","organizer":"대한기계학회 생산 및 설계공학부문","link":""},{"date":"2024-10-19","category":"competition","award":"최우수상(특허청장상)","recipients":"박재민, 신규태, 정진호, 이길용, 권순조, 이민형, 김군찬","title":"","event":"제9회 3D프린팅 BIZCON 경진대회, 구동 부문","organizer":"3D프린팅산업협회","link":""},{"date":"2023-10-26","category":"competition","award":"1위","recipients":"김재연","title":"","event":"제1회 BDU 3D 경진대회","organizer":"LS e-Mobility Solutions","link":""},{"date":"2021-12-22","category":"competition","award":"대상","recipients":"김현식, 이주은, 김건영","title":"","event":"2021 보조기기 아이디어 공모전","organizer":"경기도","link":""},{"date":"2021-11-20","category":"competition","award":"우수상","recipients":"노태환, 김재연","title":"","event":"제6회 3D프린팅 BIZCON경진대회, 국방 부문","organizer":"3D프린팅산업협회","link":""}] };
+    window.ADAM_INLINE = { "sections": [{"block":"professor","section":"","type":"profile","sub":"","text":"Soonjo Kwon (권순조), Ph.D.","link":"","image":"assets/members/member-01.jpg"},{"block":"professor","section":"","type":"profile","sub":"","text":"**Assistant Professor**","link":"","image":""},{"block":"professor","section":"","type":"profile","sub":"","text":"School of Mechanical Engineering","link":"","image":""},{"block":"professor","section":"","type":"profile","sub":"","text":"(Intelligent Manufacturing Systems Major)","link":"","image":""},{"block":"professor","section":"","type":"profile","sub":"","text":"**Pusan National University (PNU)**","link":"","image":""},{"block":"professor","section":"","type":"profile","sub":"","text":"GoogleScholar","link":"https://scholar.google.co.kr/citations?user=0cuj7OoAAAAJ&hl=en","image":""},{"block":"professor","section":"","type":"profile","sub":"","text":"ResearchGate","link":"https://www.researchgate.net/profile/Soonjo_Kwon3","image":""},{"block":"professor","section":"","type":"profile","sub":"","text":"Orcid","link":"https://orcid.org/0000-0003-1578-9262","image":""},{"block":"professor","section":"Experiences","type":"entry","sub":"","text":"**부산대학교**, 기계공학부, 조교수 (2026.03~현재)","link":"","image":""},{"block":"professor","section":"Experiences","type":"entry","sub":"","text":"**국립금오공과대학교**, 기계공학부, 조교수/부교수 (2020.09~2026.02)","link":"","image":""},{"block":"professor","section":"Experiences","type":"entry","sub":"","text":"**미국 국립표준기술연구소(NIST)**, Systems Integration Division, Guest Researcher (2019.01~2020.08)","link":"","image":""},{"block":"professor","section":"Experiences","type":"entry","sub":"","text":"**한국과학기술원(KAIST)**, 기계기술연구소, 연수원구원 (2018.03~2018.12)","link":"","image":""},{"block":"professor","section":"Educations","type":"entry","sub":"","text":"**한국과학기술원(KAIST)** 기계공학 박사 (2013.09~2018.02)","link":"","image":""},{"block":"professor","section":"Educations","type":"entry","sub":"","text":"**한국과학기술원(KAIST)** 해양시스템공학 석사 (2011.09~2013.08)","link":"","image":""},{"block":"professor","section":"Educations","type":"entry","sub":"","text":"**인하대학교** 조선해양공학 학사 (2008.03~2011.08)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Membership","text":"한국CDE학회, 종신회원","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Membership","text":"대한기계학회, 정회원 (2020.09~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Membership","text":"한국기계가공학회, 정회원 (2021.09~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Membership","text":"한국정밀공학회, 정회원 (2022.03~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Director","text":"한국CDE학회, 협력이사 (2023.03~2025.02), 홍보이사 (2025.03~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Director","text":"대한기계학회, 생산 및 설계공학부문, 편집이사 (2024.01~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Director","text":"한국기계가공학회, 대외협력이사 (2023.01~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Director","text":"한국정밀공학회, 스마트생산시스템 부문, 이사 (2025.03~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Committee","text":"한국정밀공학회, 교육위원회, 위원 (2025.03~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Editorship","text":"한국CDE학회 논문집, 편집위원 (2019.02~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Editorship","text":"한국기계가공학회지, 편집위원 (2022.10~현재)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Organizer","text":"IDETC/CIE, Design for Manufacturing and the Life Cycle Conference (DFMLC), Symposium Organizer (2020~2023)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Organizer","text":"한국CDE학회 학술대회, 조직위원 (2023 하계, 2025 동계)","link":"","image":""},{"block":"professor","section":"Academic Activities","type":"entry","sub":"Organizer","text":"한국CDE학회 학술대회, 30주년준비위원 (2025 동계)","link":"","image":""},{"block":"professor","section":"Standardization Activities","type":"entry","sub":"Membership","text":"ISO TC184/SC4 (Industrial Data), Member (2014.05~현재)","link":"","image":""},{"block":"professor","section":"Standardization Activities","type":"entry","sub":"Membership","text":"(사)한국산업데이터표준협회, 회원 (2014.05~현재)","link":"","image":""},{"block":"professor","section":"Standardization Activities","type":"entry","sub":"Committee","text":"국가기술표준원, 산업데이터전문위원회, 전문위원 (2022.02~현재)","link":"","image":""},{"block":"professor","section":"Standardization Activities","type":"entry","sub":"Organizer","text":"87th ISO TC 184/SC4 Meeting, Seoul, Korea (2024.05.12~17.), Organizing Committee Member.","link":"","image":""},{"block":"recruit-intro","section":"","type":"lead","sub":"","text":"ADAM Lab에서 {{학부연구생 및 대학원생}}을 모집합니다.","link":"","image":""},{"block":"recruit-intro","section":"","type":"fact","sub":"대상","text":"좋은 태도, 성장 마인드셋, 열정 및 끈기를 가진 학생","link":"","image":""},{"block":"recruit-intro","section":"","type":"fact","sub":"대상","text":"대학원 진학을 희망하는 **기계공학부 3·4학년 재학생 및 졸업생**","link":"","image":""},{"block":"recruit-intro","section":"","type":"fact","sub":"선발 인원","text":"00명","link":"","image":""},{"block":"recruit-intro","section":"","type":"fact","sub":"신청 기간","text":"2026년 4월 까지","link":"","image":""},{"block":"recruit-topics","section":"연구 주제 (See also [here](https://sites.google.com/view/adam-pnu/research))","type":"card","sub":"설계 자율화","text":"CAD/CAPP/CAM을 통합한 AI 기반 설계 자동화 및 적층/하이브리드/지속가능 제조를 고려한 설계 방법론 연구","link":"","image":""},{"block":"recruit-topics","section":"연구 주제 (See also [here](https://sites.google.com/view/adam-pnu/research))","type":"card","sub":"설계 지능화","text":"설계 경험과 데이터를 지능형 의사결정 지식으로 전환하는 데이터 및 지식 기반 설계 방법론 연구","link":"","image":""},{"block":"recruit-topics","section":"연구 주제 (See also [here](https://sites.google.com/view/adam-pnu/research))","type":"card","sub":"설계 디지털화","text":"디지털 트윈/디지털 스레드 기반 전주기 데이터 통합, VR 시뮬레이션/엔지니어링 VR/산업용 AR을 활용한 연구","link":"","image":""},{"block":"recruit-benefits","section":"참여 혜택","type":"card","sub":"","text":"연구 인건비 지급","link":"","image":""},{"block":"recruit-benefits","section":"참여 혜택","type":"card","sub":"","text":"연구 공간 및 연구용 장비 제공","link":"","image":""},{"block":"recruit-benefits","section":"참여 혜택","type":"card","sub":"","text":"국내외 학회 발표, 논문 출판, 경진대회 출품 등 다양한 연구 실적 구축 기회 제공","link":"","image":""},{"block":"recruit-benefits","section":"참여 혜택","type":"card","sub":"","text":"연구 프로젝트 참여를 통한 실무 능력 배양, 인적 네트워크 구축, 취업 연계 기회 제공","link":"","image":""},{"block":"recruit-apply","section":"지원 방법","type":"callout","sub":"","text":"이메일([soonjo.kwon@pusan.ac.kr](mailto:soonjo.kwon@pusan.ac.kr))로 연락(자기소개 및 지원 동기 포함) 후 개별 면담 진행","link":"","image":""},{"block":"recruit-apply","section":"지원 방법","type":"contact","sub":"E","text":"soonjo.kwon@pusan.ac.kr","link":"mailto:soonjo.kwon@pusan.ac.kr","image":""},{"block":"recruit-apply","section":"지원 방법","type":"contact","sub":"T","text":"+82-51-510-2319, 2164","link":"tel:+82515102319","image":""},{"block":"recruit-apply","section":"지원 방법","type":"contact","sub":"Office","text":"**Rm 708**, Integrated Mechanical Engineering Bldg., 2, Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan 46241, Korea","link":"","image":""},{"block":"recruit-apply","section":"지원 방법","type":"contact","sub":"Lab","text":"**Rm 703**, Integrated Mechanical Engineering Bldg., 2, Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan 46241, Korea","link":"","image":""},{"block":"research","section":"설계 자율화: Idea to Product ({{Autonomy}})","type":"bullet","sub":"","text":"ADAM Lab은 아이디어를 실제 제품으로 자동 전환하는 **Autonomous Engineering Design** 기술을 연구합니다.","link":"","image":""},{"block":"research","section":"설계 자율화: Idea to Product ({{Autonomy}})","type":"bullet","sub":"","text":"CAD, CAPP, CAM을 통합한 AI 기반 설계 자동화와 Design for Additive/Hybrid/Sustainable Manufacturing을 통해 설계와 제조 의사결정을 자율적으로 수행하는 차세대 제품 개발 패러다임을 구축합니다.","link":"","image":""},{"block":"research","section":"설계 자율화: Idea to Product ({{Autonomy}})","type":"figure","sub":"","text":"[그림: NotebookLM]","link":"","image":"assets/research/figure-autonomy.jpg"},{"block":"research","section":"설계 자율화: Idea to Product ({{Autonomy}})","type":"thumb","sub":"","text":"심층 강화학습 기반 {{케이블 라우팅 자동화}}","link":"","image":"assets/research/autonomy-1.jpg"},{"block":"research","section":"설계 자율화: Idea to Product ({{Autonomy}})","type":"thumb","sub":"","text":"심층 강화학습 기반 {{의미 및 제조성을 고려한 부품 분할}}","link":"","image":"assets/research/autonomy-2.jpg"},{"block":"research","section":"설계 자율화: Idea to Product ({{Autonomy}})","type":"thumb","sub":"","text":"LLM 및 AI 기반 {{최적 공정 추천}}","link":"","image":"assets/research/autonomy-3.jpg"},{"block":"research","section":"설계 지능화: Data to Knowledge ({{Intelligence}})","type":"bullet","sub":"","text":"ADAM Lab은 제품 설계 데이터와 엔지니어링 데이터를 활용하여 새로운 설계 지식을 생성하는 **AI-driven Design Intelligence** 기술을 연구합니다.","link":"","image":""},{"block":"research","section":"설계 지능화: Data to Knowledge ({{Intelligence}})","type":"bullet","sub":"","text":"데이터 기반 설계(Data-driven Design)와 지식 기반 설계(Knowledge-based Design)를 통해 설계 경험과 제품 데이터를 지능형 의사결정 지식으로 전환하는 차세대 엔지니어링 환경을 구축합니다.","link":"","image":""},{"block":"research","section":"설계 지능화: Data to Knowledge ({{Intelligence}})","type":"figure","sub":"","text":"[그림: NotebookLM]","link":"","image":"assets/research/figure-intelligence.jpg"},{"block":"research","section":"설계 지능화: Data to Knowledge ({{Intelligence}})","type":"thumb","sub":"","text":"설계 및 계측 {{지식 그래프 생성 및 연결}}","link":"","image":"assets/research/intelligence-1.jpg"},{"block":"research","section":"설계 지능화: Data to Knowledge ({{Intelligence}})","type":"thumb","sub":"","text":"자기 지도 학습 기반 {{점군 표면 및 모서리 보강}}","link":"","image":"assets/research/intelligence-2.jpg"},{"block":"research","section":"설계 지능화: Data to Knowledge ({{Intelligence}})","type":"thumb","sub":"","text":"친환경 부품 분할을 위한 {{AI 기반 CO2 예측}}","link":"","image":"assets/research/intelligence-3.jpg"},{"block":"research","section":"설계 디지털화: Physical to Digital ({{Digitalization}})","type":"bullet","sub":"","text":"ADAM Lab은 물리적 제품과 제조 시스템을 디지털 환경으로 연결하는 **Digital Transformation** 기술을 연구합니다.","link":"","image":""},{"block":"research","section":"설계 디지털화: Physical to Digital ({{Digitalization}})","type":"bullet","sub":"","text":"Digital Twin과 Digital Thread를 기반으로 제품 전주기 데이터를 통합하고, Engineering VR 및 Industrial AR을 활용하여 차세대 몰입형 설계 및 제조 환경을 구현합니다.","link":"","image":""},{"block":"research","section":"설계 디지털화: Physical to Digital ({{Digitalization}})","type":"figure","sub":"","text":"[그림: NotebookLM]","link":"","image":"assets/research/figure-digitalization.jpg"},{"block":"research","section":"설계 디지털화: Physical to Digital ({{Digitalization}})","type":"thumb","sub":"","text":"디지털 트윈 구축용 {{3D 모델 단순화 및 경량화}}","link":"","image":"assets/research/digitalization-1.jpg"},{"block":"research","section":"설계 디지털화: Physical to Digital ({{Digitalization}})","type":"thumb","sub":"","text":"AR 기반 설계 및 계측 {{정보 증강 가시화}}","link":"","image":"assets/research/digitalization-2.jpg"},{"block":"research","section":"설계 디지털화: Physical to Digital ({{Digitalization}})","type":"thumb","sub":"","text":"VR 시뮬레이션 기반 {{동적 대피 안내 강화학습}}","link":"","image":"assets/research/digitalization-3.jpg"},{"block":"home-pillars","section":"","type":"lead","sub":"","text":"We {{AID}} engineering design with,","link":"","image":""},{"block":"home-pillars","section":"","type":"card","sub":"{{A}}utonomy: Idea to Product","text":"CAD/CAPP/CAM","link":"","image":""},{"block":"home-pillars","section":"","type":"card","sub":"{{A}}utonomy: Idea to Product","text":"Design for additive/hybrid/sustainable manufacturing","link":"","image":""},{"block":"home-pillars","section":"","type":"card","sub":"{{I}}ntelligence: Data to Knowledge","text":"Data-driven design","link":"","image":""},{"block":"home-pillars","section":"","type":"card","sub":"{{I}}ntelligence: Data to Knowledge","text":"Knowledge-based design","link":"","image":""},{"block":"home-pillars","section":"","type":"card","sub":"{{D}}igitalization: Physical to Digital","text":"Digital twin/Digital thread","link":"","image":""},{"block":"home-pillars","section":"","type":"card","sub":"{{D}}igitalization: Physical to Digital","text":"Engineering VR/Industrial AR","link":"","image":""},{"block":"home-growth","section":"","type":"card","sub":"Unite","text":"We leverage collective intelligence for multidimensional growth.","link":"","image":"assets/home/growth-unite.png"},{"block":"home-growth","section":"","type":"card","sub":"Execute","text":"We value practical action over perfect theory.","link":"","image":"assets/home/growth-execute.png"},{"block":"home-growth","section":"","type":"card","sub":"Share","text":"We spread our insights to inspire others and grow together.","link":"","image":"assets/home/growth-share.png"},{"block":"home-join","section":"","type":"text","sub":"","text":"**ADAM Lab**에서는 {{성장 마인드셋, 열정 및 끈기}}가 있는 **학부연구생, 대학원생**을 상시모집하고 있습니다. 언제든 편하게 연락주시기 바랍니다.","link":"","image":""},{"block":"home-join","section":"","type":"text","sub":"","text":"**ADAM Lab** is looking for **undergraduate and graduate students** with a {{Growth Mindset and Grit}}. Please feel free to contact us via **e-mail** or **telephone** at any time.","link":"","image":""},{"block":"home-join","section":"","type":"contact","sub":"Office","text":"**Rm 708**, Integrated Mechanical Engineering Bldg., 2, Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan 46241, Korea","link":"","image":""},{"block":"home-join","section":"","type":"contact","sub":"Lab","text":"**Rm 703**, Integrated Mechanical Engineering Bldg., 2, Busandaehak-ro 63beon-gil, Geumjeong-gu, Busan 46241, Korea","link":"","image":""},{"block":"home-join","section":"","type":"contact","sub":"E","text":"soonjo.kwon@pusan.ac.kr","link":"mailto:soonjo.kwon@pusan.ac.kr","image":""},{"block":"home-join","section":"","type":"contact","sub":"T","text":"+82-51-510-2319, 2164","link":"tel:+82515102319","image":""},{"block":"home-join","section":"","type":"button","sub":"","text":"Instagram","link":"https://www.instagram.com/pnu_adam_lab?stkn=eWJlOHk4cHp6MDVt&utm_source=qr","image":"assets/home/icon-instagram.png"}] };
   </script>
   <script>
 /* ADAM Lab workbook → one tab per widget, read through gviz CSV.
@@ -1256,162 +1323,292 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
   };
 })();
 
-/* Awards timeline — sheet tab `awards`.
-   Columns: date,category,award,recipients,title,event,organizer,link
-   category: paper | presentation | competition   URL params: ?category=… */
+/* Text blocks of the Sites pages (Professor CV, Recruiting, Research areas, Home
+   pillars/contact) — sheet tab `sections`. Columns: block,section,type,sub,text,link,image
+   One row = one line/item, in sheet order. ?block=<id> picks the rows of one embed
+   (several: ?block=a,b; none = every block, labelled — handy as a preview).
+   section: heading shown above the rows that share it (empty = no heading).
+   type: bullet (default) | entry | text | lead | fact | card | callout | figure | thumb |
+         profile | contact | button | photo — see README §2 "sections".
+   text markup: **굵게**  {{주황 강조}}  [글자](https://…)  (줄바꿈은 셀 안 Alt+Enter).
+   A cell must not START with = or + when typed in Sheets (formula) — put ' in front. */
 (function () {
   var A = window.ADAM, el = A.el;
-  var mount = document.getElementById("adam-awards");
+  var mount = document.getElementById("adam-sections");
   if (!mount) return;
-
-  var CATS = [
-    { id: "paper", lb: "Paper", ko: "논문" },
-    { id: "presentation", lb: "Presentation", ko: "학술발표" },
-    { id: "competition", lb: "Competition", ko: "경진대회" },
-    { id: "other", lb: "Other", ko: "기타(분류 확인)" }
-  ];
-  var ALIAS = { "논문": "paper", papers: "paper", journal: "paper", "발표": "presentation", presentations: "presentation", conference: "presentation", poster: "presentation",
-    "경진대회": "competition", competitions: "competition", contest: "competition" };
-  var CAT_BY = {};
-  CATS.forEach(function (c) { CAT_BY[c.id] = c; });
-  var MEDAL = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 1h2.2l1 3.2L9.2 1H11L9 6.1" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="10.2" r="4.3" fill="currentColor"/><path d="m8 7.9.7 1.5 1.6.2-1.2 1.1.3 1.6L8 11.5l-1.4.8.3-1.6-1.2-1.1 1.6-.2z" fill="#fff"/></svg>';
-  var state = { items: [], cat: canon(A.params.get("category")) || "all", q: "" };
+  var TYPES = ["bullet", "entry", "text", "lead", "fact", "card", "callout", "figure", "thumb", "profile", "contact", "button", "photo"];
+  var TITLES = {
+    professor: "Professor · 권순조", "recruit-intro": "Recruiting · 모집 안내", "recruit-topics": "Recruiting · 연구 주제",
+    "recruit-benefits": "Recruiting · 참여 혜택", "recruit-apply": "Recruiting · 지원 방법",
+    research: "Research Area", "home-pillars": "Research Pillars", "home-growth": "Growth Pillars", "home-join": "Join ADAM Lab"
+  };
+  /* text blocks often sit in a 5/12–6/12 Sites column (480–581px) on desktop: only
+     phone-width frames (≤440px: 327–397px on 360–430px phones) get the phone look */
+  A.peMax = 440; A.peCheck();
+  var want = (A.params.get("block") || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean);
   var refs = {};
 
-  function canon(v) {
-    var s = String(v || "").trim().toLowerCase();
-    return CAT_BY[s] ? s : (ALIAS[s] || ALIAS[String(v || "").trim()] || "");
+  /* ---------- inline markup → DOM (no innerHTML: sheet text is untrusted) ---------- */
+  var DATE = /\((\d{4}[^()]*)\)/;
+  function inline(str, opts) {
+    var frag = document.createDocumentFragment();
+    var re = opts && opts.dates
+      ? /\*\*(.+?)\*\*|\{\{(.+?)\}\}|\[([^\]]+)\]\(([^)\s]+)\)|\((\d{4}[^()]*)\)/
+      : /\*\*(.+?)\*\*|\{\{(.+?)\}\}|\[([^\]]+)\]\(([^)\s]+)\)/;
+    var s = String(str || "");
+    while (s) {
+      var m = s.match(re);
+      if (!m) { text(frag, s); break; }
+      if (m.index) text(frag, s.slice(0, m.index));
+      if (m[1] != null) frag.appendChild(wrap("strong", m[1]));
+      else if (m[2] != null) frag.appendChild(wrap("em", m[2], "sx-ac"));
+      else if (m[3] != null) {
+        var href = A.safeUrl(m[4]);
+        if (href) frag.appendChild(linkTo(href, inline(m[3], opts)));
+        else text(frag, m[0]);
+      } else frag.appendChild(el("span", { class: "sx-date", text: m[5] }));
+      s = s.slice(m.index + m[0].length);
+    }
+    return frag;
+    function wrap(tag, inner, cls) { var n = el(tag, cls ? { class: cls } : {}); n.appendChild(inline(inner, opts)); return n; }
   }
+  function text(frag, s) {
+    s.split("\n").forEach(function (part, i) { if (i) frag.appendChild(el("br")); if (part) frag.appendChild(document.createTextNode(part)); });
+  }
+  function linkTo(href, child) {
+    var ext = /^https?:/.test(href);
+    var a = el("a", ext ? { href: href, target: "_blank", rel: "noopener" } : { href: href });
+    a.appendChild(child);
+    return a;
+  }
+  function rich(tag, cls, str, opts) { var n = el(tag, cls ? { class: cls } : {}); n.appendChild(inline(str, opts)); return n; }
+  function img(src, alt, cls) {
+    var u = A.asset(src);
+    return u ? el("img", { src: u, alt: alt || "", loading: "lazy", decoding: "async", class: cls || null }) : null;
+  }
+  function plain(s) { return String(s || "").replace(/\*\*|\{\{|\}\}/g, "").replace(/\[([^\]]+)\]\([^)]*\)/g, "$1"); }
 
-  var T = A.track("awards");
+  /* ---------- rows ---------- */
+  var T = A.track("sections");
   function normalize(rows) {
     var out = [];
     T.reset();
     rows.forEach(function (r, i) {
-      var award = (r.award || "").trim();
-      var date = A.normalizeDate(r.date);
-      if (!award) { T.drop(i, "award 비어 있음"); return; }
-      if (!date) { T.drop(i, award + ": date '" + (r.date || "") + "' 날짜로 못 읽음"); return; }
-      var cat = canon(r.category);
-      if (!cat) { T.warn(i, award + ": category '" + (r.category || "") + "' 모름 → '기타'"); cat = "other"; }
-      out.push({ date: date, cat: cat, award: award, recipients: r.recipients || "",
-        title: r.title || "", event: r.event || "", organizer: r.organizer || "", link: A.safeUrl(r.link), order: i,
-        hay: A.fold([award, r.recipients, r.title, r.event, r.organizer, date].join(" ")) });
+      var block = String(r.block || "").trim(), type = String(r.type || "").trim().toLowerCase() || "bullet";
+      var txt = String(r.text == null ? "" : r.text).replace(/\r\n?/g, "\n").replace(/^\s+|\s+$/g, "");
+      if (!block) { if (txt) T.drop(i, "block 비어 있음"); return; }
+      if (TYPES.indexOf(type) === -1) { T.warn(i, "type '" + type + "' 모름 → bullet"); type = "bullet"; }
+      if (!txt && !r.image) { T.drop(i, "text·image 둘 다 비어 있음"); return; }
+      out.push({ block: block, section: String(r.section || "").trim(), type: type, sub: String(r.sub || "").trim(),
+        text: txt, link: A.safeUrl(r.link), image: String(r.image || "").trim(), order: i });
     });
-    out.sort(function (a, b) { return a.date === b.date ? a.order - b.order : (a.date < b.date ? 1 : -1); });
     T.done(out.length);
     return out;
   }
 
-  function shell() {
-    mount.innerHTML = "";
-    refs.head = el("div", { class: "aw-head" });
-    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "수상 분류" });
-    refs.q = el("input", { type: "search", placeholder: "수상명·수상자·대회 검색", "aria-label": "수상 검색" });
-    var search = el("label", { class: "ax-search" }, [
-      el("span", { html: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
-      refs.q
-    ]);
-    refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
-    refs.list = el("div", { class: "aw-timeline" });
-    var root = el("div", { class: "ax-root aw" }, [
-      refs.head,
-      el("div", { class: "ax-bar" }, [refs.chips, search, el("span", { class: "ax-grow" }), refs.count]),
-      refs.list
-    ]);
-    mount.appendChild(root);
-    A.phone(root, { title: "수상 Awards" });
-    refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
-    for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
-  }
-
-  function matches(it, skipCat) {
-    if (!skipCat && state.cat !== "all" && it.cat !== state.cat) return false;
-    if (state.q) {
-      var words = A.fold(state.q).trim().split(" ");
-      for (var i = 0; i < words.length; i++) if (words[i] && it.hay.indexOf(words[i]) === -1) return false;
-    }
-    return true;
-  }
-
-  function renderHead() {
-    var c = { paper: 0, presentation: 0, competition: 0, other: 0 };
-    state.items.forEach(function (it) { c[it.cat]++; });
-    var years = state.items.map(function (it) { return it.date.slice(0, 4); });
-    refs.head.innerHTML = "";
-    refs.head.appendChild(el("div", { class: "aw-total" }, [
-      el("span", { class: "num", text: String(state.items.length) }),
-      el("span", { class: "lb", text: "Awards · " + years[years.length - 1] + "–" + years[0] })
-    ]));
-    var split = el("div", { class: "aw-split" });
-    CATS.forEach(function (cat) {
-      if (!c[cat.id]) return;
-      split.appendChild(el("div", {}, [el("b", { text: String(c[cat.id]) }),
-        el("span", {}, [el("i", { class: "aw-dot-" + cat.id }), cat.ko])]));
-    });
-    refs.head.appendChild(split);
-  }
-
-  function renderChips() {
-    var counts = { all: 0 };
-    state.items.forEach(function (it) { if (matches(it, true)) { counts.all++; counts[it.cat] = (counts[it.cat] || 0) + 1; } });
-    refs.chips.innerHTML = "";
-    [{ id: "all", lb: "All", ko: "전체" }].concat(CATS).forEach(function (cat) {
-      if (cat.id !== "all" && !state.items.some(function (it) { return it.cat === cat.id; })) return;
-      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.cat === cat.id) }, [
-        el("span", { class: "ko", text: cat.ko }), el("span", { class: "n", text: String(counts[cat.id] || 0) })
-      ]);
-      b.addEventListener("click", function () { state.cat = cat.id; render(); });
-      refs.chips.appendChild(b);
-    });
-  }
-
-  function card(it) {
-    var cat = CAT_BY[it.cat];
-    var rec = el("div", { class: "aw-rec" });
-    rec.appendChild(A.authors(it.recipients));
-    var ev = el("div", { class: "aw-event" }, [it.event, it.organizer ? el("span", { class: "org", text: (it.event ? " · " : "") + it.organizer }) : null]);
-    return el("article", { class: "aw-card", "data-cat": it.cat }, [
-      el("div", { class: "aw-top" }, [el("span", { class: "aw-date", text: it.date.replace(/-/g, ".") }), el("span", { class: "aw-cat", text: cat.lb + " · " + cat.ko })]),
-      el("h4", { class: "aw-name" }, [el("span", { html: MEDAL }), el("span", { text: it.award })]),
-      it.title ? el("div", { class: "aw-title", text: it.title }) : null,
-      it.recipients ? rec : null,
-      (it.event || it.organizer) ? ev : null,
-      el("div", { class: "aw-foot" }, [it.link ? el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: /doi\.org/.test(it.link) ? "DOI" : "LINK" }) : null])
-    ]);
-  }
-
-  function render() {
-    renderChips();
-    var shown = state.items.filter(function (it) { return matches(it); });
-    refs.count.textContent = shown.length + " / " + state.items.length;
-    refs.list.innerHTML = "";
-    if (!shown.length) { refs.list.appendChild(el("p", { class: "pub-empty adam-state", text: "조건에 맞는 수상 내역이 없습니다." })); return; }
-    var groups = [], cur = null;
-    shown.forEach(function (it) {
-      var y = it.date.slice(0, 4);
-      if (!cur || cur.y !== y) { cur = { y: y, items: [] }; groups.push(cur); }
+  /* consecutive rows with the same key → groups */
+  function runs(list, key) {
+    var out = [], cur = null;
+    list.forEach(function (it) {
+      var k = key(it);
+      if (!cur || cur.k !== k) { cur = { k: k, items: [] }; out.push(cur); }
       cur.items.push(it);
     });
-    groups.forEach(function (g) {
-      var grid = el("div", { class: "aw-grid" });
-      g.items.forEach(function (it) { grid.appendChild(card(it)); });
-      refs.list.appendChild(el("section", { class: "aw-year ax-in" }, [
-        el("h3", { class: "aw-ylabel" }, [g.y, el("span", { class: "ax-count", text: g.items.length + (g.items.length > 1 ? " awards" : " award") })]),
-        grid
-      ]));
+    return out;
+  }
+
+  /* ---------- renderers per run type ---------- */
+  function listRun(items, kind) {
+    var subs = runs(items, function (it) { return it.sub; });
+    var hasSub = subs.some(function (g) { return g.k; });
+    var wrapEl = hasSub ? el("div", { class: "sx-subgrid", "data-min": "340" }) : document.createDocumentFragment();
+    subs.forEach(function (g) {
+      var ul = el("ul", { class: kind === "entry" ? "sx-entries" : "sx-list" });
+      g.items.forEach(function (it) {
+        var li = el("li", {});
+        if (kind === "entry") {
+          var all = it.text.match(new RegExp(DATE.source, "g")) || [];
+          var tail = it.text.match(/^([\s\S]*?)\s*\((\d{4}[^()]*)\)\s*$/);
+          if (all.length === 1 && tail) {
+            li.appendChild(rich("span", "sx-what", tail[1], { dates: true }));
+            li.appendChild(el("span", { class: "sx-when", text: tail[2] }));
+          } else li.appendChild(rich("span", "sx-what", it.text, { dates: true }));
+        } else li.appendChild(inline(it.text));
+        if (it.link) { var a = linkTo(it.link, document.createTextNode("")); a.className = "ax-link sx-more"; a.setAttribute("aria-label", "링크"); li.appendChild(a); }
+        ul.appendChild(li);
+      });
+      if (hasSub) wrapEl.appendChild(el("div", { class: "sx-subcard" }, [g.k ? rich("h4", "sx-sub", g.k) : null, ul]));
+      else wrapEl.appendChild(ul);
     });
+    return wrapEl;
+  }
+
+  function cardRun(items) {
+    /* rows with the same non-empty sub (consecutive) = one card */
+    var cards = [], cur = null;
+    items.forEach(function (it) {
+      if (cur && it.sub && it.sub === cur.sub) cur.items.push(it);
+      else { cur = { sub: it.sub, items: [it] }; cards.push(cur); }
+    });
+        /* icon cards (Growth Pillars) = rows on desktop, three mini columns on phones */
+    var icons = cards.some(function (c) { return c.items[0].image; });
+    var grid = el("div", { class: "sx-cards" + (icons ? " has-icon" : ""), "data-min": icons ? "640" : "300", "data-min-pe": icons ? "96" : "300" });
+    cards.forEach(function (c, i) {
+      var first = c.items[0], link = first.link;
+      var body = c.items.length > 1
+        ? el("ul", { class: "sx-list" }, c.items.map(function (it) { return el("li", {}, [inline(it.text)]); }))
+        : rich("p", "sx-body", first.text);
+      var card = el(link ? "a" : "div", link ? { class: "sx-card", href: link, target: /^https?:/.test(link) ? "_blank" : null, rel: "noopener" } : { class: "sx-card" }, [
+        first.image ? el("div", { class: "sx-icon" }, [img(first.image, plain(c.sub))]) : null,
+        el("div", { class: "sx-cardtxt" }, [
+          c.sub ? rich("h4", "sx-ct", c.sub) : el("span", { class: "sx-num", text: (i + 1 < 10 ? "0" : "") + (i + 1) }),
+          body
+        ])
+      ]);
+      grid.appendChild(card);
+    });
+    return grid;
+  }
+
+  function factRun(items) {
+    var grid = el("div", { class: "sx-facts", "data-min": "220", "data-min-pe": "130" });
+    runs(items, function (it) { return it.sub; }).forEach(function (g) {
+      var val = g.items.length > 1
+        ? el("ul", { class: "sx-list" }, g.items.map(function (it) { return el("li", {}, [inline(it.text)]); }))
+        : rich("p", "sx-fv", g.items[0].text);
+      grid.appendChild(el("div", { class: "sx-fact" + (g.items.length > 1 ? " wide" : "") }, [el("span", { class: "sx-fl", text: plain(g.k) }), val]));
+    });
+    return grid;
+  }
+
+  function profileRun(items) {
+    var photo = null, lines = [], links = [], name = null;
+    items.forEach(function (it) {
+      if (it.image && !photo) photo = img(it.image, plain(items[0].text));
+      if (it.link) links.push(el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: plain(it.text) }));
+      else if (!name) name = rich("h2", "sx-name", it.text);
+      else lines.push(rich("div", "sx-line", it.text));
+    });
+    return el("div", { class: "sx-profile" + (photo ? "" : " no-photo") }, [
+      photo ? el("div", { class: "sx-photo" }, [photo]) : null,
+      el("div", { class: "sx-pbody" }, [el("span", { class: "ax-kicker", text: "Professor" }), name, el("div", { class: "sx-lines" }, lines),
+        links.length ? el("div", { class: "sx-plinks" }, links) : null])
+    ]);
+  }
+
+  function renderRun(g) {
+    var items = g.items, t = g.k;
+    if (t === "bullet" || t === "entry") return listRun(items, t);
+    if (t === "card") return cardRun(items);
+    if (t === "fact") return factRun(items);
+    if (t === "profile") return profileRun(items);
+    if (t === "thumb") return el("div", { class: "sx-thumbs", "data-min": "220", "data-min-pe": "96" }, items.map(function (it) {
+      var fig = el("figure", { class: "sx-thumb" }, [el("div", { class: "sx-tim" }, [img(it.image, plain(it.text))]), rich("figcaption", "", it.text)]);
+      return it.link ? linkTo(it.link, fig) : fig;
+    }));
+    if (t === "contact") return el("dl", { class: "sx-contact" }, items.map(function (it) {
+      var v = el("dd", {});
+      if (it.link) v.appendChild(linkTo(it.link, inline(it.text))); else v.appendChild(inline(it.text));
+      return el("div", { class: "sx-crow" }, [el("dt", { text: it.sub }), v]);
+    }));
+    if (t === "button") return el("div", { class: "sx-buttons" }, items.map(function (it) {
+      var a = el("a", { class: "sx-btn", href: it.link || "#", target: "_blank", rel: "noopener" }, [it.image ? img(it.image, "") : null, el("span", { text: plain(it.text) })]);
+      return a;
+    }));
+    var frag = document.createDocumentFragment();
+    items.forEach(function (it) {
+      if (t === "text") frag.appendChild(rich("p", "sx-text", it.text));
+      else if (t === "lead") frag.appendChild(rich("h2", "sx-lead", it.text));
+      else if (t === "callout") frag.appendChild(rich("p", "sx-callout", it.text));
+      else if (t === "figure") frag.appendChild(el("figure", { class: "sx-figure" }, [img(it.image, plain(it.text)), it.text ? rich("figcaption", "", it.text) : null]));
+    });
+    return frag;
+  }
+
+  function renderSection(sec) {
+    var photos = sec.items.filter(function (it) { return it.type === "photo"; });
+    var rest = sec.items.filter(function (it) { return it.type !== "photo"; });
+    var main = el("div", { class: "sx-main" });
+    runs(rest, function (it) { return it.type; }).forEach(function (g) { main.appendChild(renderRun(g)); });
+    var onlyEntries = rest.length && rest.every(function (it) { return it.type === "entry" && !it.sub; });
+    var node = el("section", { class: "sx-sec ax-in" + (photos.length ? " sx-split" : "") + (onlyEntries && sec.k ? " sx-halfable" : "") }, [
+      sec.k ? el("h3", { class: "sx-sh" }, [rich("span", "t", sec.k)]) : null,
+      photos.length ? el("div", { class: "sx-splitwrap" }, [main, el("aside", { class: "sx-aside" }, photos.map(function (it) {
+        var fig = el("figure", { class: "sx-photo-fig" }, [img(it.image, plain(it.text)), it.text ? rich("figcaption", "", it.text) : null]);
+        return it.link ? linkTo(it.link, fig) : fig;
+      }))]) : main
+    ]);
+    return node;
+  }
+
+  /* two neighbouring short CV sections (entries only, no sub) sit side by side */
+  function pairHalves(blockEl) {
+    var secs = Array.prototype.slice.call(blockEl.querySelectorAll(":scope > .sx-sec"));
+    for (var i = 0; i < secs.length; i++) {
+      if (secs[i].classList.contains("sx-halfable") && secs[i + 1] && secs[i + 1].classList.contains("sx-halfable")) {
+        secs[i].classList.add("sx-half"); secs[i + 1].classList.add("sx-half"); i++;
+      }
+    }
+  }
+
+  /* balanced grid columns: as many as fit (data-min px each), then even rows (4 → 2×2, 5 → 3+2) */
+  function layout() {
+    var pe = document.documentElement.classList.contains("ax-pe");
+    Array.prototype.forEach.call(mount.querySelectorAll("[data-min]"), function (g) {
+      var kids = Array.prototype.slice.call(g.children), n = kids.length; if (!n) return;
+      var wide = kids.filter(function (c) { return c.classList.contains("wide"); });
+      n += wide.length;   /* a .wide child (e.g. a fact with a list) takes two columns */
+      var min = +(pe && g.getAttribute("data-min-pe") || g.getAttribute("data-min")), gap = parseFloat(getComputedStyle(g).columnGap) || 12;
+      var cols = Math.max(1, Math.min(n, Math.floor((g.clientWidth + gap) / (min + gap))));
+      cols = Math.ceil(n / Math.ceil(n / cols));
+      g.style.gridTemplateColumns = "repeat(" + cols + ", minmax(0, 1fr))";
+      wide.forEach(function (c) { c.style.gridColumn = cols >= 2 ? "span 2" : ""; });
+    });
+  }
+
+  function shell() {
+    mount.innerHTML = "";
+    refs.body = el("div", { class: "sx-blocks" });
+    refs.root = el("div", { class: "ax-root sx" }, [refs.body]);
+    mount.appendChild(refs.root);
+    var title = want.length === 1 ? (TITLES[want[0]] || want[0]) : "ADAM Lab";
+    A.phone(refs.root, { open: false, title: title });
+    for (var i = 0; i < 3; i++) refs.body.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true", style: "height:56px;margin:8px 0" }));
+  }
+
+  function render(items) {
+    var blocks = runs(items, function (it) { return it.block; });
+    if (want.length) blocks = want.map(function (id) {
+      var all = items.filter(function (it) { return it.block === id; });
+      return all.length ? { k: id, items: all } : null;
+    }).filter(Boolean);
+    refs.body.innerHTML = "";
+    if (!blocks.length) {
+      var ids = runs(items, function (it) { return it.block; }).map(function (g) { return g.k; });
+      A.status(refs.body, "블록 '" + want.join(",") + "'이(가) 시트에 없습니다. 있는 블록: " + ids.join(", "));
+      return;
+    }
+    blocks.forEach(function (b) {
+      var blockEl = el("div", { class: "sx-block", "data-block": b.k });
+      if (!want.length) blockEl.appendChild(el("div", { class: "sx-blockid" }, [el("span", { class: "ax-kicker", text: "block" }), el("code", { text: b.k })]));
+      runs(b.items, function (it) { return it.section; }).forEach(function (sec) { blockEl.appendChild(renderSection(sec)); });
+      pairHalves(blockEl);
+      refs.body.appendChild(blockEl);
+    });
+    layout();
   }
 
   function boot() {
     shell();
+    var t0 = 0;
+    window.addEventListener("resize", function () { clearTimeout(t0); t0 = setTimeout(layout, 60); });
     function apply(res) {
-      state.items = normalize(res.rows);
-      if (!state.items.length) { A.status(refs.list, "표시할 수상 내역이 없습니다."); return; }
-      renderHead();
-      render();
+      var items = normalize(res.rows);
+      if (!items.length) { A.status(refs.body, "표시할 내용이 없습니다."); return; }
+      render(items);
     }
-    A.load("awards", { required: ["date", "award", "recipients", "category"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "수상 내역을 불러오지 못했습니다."); });
+    A.load("sections", { required: ["block", "type", "text"], onUpdate: apply }).then(apply)
+      .catch(function () { A.status(refs.body, "내용을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

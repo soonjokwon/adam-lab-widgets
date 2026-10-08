@@ -35,7 +35,11 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
     /* date,title,venue,location,link */
     talks: gviz("talks"),
     /* date,caption,image,group,link   group: PNU | KIT   image: assets/gallery/… (권장) */
-    gallery: gviz("gallery")
+    gallery: gviz("gallery"),
+    /* block,section,type,sub,text,link,image   (Professor·Recruiting·Research·Home text blocks)
+       block: which embed (sections/?block=professor) · type: bullet | entry | text | lead | fact | card |
+       callout | figure | thumb | profile | contact | button | photo · text: **굵게** {{주황}} [글자](링크) */
+    sections: gviz("sections")
   };
 })();
 

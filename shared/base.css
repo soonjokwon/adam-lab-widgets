@@ -346,6 +346,9 @@ html.ax-pe .ax-pe-end {
   text-decoration: none;
 }
 html.ax-pe .ax-pe-end .ar { font-family: var(--font-mono); }
+html.ax-pe.ax-pe-fits .ax-pe-end { display: none; }
+.ax-pe-mark { display: none; }
+html.ax-pe .ax-pe-mark { display: block; height: 0; }
 html.ax-pe .ax-pe-end:hover { background: #f6f8ff; }
 html.ax-pe .adam-state { margin: 10px 0; padding: 12px; }
 html.ax-pe .ax-skel { height: 48px !important; margin: 6px 0; }

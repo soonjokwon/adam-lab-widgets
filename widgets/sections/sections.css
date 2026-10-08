@@ -248,3 +248,26 @@ html.ax-pe .sx-pim img { height: 100%; object-fit: cover; }
 html.ax-pe .sx-photo-fig figcaption { margin: 0; justify-content: flex-start; text-align: left; font-size: 13.5px; }
 /* very short phone boxes: drop the photo, the text + end link stay */
 html.ax-pe-tiny .sx-aside { display: none; }
+
+/* very short phone boxes (html.sx-compact, ≤170px tall — e.g. home-join 355×134):
+   contact rows / buttons / side photo → one row of small link buttons; paragraphs
+   that still do not fit are dropped from the end (.sx-cut, set in JS). */
+.sx-cbar { display: none; }
+html.sx-compact .sx-sec.has-cbar .sx-contact,
+html.sx-compact .sx-sec.has-cbar .sx-buttons,
+html.sx-compact .sx-sec.has-cbar .sx-aside,
+html.sx-compact .sx-sec.has-cbar .sx-cut { display: none; }
+html.sx-compact .sx-sec.has-cbar .sx-splitwrap { display: block; }
+html.sx-compact .sx-cbar { display: flex; flex-wrap: wrap; gap: 6px; }
+.sx-cbtn {
+  display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 8px;
+  border: 1px solid var(--line); background: #fff; color: var(--navy) !important; text-decoration: none;
+  font: 600 11px var(--font-mono); letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap;
+}
+.sx-cbtn.ko { font: 600 12px var(--font-body); letter-spacing: 0; }
+.sx-cbtn img { width: 15px; height: 15px; display: block; }
+.sx-cbtn .i { display: inline-flex; color: var(--navy); }
+.sx-cbtn::after { content: "↗"; font: 500 10px var(--font-mono); color: var(--ink-dim); }
+@container ax (max-width: 345px) { .sx-cbtn::after { content: none; } .sx-cbar { gap: 5px; } }
+.sx-cbtn:hover, .sx-cbtn:focus-visible { border-color: var(--navy); background: #f6f8ff; }
+html.sx-compact .sx-text { line-height: 1.55; }

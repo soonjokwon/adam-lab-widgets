@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAM Lab · Awards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* ADAM Lab embeddable widgets — design tokens extracted from the
+   home-page hero embed (ADAM Lab Intro, ~187KB inline HTML/SVG on
+   *-atari-embeds.googleusercontent.com / sites.google.com/view/adam-pnu).
+
+   Source :root block (2026-10-08):
+     --ground #FFFFFF  --sheet #FFFFFF  --grid #F0F2F7
+     --line #D8DDE8    --line-soft #E9ECF3
+     --navy #102B86    --blue #0707AA
+     --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
+     --accent #FF9900  --accent-deep #D97E00
+*/
+
+:root {
+  --ground: #ffffff;
+  --sheet: #ffffff;
+  --grid: #f0f2f7;
+  --line: #d8dde8;
+  --line-soft: #e9ecf3;
+  --navy: #102b86;
+  --blue: #0707aa;
+  --ink: #161a2b;
+  --ink-dim: #5a6378;
+  --ink-faint: #9aa3b5;
+  --accent: #ff9900;
+  --accent-deep: #d97e00;
+  --paper: var(--sheet);
+  --muted: var(--ink-dim);
+  --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adam-sheet *,
+  .adam-sheet *::before,
+  .adam-sheet *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ADAM Lab widgets — shared base for the sheet-driven widgets
+   (publications, patents, awards, members, projects, talks, gallery).
+   Palette/fonts come from tokens.css (= hero animation). Each Sites page
+   gets its own layout file on top of this (see widgets/<name>/). */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html {
+  background-color: var(--ground);
+  /* Plain checkerboard grid, ~5% cells (20 across), no border/marks. */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 5vw 5vw;
+  background-attachment: fixed;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ax-root {
+  container-type: inline-size;
+  container-name: ax;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(10px, 2.4vw, 24px) clamp(10px, 2.6vw, 28px) clamp(16px, 3vw, 32px);
+}
+
+/* ---------- toolbar ---------- */
+.ax-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 0;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.ax-bar .ax-grow { flex: 1 1 auto; }
+@container ax (max-width: 600px) {
+  .ax-bar { position: static; }
+}
+
+.ax-chips {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 1px;
+}
+.ax-chips::-webkit-scrollbar { display: none; }
+
+.ax-chip {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-chip:hover { border-color: var(--navy); color: var(--navy); }
+.ax-chip[aria-pressed="true"] {
+  border-color: var(--navy);
+  color: var(--navy);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.ax-chip .n {
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.ax-chip[aria-pressed="true"] .n { color: var(--navy); }
+.ax-chip .ko { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+.ax-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 360px;
+}
+.ax-search input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 30px 0 32px;
+  font: 13px var(--font-body);
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.ax-search input::placeholder { color: var(--ink-faint); }
+.ax-search input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(16, 43, 134, 0.08); }
+.ax-search svg {
+  position: absolute; left: 10px; top: 50%; width: 14px; height: 14px;
+  transform: translateY(-50%); color: var(--ink-faint); pointer-events: none;
+}
+.ax-search .ax-clear {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
+  color: var(--ink-faint); font-size: 16px; line-height: 1;
+}
+.ax-search .ax-clear:hover { color: var(--navy); }
+
+.ax-select {
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: 12px var(--font-mono);
+  color: var(--ink-dim);
+  padding: 0 26px 0 10px;
+  border-radius: 0;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-faint) 50%), linear-gradient(135deg, var(--ink-faint) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.ax-select:focus { border-color: var(--navy); outline: none; }
+
+/* ---------- type ---------- */
+.ax-kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.ax-mono { font-family: var(--font-mono); }
+.ax-dim { color: var(--ink-dim); }
+.ax-faint { color: var(--ink-faint); }
+
+.au-pi { color: var(--ink); font-weight: 700; }
+
+/* ---------- small parts ---------- */
+.ax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  background: #fff;
+  white-space: nowrap;
+}
+.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ax-badge.navy { border-color: var(--navy); color: var(--navy); }
+.ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
+.ax-badge.dash { border-style: dashed; color: var(--blue); border-color: var(--blue); }
+.ax-badge.ko { font-family: var(--font-body); letter-spacing: 0; font-size: 11px; }
+
+.ax-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--navy);
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 4px 7px;
+  line-height: 1;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-link:hover { border-color: var(--navy); background: #f6f8ff; }
+.ax-link::after { content: "↗"; font-size: 10px; }
+
+.ax-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ---------- states ---------- */
+.adam-state {
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: center;
+}
+.ax-skel {
+  height: 64px;
+  margin: 10px 0;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(90deg, #fff 0%, #f6f7fb 50%, #fff 100%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ax-skel { animation: ax-shimmer 1.2s linear infinite; }
+  .ax-in { animation: ax-in 0.4s var(--ease) both; }
+}
+@keyframes ax-shimmer { to { background-position: -200% 0; } }
+@keyframes ax-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Awards page (Sites /awards) — year timeline of award cards. */
+
+.aw-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px 22px;
+  margin-bottom: 4px;
+}
+.aw-total { display: flex; align-items: baseline; gap: 8px; }
+.aw-total .num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(34px, 5vw, 48px);
+  line-height: 0.9;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+.aw-total .lb { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--ink-dim); text-transform: uppercase; }
+.aw-split { display: flex; gap: 16px; flex-wrap: wrap; }
+.aw-split div { display: grid; gap: 1px; }
+.aw-split b { font-family: var(--font-display); font-size: 20px; line-height: 1; font-weight: 700; color: var(--ink); }
+.aw-split span { font-size: 11.5px; color: var(--ink-faint); }
+.aw-split i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+
+.aw-dot-paper { background: var(--navy); }
+.aw-dot-presentation { background: #fff; box-shadow: inset 0 0 0 2px var(--blue); }
+.aw-dot-competition { background: var(--accent); }
+
+.aw-timeline { position: relative; margin-top: 8px; }
+.aw-year {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding-left: 26px;
+}
+.aw-year::before {
+  content: "";
+  position: absolute;
+  left: 7px; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+.aw-ylabel {
+  position: relative;
+  margin: 18px 0 8px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--navy);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.aw-ylabel::before {
+  content: "";
+  position: absolute;
+  left: -25px; top: 50%;
+  width: 15px; height: 15px;
+  transform: translateY(-50%);
+  background: #fff;
+  border: 1.5px solid var(--navy);
+}
+.aw-year:first-child .aw-ylabel { margin-top: 6px; }
+
+.aw-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+
+.aw-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line);
+  padding: 12px 14px 12px;
+  display: grid;
+  gap: 4px;
+  align-content: start;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease), transform 0.15s var(--ease);
+}
+.aw-card:hover { border-color: var(--navy); box-shadow: 0 8px 18px rgba(16, 43, 134, 0.07); transform: translateY(-1px); }
+.aw-card::before {
+  content: "";
+  position: absolute;
+  left: -24px; top: 17px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+}
+.aw-card[data-cat="paper"]::before { background: var(--navy); }
+.aw-card[data-cat="presentation"]::before { background: #fff; box-shadow: inset 0 0 0 2px var(--blue); }
+.aw-card[data-cat="competition"]::before { background: var(--accent); }
+.aw-card[data-cat="competition"] { border-top: 2px solid var(--accent); }
+.aw-card[data-cat="paper"] { border-top: 2px solid var(--navy); }
+.aw-card[data-cat="presentation"] { border-top: 2px solid var(--blue); }
+
+.aw-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.aw-date { font-family: var(--font-mono); font-size: 11px; color: var(--navy); letter-spacing: 0.04em; font-weight: 500; }
+.aw-cat { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.aw-name {
+  margin: 2px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ink);
+}
+.aw-name svg { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 2px; color: var(--accent); }
+.aw-title { font-size: 13px; color: var(--ink); line-height: 1.5; }
+.aw-rec { font-size: 12.5px; color: var(--ink-dim); }
+.aw-event { font-size: 12.5px; color: var(--blue); }
+.aw-event .org { color: var(--ink-faint); }
+.aw-foot { display: flex; gap: 6px; margin-top: 4px; }
+.aw-foot:empty { display: none; }
+
+@container ax (min-width: 820px) {
+  .aw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aw-year { padding-left: 120px; }
+  .aw-year::before { left: 101px; }
+  .aw-ylabel {
+    position: absolute;
+    left: 0; top: 0;
+    width: 86px;
+    margin: 0;
+    padding-top: 10px;
+    flex-direction: column;
+    align-items: flex-end;
+    font-size: 30px;
+    gap: 4px;
+  }
+  .aw-ylabel::before { left: auto; right: -23px; top: 26px; }
+  .aw-year:first-child .aw-ylabel { margin-top: 0; }
+  .aw-year { padding-top: 6px; padding-bottom: 14px; min-height: 90px; }
+  .aw-card::before { display: none; }
+}
+@container ax (max-width: 460px) {
+  .aw-split { gap: 12px; }
+  .ax-search { max-width: none; flex-basis: 100%; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="adam-awards"></div>
+  <script>
+    window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
+    window.ADAM_INLINE = { "awards": [{"date":"2026-02-10","category":"paper","award":"가헌학술상","recipients":"김군찬, 권순조","title":"심층 강화학습을 활용한 3D 전기 패널의 자동 케이블 라우팅","event":"한국CDE학회 논문집, 30(1), 122-135","organizer":"한국CDE학회","link":"https://doi.org/10.7315/CDE.2025.122"},{"date":"2024-11-07","category":"paper","award":"대한기계학회논문집A 우수논문","recipients":"김재연, 이상명, 고민석, 안성익, 신규태, 박재민, 이길용, 권순조","title":"적층 제조 고려 설계에 기반한 연질 소재 유도탄 보호 덮개 설계 및 제작","event":"대한기계학회 논문집 A권, 47(10), 829-840","organizer":"대한기계학회","link":"https://doi.org/10.3795/KSME-A.2023.47.10.829"},{"date":"2026-08-21","category":"presentation","award":"우수포스터상","recipients":"박현석, 김태길, 권순조","title":"산업 디자인 초기 단계에서의 간섭 검증을 위한 지식 기반 강화 학습","event":"한국CDE학회 2026 하계학술대회","organizer":"","link":""},{"date":"2026-02-11","category":"presentation","award":"우수논문상","recipients":"엄태주, 최민주, 김민규, 권순조","title":"비수밀 CAD 데이터의 내부 형상 제거를 위한 NeuS 가이드 하이브리드 레이캐스팅 기법","event":"한국CDE학회 2026 동계학술대회","organizer":"","link":""},{"date":"2025-08-22","category":"presentation","award":"우수포스터상","recipients":"김군찬, 이승현, 김현철, 권순조","title":"화재 확산과 군중 행동을 고려한 강화학습 기반 대피 보조 에이전트 개발","event":"한국CDE학회 2025 하계학술대회","organizer":"","link":""},{"date":"2025-08-22","category":"presentation","award":"우수포스터상","recipients":"이초빈, 전예성, 박재민, 정진호, 신규태, 손현진, 양시훈, 김도희, 위정욱, 김현찬, 권순조","title":"금속 적층 제조 기반 유도 미사일 조종 날개의 최적 격자 구조 선정","event":"한국CDE학회 2025 하계학술대회","organizer":"","link":""},{"date":"2025-02-21","category":"presentation","award":"우수포스터상","recipients":"한서희, 고민석, 권순조","title":"설명 가능한 적정 제조 방식 추천을 위한 LLM의 활용","event":"한국CDE학회 2025 동계학술대회","organizer":"","link":""},{"date":"2024-08-22","category":"presentation","award":"우수포스터상","recipients":"한서희, 고민석, 권순조","title":"적층 제조 적합 부품 식별을 위한 기준 및 절차 수립","event":"한국CDE학회 2024 하계학술대회","organizer":"","link":""},{"date":"2024-05-31","category":"presentation","award":"우수논문상","recipients":"S. Kwon, H. Kim","title":"Saliency-Aware Point Cloud Upsampling Approach for Edge Consolidation","event":"ICMDT 2023","organizer":"","link":""},{"date":"2024-04-12","category":"presentation","award":"특별상(한국기계연구원장상)","recipients":"김군찬, 윤영준, 권순조","title":"케이블 자동 라우팅을 위한 강화학습 기반 최적 케이블 형상 생성 방안","event":"2024년 한국기계가공학회 춘계학술대회","organizer":"","link":""},{"date":"2024-01-31","category":"presentation","award":"우수논문상","recipients":"고민석, 김재연, 권순조","title":"적층 제조의 탄소 배출량 예측을 위한 심층 신경망 활용","event":"한국CDE학회 2024 동계학술대회","organizer":"","link":""},{"date":"2024-01-31","category":"presentation","award":"우수포스터상","recipients":"배대철, 전예성, 정재호, 윤영준, 고민석, 김재연, 김군찬, 권순조","title":"3D 프린팅 품질 및 상태 관찰을 위한 웹 기반 디지털 트윈 구현","event":"한국CDE학회 2024 동계학술대회","organizer":"","link":""},{"date":"2023-12-22","category":"presentation","award":"Best Paper Award","recipients":"M. Ko, S. Kwon","title":"A Review of Lifecycle Assessment (LCA) Cases in the Shipbuilding Industry","event":"AeroNDT 2023","organizer":"","link":""},{"date":"2023-08-25","category":"presentation","award":"우수논문상","recipients":"고민석, 김재연, 한혜련, 권순조","title":"적층 제조에서 설계 및 제조 정보 기반 전생애주기평가 도구 개발","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-08-25","category":"presentation","award":"우수논문상","recipients":"윤영준, 김재연, 최민주, 권순조","title":"3D 프린팅을 위한 커스텀 제품의 최적 모듈화","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-08-24","category":"presentation","award":"우수논문상","recipients":"김재연, 윤영준, 이상명, 김형기, 권순조","title":"기계 3D CAD 모델 자동 채점을 위한 형상 유사도 활용","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-08-25","category":"presentation","award":"우수논문상","recipients":"정동원, 권순조, 김형기","title":"미분 가능한 샘플링과 점군-메쉬 거리를 활용한 QEM 간략화 메쉬의 원본 형상 복원 기법","event":"한국CDE학회 2023 하계학술대회","organizer":"","link":""},{"date":"2023-02-10","category":"presentation","award":"우수포스터상","recipients":"김재연, 윤영준, 이상명, 김형기, 권순조","title":"2D 이미지의 특징점을 활용한 3D CAD 모델의 국소 형상 비교","event":"한국CDE학회 2023 동계학술대회","organizer":"","link":""},{"date":"2023-02-10","category":"presentation","award":"우수포스터상","recipients":"윤영준, 김재연, 이상명, 김형기, 권순조","title":"단면도의 형상 분산을 활용한 3D CAD 모델의 형상 유사도 비교","event":"한국CDE학회 2023 동계학술대회","organizer":"","link":""},{"date":"2022-08-25","category":"presentation","award":"우수포스터상","recipients":"김현식, 서규민, 이승현, 노태환, 김현철, 권순조","title":"증강현실 기반 실내 화재 대피 내비게이션 시스템 개발","event":"한국CDE학회 2022 하계학술대회","organizer":"","link":""},{"date":"2020-11-20","category":"presentation","award":"우수논문상","recipients":"오요셉, 고현웅, 권순조","title":"효율적인 3D 프린팅을 위한 부품 분해 최적화","event":"대한기계학회 대구경북지회 2020년 춘추계통합학술대회","organizer":"","link":""},{"date":"2026-02-10","category":"competition","award":"금상","recipients":"권순조, 김형기, 전예성, 박현석, 차준렬","title":"","event":"CDE DX Awards 2025, 대학 부문","organizer":"한국CDE학회","link":""},{"date":"2025-12-12","category":"competition","award":"혁신설계 우수상","recipients":"이초빈, 김동환, 변재호, 남승건","title":"","event":"사용자 중심 융합설계연구회 2025년 적층제조 기반 융합설계 워크숍","organizer":"대한기계학회 생산 및 설계공학부문","link":""},{"date":"2025-11-28","category":"competition","award":"협의회장상","recipients":"이초빈, 김동환, 변재호, 남승건","title":"","event":"적층제조 융합설계 경진대회: Folding Chair","organizer":"첨단분야 혁신융합대학 사업단 협의회","link":""},{"date":"2025-11-21","category":"competition","award":"우수상(한국산업단지공단이사장상)","recipients":"권순조, 전예성, 이초빈, 김윤서, 김현찬, 박재민, 정진호, 신규태, 이동완, 김도희","title":"","event":"제10회 3D프린팅 BIZCON경진대회, 구동 부문","organizer":"3D프린팅산업협회","link":""},{"date":"2025-11-11","category":"competition","award":"대상(과학기술정보통신부장관상)","recipients":"정진호, 박재민, 이동완, 김진우, 전예성","title":"","event":"2025 DfAM 경진대회, 산업부문","organizer":"울산광역시","link":""},{"date":"2025-09-30","category":"competition","award":"최우수상","recipients":"김태길, 김군찬, 전예성, 박현석, 이초빈","title":"","event":"제4회 가상공학 플랫폼 소프트웨어(KIMM Cyber Lab) 활용 경진대회","organizer":"한국기계연구원","link":""},{"date":"2024-11-08","category":"competition","award":"우수 융합설계상","recipients":"전예성, 조용우, 유정현, 피영민, 이동준, 배경근","title":"","event":"사용자 중심 융합설계연구회 2024 첨단 융합설계 워크숍","organizer":"대한기계학회 생산 및 설계공학부문","link":""},{"date":"2024-10-19","category":"competition","award":"최우수상(특허청장상)","recipients":"박재민, 신규태, 정진호, 이길용, 권순조, 이민형, 김군찬","title":"","event":"제9회 3D프린팅 BIZCON 경진대회, 구동 부문","organizer":"3D프린팅산업협회","link":""},{"date":"2023-10-26","category":"competition","award":"1위","recipients":"김재연","title":"","event":"제1회 BDU 3D 경진대회","organizer":"LS e-Mobility Solutions","link":""},{"date":"2021-12-22","category":"competition","award":"대상","recipients":"김현식, 이주은, 김건영","title":"","event":"2021 보조기기 아이디어 공모전","organizer":"경기도","link":""},{"date":"2021-11-20","category":"competition","award":"우수상","recipients":"노태환, 김재연","title":"","event":"제6회 3D프린팅 BIZCON경진대회, 국방 부문","organizer":"3D프린팅산업협회","link":""}] };
+  </script>
+  <script>
+/* ADAM Lab workbook → one tab per widget, read through gviz CSV.
+   Sheet: https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw
+   (공유: 링크가 있는 모든 사용자 = 뷰어). 탭 이름은 아래 키와 정확히 같아야 합니다.
+   A tab that does not exist yet (or is empty / has the wrong header) falls
+   back to the bundled data/<tab>.json automatically — nothing to change here
+   when a tab is added later. Set a value to "" to always use the JSON. */
+window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
+
+(function () {
+  function gviz(tab) {
+    return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
+  }
+  window.ADAM_SHEETS = {
+    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
+    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    publications: gviz("publications"),
+    /* no,title,status,number,date,link,note   status: registered | filed */
+    patents: gviz("patents"),
+    /* date,category,award,recipients,title,event,organizer,link
+       category: paper | presentation | competition */
+    awards: gviz("awards"),
+    /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+    members: gviz("members"),
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    projects: gviz("projects"),
+    /* date,title,venue,location,link */
+    talks: gviz("talks"),
+    /* date,caption,image,group,link   group: PNU | KIT */
+    gallery: gviz("gallery")
+  };
+})();
+
+window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
+
+/* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
+
+   ADAM.load(tab, { required: ["col", ...] })
+     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
+     2) if the request fails, the tab is missing (gviz then silently returns
+        the FIRST tab, so the header is checked against `required`) or the
+        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
+   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
+   for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
+
+   Also exposes helpers shared by every widget: parseCsv, normalizeDate
+   (accepts '2026-08-21', '2026. 8. 21', '26.08.21'), normalizeMonth,
+   safeUrl, asset (repo-relative paths, Google Drive share links), el, debounce. */
+(function () {
+  var ADAM = window.ADAM = window.ADAM || {};
+
+  var script = document.currentScript ||
+    Array.prototype.slice.call(document.scripts).filter(function (s) {
+      return /sheet-loader\.js/.test(s.src);
+    })[0];
+  /* Repo root (…/adam-lab-widgets/) = parent of /shared/. */
+  ADAM.root = window.ADAM_ROOT ||
+    (script && script.src ? new URL("../", script.src).href : new URL("./", location.href).href);
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  ADAM.normalizeDate = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var iso = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
+    var short = s.match(/^(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})$/);
+    if (short) return "20" + short[1] + "-" + pad(short[2]) + "-" + pad(short[3]);
+    /* gviz "Date(2026,7,21)" (month is 0-based) */
+    var gv = s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+    if (gv) return gv[1] + "-" + pad(+gv[2] + 1) + "-" + pad(gv[3]);
+    return "";
+  };
+
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  ADAM.normalizeMonth = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var d = ADAM.normalizeDate(s);
+    if (d) return d.slice(0, 7);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
+    if (m) return m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{2})\.(\d{1,2})$/);
+    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{4})/);
+    return m ? m[1] : "";
+  };
+
+  ADAM.safeUrl = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    try {
+      var url = new URL(raw, ADAM.root);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+    } catch (err) { /* ignore */ }
+    return "";
+  };
+
+  /* Image cell → URL. Repo paths (assets/…) resolve against the Pages root;
+     Drive share links (…/file/d/<id>/view or open?id=<id>) become direct images. */
+  ADAM.asset = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    var id = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{10,})/);
+    if (id) return "https://lh3.googleusercontent.com/d/" + id[1] + "=w800";
+    return ADAM.safeUrl(raw);
+  };
+
+  ADAM.parseCsv = function (text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    var s = String(text || "").replace(/^\uFEFF/, "");
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (s[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return { header: [], rows: [] };
+    var header = rows[0].map(function (h) { return String(h || "").trim().toLowerCase(); });
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
+      var obj = {};
+      for (var c = 0; c < header.length; c++) {
+        if (header[c]) obj[header[c]] = rows[r][c] != null ? String(rows[r][c]).trim() : "";
+      }
+      out.push(obj);
+    }
+    return { header: header, rows: out };
+  };
+
+  function fetchTimeout(url, ms, opts) {
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    opts = opts || {};
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(timer); });
+  }
+
+  ADAM.sheetUrl = function (tab) {
+    var map = window.ADAM_SHEETS || {};
+    if (typeof map[tab] === "string") return map[tab].trim();
+    if (window.ADAM_SHEET_ID) {
+      return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+        "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(tab);
+    }
+    return "";
+  };
+
+  ADAM.load = function (tab, opts) {
+    opts = opts || {};
+    var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
+    var url = ADAM.sheetUrl(tab);
+    var params = new URLSearchParams(location.search);
+    if (params.get("source") === "json") url = "";
+
+    function fromJson() {
+      var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
+      if (Array.isArray(inline) && inline.length) return Promise.resolve({ rows: inline, source: "inline" });
+      return fetchTimeout(ADAM.root + "data/" + tab + ".json", 8000, { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("json " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var list = Array.isArray(data) ? data : (data && data.items) || [];
+          return { rows: list, source: "json" };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson();
+    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("sheet " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        var parsed = ADAM.parseCsv(text);
+        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
+        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
+        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
+        return { rows: parsed.rows, source: "sheet" };
+      })
+      .catch(function (err) {
+        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
+        return fromJson();
+      });
+  };
+
+  /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
+  ADAM.el = function (tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v == null || v === false) return;
+        if (k === "text") node.textContent = v;
+        else if (k === "html") node.innerHTML = v;
+        else if (k === "class") node.className = v;
+        else if (k.slice(0, 2) === "on" && typeof v === "function") node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  };
+
+  ADAM.debounce = function (fn, ms) {
+    var t;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  };
+
+  ADAM.params = new URLSearchParams(location.search);
+
+  /* Normalised text for search (case/space-insensitive, strips * + marks). */
+  ADAM.fold = function (s) {
+    return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
+  };
+
+  /* Lab PI names to emphasise in author lists. */
+  ADAM.PI = ["S. Kwon", "권순조", "Soonjo Kwon"];
+  ADAM.authors = function (text) {
+    var frag = document.createDocumentFragment();
+    String(text || "").split(/,\s*/).forEach(function (name, i, arr) {
+      var clean = name.replace(/[*+]/g, "").trim();
+      var isPI = ADAM.PI.indexOf(clean) !== -1;
+      var span = ADAM.el("span", { class: isPI ? "au au-pi" : "au", text: name.trim() });
+      frag.appendChild(span);
+      if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
+    });
+    return frag;
+  };
+
+  ADAM.status = function (mount, message, kind) {
+    mount.innerHTML = "";
+    mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
+  };
+})();
+
+/* Awards timeline — sheet tab `awards`.
+   Columns: date,category,award,recipients,title,event,organizer,link
+   category: paper | presentation | competition   URL params: ?category=… */
+(function () {
+  var A = window.ADAM, el = A.el;
+  var mount = document.getElementById("adam-awards");
+  if (!mount) return;
+
+  var CATS = [
+    { id: "paper", lb: "Paper", ko: "논문" },
+    { id: "presentation", lb: "Presentation", ko: "학술발표" },
+    { id: "competition", lb: "Competition", ko: "경진대회" }
+  ];
+  var ALIAS = { "논문": "paper", papers: "paper", journal: "paper", "발표": "presentation", presentations: "presentation", conference: "presentation", poster: "presentation",
+    "경진대회": "competition", competitions: "competition", contest: "competition" };
+  var CAT_BY = {};
+  CATS.forEach(function (c) { CAT_BY[c.id] = c; });
+  var MEDAL = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 1h2.2l1 3.2L9.2 1H11L9 6.1" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="10.2" r="4.3" fill="currentColor"/><path d="m8 7.9.7 1.5 1.6.2-1.2 1.1.3 1.6L8 11.5l-1.4.8.3-1.6-1.2-1.1 1.6-.2z" fill="#fff"/></svg>';
+  var state = { items: [], cat: canon(A.params.get("category")) || "all", q: "" };
+  var refs = {};
+
+  function canon(v) {
+    var s = String(v || "").trim().toLowerCase();
+    return CAT_BY[s] ? s : (ALIAS[s] || ALIAS[String(v || "").trim()] || "");
+  }
+
+  function normalize(rows) {
+    var out = [];
+    rows.forEach(function (r, i) {
+      var award = (r.award || "").trim();
+      var date = A.normalizeDate(r.date);
+      if (!award || !date) return;
+      out.push({ date: date, cat: canon(r.category) || "competition", award: award, recipients: r.recipients || "",
+        title: r.title || "", event: r.event || "", organizer: r.organizer || "", link: A.safeUrl(r.link), order: i,
+        hay: A.fold([award, r.recipients, r.title, r.event, r.organizer, date].join(" ")) });
+    });
+    out.sort(function (a, b) { return a.date === b.date ? a.order - b.order : (a.date < b.date ? 1 : -1); });
+    return out;
+  }
+
+  function shell() {
+    mount.innerHTML = "";
+    refs.head = el("div", { class: "aw-head" });
+    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "수상 분류" });
+    refs.q = el("input", { type: "search", placeholder: "수상명·수상자·대회 검색", "aria-label": "수상 검색" });
+    var search = el("label", { class: "ax-search" }, [
+      el("span", { html: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
+      refs.q
+    ]);
+    refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
+    refs.list = el("div", { class: "aw-timeline" });
+    mount.appendChild(el("div", { class: "ax-root aw" }, [
+      refs.head,
+      el("div", { class: "ax-bar" }, [refs.chips, search, el("span", { class: "ax-grow" }), refs.count]),
+      refs.list
+    ]));
+    refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
+    for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
+  }
+
+  function matches(it, skipCat) {
+    if (!skipCat && state.cat !== "all" && it.cat !== state.cat) return false;
+    if (state.q) {
+      var words = A.fold(state.q).trim().split(" ");
+      for (var i = 0; i < words.length; i++) if (words[i] && it.hay.indexOf(words[i]) === -1) return false;
+    }
+    return true;
+  }
+
+  function renderHead() {
+    var c = { paper: 0, presentation: 0, competition: 0 };
+    state.items.forEach(function (it) { c[it.cat]++; });
+    var years = state.items.map(function (it) { return it.date.slice(0, 4); });
+    refs.head.innerHTML = "";
+    refs.head.appendChild(el("div", { class: "aw-total" }, [
+      el("span", { class: "num", text: String(state.items.length) }),
+      el("span", { class: "lb", text: "Awards · " + years[years.length - 1] + "–" + years[0] })
+    ]));
+    var split = el("div", { class: "aw-split" });
+    CATS.forEach(function (cat) {
+      if (!c[cat.id]) return;
+      split.appendChild(el("div", {}, [el("b", { text: String(c[cat.id]) }),
+        el("span", {}, [el("i", { class: "aw-dot-" + cat.id }), cat.ko])]));
+    });
+    refs.head.appendChild(split);
+  }
+
+  function renderChips() {
+    var counts = { all: 0 };
+    state.items.forEach(function (it) { if (matches(it, true)) { counts.all++; counts[it.cat] = (counts[it.cat] || 0) + 1; } });
+    refs.chips.innerHTML = "";
+    [{ id: "all", lb: "All", ko: "전체" }].concat(CATS).forEach(function (cat) {
+      if (cat.id !== "all" && !state.items.some(function (it) { return it.cat === cat.id; })) return;
+      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.cat === cat.id) }, [
+        el("span", { class: "ko", text: cat.ko }), el("span", { class: "n", text: String(counts[cat.id] || 0) })
+      ]);
+      b.addEventListener("click", function () { state.cat = cat.id; render(); });
+      refs.chips.appendChild(b);
+    });
+  }
+
+  function card(it) {
+    var cat = CAT_BY[it.cat];
+    var rec = el("div", { class: "aw-rec" });
+    rec.appendChild(A.authors(it.recipients));
+    var ev = el("div", { class: "aw-event" }, [it.event, it.organizer ? el("span", { class: "org", text: (it.event ? " · " : "") + it.organizer }) : null]);
+    return el("article", { class: "aw-card", "data-cat": it.cat }, [
+      el("div", { class: "aw-top" }, [el("span", { class: "aw-date", text: it.date.replace(/-/g, ".") }), el("span", { class: "aw-cat", text: cat.lb + " · " + cat.ko })]),
+      el("h4", { class: "aw-name" }, [el("span", { html: MEDAL }), el("span", { text: it.award })]),
+      it.title ? el("div", { class: "aw-title", text: it.title }) : null,
+      it.recipients ? rec : null,
+      (it.event || it.organizer) ? ev : null,
+      el("div", { class: "aw-foot" }, [it.link ? el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: /doi\.org/.test(it.link) ? "DOI" : "LINK" }) : null])
+    ]);
+  }
+
+  function render() {
+    renderChips();
+    var shown = state.items.filter(function (it) { return matches(it); });
+    refs.count.textContent = shown.length + " / " + state.items.length;
+    refs.list.innerHTML = "";
+    if (!shown.length) { refs.list.appendChild(el("p", { class: "pub-empty adam-state", text: "조건에 맞는 수상 내역이 없습니다." })); return; }
+    var groups = [], cur = null;
+    shown.forEach(function (it) {
+      var y = it.date.slice(0, 4);
+      if (!cur || cur.y !== y) { cur = { y: y, items: [] }; groups.push(cur); }
+      cur.items.push(it);
+    });
+    groups.forEach(function (g) {
+      var grid = el("div", { class: "aw-grid" });
+      g.items.forEach(function (it) { grid.appendChild(card(it)); });
+      refs.list.appendChild(el("section", { class: "aw-year ax-in" }, [
+        el("h3", { class: "aw-ylabel" }, [g.y, el("span", { class: "ax-count", text: g.items.length + (g.items.length > 1 ? " awards" : " award") })]),
+        grid
+      ]));
+    });
+  }
+
+  function boot() {
+    shell();
+    A.load("awards", { required: ["date", "award", "recipients", "category"] }).then(function (res) {
+      state.items = normalize(res.rows);
+      if (!state.items.length) { A.status(refs.list, "표시할 수상 내역이 없습니다."); return; }
+      renderHead();
+      render();
+    }).catch(function () { A.status(refs.list, "수상 내역을 불러오지 못했습니다."); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+  </script>
+</body>
+</html>

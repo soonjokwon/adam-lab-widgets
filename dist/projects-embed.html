@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAM Lab · Research Projects</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* ADAM Lab embeddable widgets — design tokens extracted from the
+   home-page hero embed (ADAM Lab Intro, ~187KB inline HTML/SVG on
+   *-atari-embeds.googleusercontent.com / sites.google.com/view/adam-pnu).
+
+   Source :root block (2026-10-08):
+     --ground #FFFFFF  --sheet #FFFFFF  --grid #F0F2F7
+     --line #D8DDE8    --line-soft #E9ECF3
+     --navy #102B86    --blue #0707AA
+     --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
+     --accent #FF9900  --accent-deep #D97E00
+*/
+
+:root {
+  --ground: #ffffff;
+  --sheet: #ffffff;
+  --grid: #f0f2f7;
+  --line: #d8dde8;
+  --line-soft: #e9ecf3;
+  --navy: #102b86;
+  --blue: #0707aa;
+  --ink: #161a2b;
+  --ink-dim: #5a6378;
+  --ink-faint: #9aa3b5;
+  --accent: #ff9900;
+  --accent-deep: #d97e00;
+  --paper: var(--sheet);
+  --muted: var(--ink-dim);
+  --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adam-sheet *,
+  .adam-sheet *::before,
+  .adam-sheet *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ADAM Lab widgets — shared base for the sheet-driven widgets
+   (publications, patents, awards, members, projects, talks, gallery).
+   Palette/fonts come from tokens.css (= hero animation). Each Sites page
+   gets its own layout file on top of this (see widgets/<name>/). */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html {
+  background-color: var(--ground);
+  /* Plain checkerboard grid, ~5% cells (20 across), no border/marks. */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 5vw 5vw;
+  background-attachment: fixed;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ax-root {
+  container-type: inline-size;
+  container-name: ax;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(10px, 2.4vw, 24px) clamp(10px, 2.6vw, 28px) clamp(16px, 3vw, 32px);
+}
+
+/* ---------- toolbar ---------- */
+.ax-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 0;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.ax-bar .ax-grow { flex: 1 1 auto; }
+@container ax (max-width: 600px) {
+  .ax-bar { position: static; }
+}
+
+.ax-chips {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 1px;
+}
+.ax-chips::-webkit-scrollbar { display: none; }
+
+.ax-chip {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-chip:hover { border-color: var(--navy); color: var(--navy); }
+.ax-chip[aria-pressed="true"] {
+  border-color: var(--navy);
+  color: var(--navy);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.ax-chip .n {
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.ax-chip[aria-pressed="true"] .n { color: var(--navy); }
+.ax-chip .ko { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+.ax-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 360px;
+}
+.ax-search input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 30px 0 32px;
+  font: 13px var(--font-body);
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.ax-search input::placeholder { color: var(--ink-faint); }
+.ax-search input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(16, 43, 134, 0.08); }
+.ax-search svg {
+  position: absolute; left: 10px; top: 50%; width: 14px; height: 14px;
+  transform: translateY(-50%); color: var(--ink-faint); pointer-events: none;
+}
+.ax-search .ax-clear {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
+  color: var(--ink-faint); font-size: 16px; line-height: 1;
+}
+.ax-search .ax-clear:hover { color: var(--navy); }
+
+.ax-select {
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: 12px var(--font-mono);
+  color: var(--ink-dim);
+  padding: 0 26px 0 10px;
+  border-radius: 0;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-faint) 50%), linear-gradient(135deg, var(--ink-faint) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.ax-select:focus { border-color: var(--navy); outline: none; }
+
+/* ---------- type ---------- */
+.ax-kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.ax-mono { font-family: var(--font-mono); }
+.ax-dim { color: var(--ink-dim); }
+.ax-faint { color: var(--ink-faint); }
+
+.au-pi { color: var(--ink); font-weight: 700; }
+
+/* ---------- small parts ---------- */
+.ax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  background: #fff;
+  white-space: nowrap;
+}
+.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ax-badge.navy { border-color: var(--navy); color: var(--navy); }
+.ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
+.ax-badge.dash { border-style: dashed; color: var(--blue); border-color: var(--blue); }
+.ax-badge.ko { font-family: var(--font-body); letter-spacing: 0; font-size: 11px; }
+
+.ax-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--navy);
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 4px 7px;
+  line-height: 1;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-link:hover { border-color: var(--navy); background: #f6f8ff; }
+.ax-link::after { content: "↗"; font-size: 10px; }
+
+.ax-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ---------- states ---------- */
+.adam-state {
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: center;
+}
+.ax-skel {
+  height: 64px;
+  margin: 10px 0;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(90deg, #fff 0%, #f6f7fb 50%, #fff 100%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ax-skel { animation: ax-shimmer 1.2s linear infinite; }
+  .ax-in { animation: ax-in 0.4s var(--ease) both; }
+}
+@keyframes ax-shimmer { to { background-position: -200% 0; } }
+@keyframes ax-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Research page (Sites /research) — project cards with period progress. */
+
+.pj-head { display: flex; flex-wrap: wrap; gap: 8px 26px; align-items: flex-end; margin-bottom: 4px; }
+.pj-stat { display: grid; gap: 2px; }
+.pj-stat b {
+  font-family: var(--font-display); font-weight: 700; font-size: clamp(30px, 4.4vw, 42px);
+  line-height: 0.95; color: var(--ink); font-variant-numeric: tabular-nums;
+}
+.pj-stat.on b { color: var(--navy); }
+.pj-stat span { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
+.pj-stat span i { font-style: normal; font-family: var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink-faint); margin-left: 4px; }
+
+.pj-sep { width: 1px; height: 22px; background: var(--line); margin: 0 2px; flex: 0 0 auto; }
+
+.pj-sec { margin-top: 18px; }
+.pj-sh {
+  display: flex; align-items: baseline; gap: 10px;
+  margin: 0 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+}
+.pj-sh .t { font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--navy); letter-spacing: 0.01em; }
+.pj-sh .ko { font-size: 13px; color: var(--ink-dim); }
+.pj-sh .ax-count { margin-left: auto; }
+
+.pj-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+
+.pj-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 14px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--line);
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.pj-card:hover { border-color: var(--navy); box-shadow: 0 10px 22px rgba(16, 43, 134, 0.07); transform: translateY(-2px); }
+.pj-card[data-status="completed"] { background: rgba(255, 255, 255, 0.88); }
+.pj-card[data-status="completed"] .pj-title { color: #2c3247; }
+
+.pj-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 30px; }
+.pj-logo { height: 30px; max-width: 150px; display: flex; align-items: center; }
+.pj-logo img { max-height: 30px; max-width: 150px; object-fit: contain; display: block; }
+.pj-funder-mark {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em; color: var(--ink-dim);
+  border-left: 2px solid var(--line); padding-left: 8px; line-height: 1.3;
+}
+
+.pj-pill {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 8px; border: 1px solid var(--line); color: var(--ink-faint); background: #fff; line-height: 1;
+}
+.pj-pill .ko { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: 11px; }
+.pj-pill.ongoing { border-color: var(--navy); color: #fff; background: var(--navy); }
+.pj-pill.ongoing::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.pj-pill.upcoming { border-color: var(--blue); color: var(--blue); border-style: dashed; }
+@media (prefers-reduced-motion: no-preference) {
+  .pj-pill.ongoing::before { animation: pj-blink 1.8s ease-in-out infinite; }
+}
+@keyframes pj-blink { 50% { opacity: 0.35; } }
+
+.pj-title { margin: 0; font-size: 15px; font-weight: 700; line-height: 1.45; color: var(--ink); }
+.pj-title a { text-decoration: none; }
+.pj-title a:hover { color: var(--navy); }
+.pj-meta { font-size: 12.5px; color: var(--ink-dim); line-height: 1.5; }
+.pj-meta .f { color: var(--blue); font-weight: 500; }
+.pj-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+
+.pj-period { margin-top: auto; padding-top: 6px; }
+.pj-dates { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-dim); letter-spacing: 0.04em; }
+.pj-dates .pct { color: var(--navy); }
+.pj-track { position: relative; height: 4px; margin-top: 5px; background: var(--line-soft); }
+.pj-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--navy); }
+.pj-card[data-status="completed"] .pj-fill { background: var(--ink-faint); }
+.pj-now { position: absolute; top: -3px; width: 2px; height: 10px; background: var(--accent); transform: translateX(-1px); }
+
+/* compact mode (e.g. Team/Recruiting) */
+.pj.compact .pj-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+.pj.compact .pj-sec { margin-top: 4px; }
+
+@container ax (max-width: 520px) {
+  .pj-grid { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .pj-card { padding: 12px; }
+  .pj-sep { display: none; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="adam-projects"></div>
+  <script>
+    window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
+    window.ADAM_INLINE = { "projects": [{"title":"지식 그래프 증강 멀티에이전트 시스템 기반 적층제조 특화 자율 재설계 기술 개발","org_role":"주관기관","researcher_role":"책임연구원","program":"신진연구(유형B)","funder":"한국연구재단","start":"2026-03","end":"2030-02","group":"PNU","status":"","logo":"assets/projects/vIT9qcQZeTF.png","link":""},{"title":"생각으로 하는 제조: LLM 연계 생성형 AI 기반 자율 설계·생산 플랫폼 기술","org_role":"공동기관","researcher_role":"책임연구원","program":"산업기술알키미스트프로젝트사업 (3단계)","funder":"산업통상부","start":"2026-01","end":"2030-12","group":"PNU","status":"","logo":"assets/projects/soDrQmp6rStq.png","link":""},{"title":"디자인-생산공정 충돌요소 예측 및 최적화 솔루션 기술 개발","org_role":"공동기관","researcher_role":"책임연구원","program":"디자인산업기술개발사업","funder":"산업통상부","start":"2025-04","end":"2028-12","group":"PNU","status":"","logo":"assets/projects/soDrQmp6rStq.png","link":""},{"title":"전장 최적배치를 위한 원가 산출 알고리즘 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"삼성중공업","start":"2026-05","end":"2026-10","group":"PNU","status":"","logo":"assets/projects/sonnYg5c7E4C.png","link":""},{"title":"AI 기반 OO OO OO 예측 기술 개발","org_role":"연구용역","researcher_role":"공동연구원","program":"","funder":"한화에어로스페이스","start":"2026","end":"2027","group":"PNU","status":"","logo":"assets/projects/sKzABYRKWhgE.png","link":""},{"title":"10·29 이태원역에 대한 공간밀집 시뮬레이션","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"10·29이태원참사 특별조사위원회","start":"2025-12","end":"2026-02","group":"KIT","status":"","logo":"","link":""},{"title":"타이타늄 3D프린팅 기술을 이용한 수출형 중거리 대전차 정밀 유도 미사일 조종날개 양산 기술 개발","org_role":"위탁기관","researcher_role":"책임연구원","program":"창업성장기술개발사업","funder":"중소벤처기업부","start":"2024-10","end":"2025-09","group":"KIT","status":"","logo":"","link":""},{"title":"생각으로 하는 제조: LLM 연계 생성형 AI 기반 자율 설계·생산 플랫폼 기술","org_role":"공동기관","researcher_role":"책임연구원","program":"산업기술알키미스트프로젝트사업 (2단계)","funder":"산업통상자원부","start":"2025-01","end":"2025-12","group":"KIT","status":"","logo":"","link":""},{"title":"인공지능 기반 최적 대피 경로 안내 기술을 활용한 금오공대 3차원 디지털 트윈 기반 군중 대피 시뮬레이션 시스템 개발","org_role":"주관기관","researcher_role":"책임연구원","program":"산학공동기술개발과제","funder":"국립금오공과대학교 LINC3.0 사업단","start":"2024-06","end":"2024-11","group":"KIT","status":"","logo":"","link":""},{"title":"암모니아를 활용한 수소 항만 구축 방안에 대한 분석","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국기계연구원","start":"2024-05","end":"2024-10","group":"KIT","status":"","logo":"","link":""},{"title":"심층 강화학습을 이용한 기계 조립품 3D CAD 모델의 최적 단순화","org_role":"주관기관","researcher_role":"책임연구원","program":"생애첫연구과제","funder":"한국연구재단","start":"2021-03","end":"2024-02","group":"KIT","status":"","logo":"","link":""},{"title":"전기추진선박 모델의 매쉬 경량화 알고리즘 현황 분석 용역","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국기계연구원","start":"2023-04","end":"2023-11","group":"KIT","status":"","logo":"","link":""},{"title":"적층제조 기술을 이용한 연질 소재 유도탄 탐색기 보호덮개 설계 및 제조 기술 개발","org_role":"주관기관","researcher_role":"공동연구원","program":"산학공동기술개발과제","funder":"금오공과대학교 LINC3.0 사업단","start":"2022-08","end":"2023-01","group":"KIT","status":"","logo":"","link":""},{"title":"제조 디지털 트윈의 연동 기술 및 디지털 쓰레드 적용 방안 연구","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국전자통신연구원","start":"2023-06","end":"2023-11","group":"KIT","status":"","logo":"","link":""},{"title":"제조 디지털 트윈 표준모델 설계를 위한 디지털 쓰레드 기술 적용 방안 연구","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국전자통신연구원","start":"2022-07","end":"2022-11","group":"KIT","status":"","logo":"","link":""},{"title":"분산객체모델 기반 전기장치 구조체 모델링 도구 시제품 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"(사)한국산업데이터표준협회","start":"2023-05","end":"2023-12","group":"KIT","status":"","logo":"","link":""},{"title":"분산객체모델 기반 전기장치 구조체 모델링 도구 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"(사)한국산업데이터표준협회","start":"2022-05","end":"2022-10","group":"KIT","status":"","logo":"","link":""},{"title":"플랜트 3D CAD 시스템 인터페이스 분석","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"고려대학교","start":"2021-06","end":"2021-10","group":"KIT","status":"","logo":"","link":""}] };
+  </script>
+  <script>
+/* ADAM Lab workbook → one tab per widget, read through gviz CSV.
+   Sheet: https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw
+   (공유: 링크가 있는 모든 사용자 = 뷰어). 탭 이름은 아래 키와 정확히 같아야 합니다.
+   A tab that does not exist yet (or is empty / has the wrong header) falls
+   back to the bundled data/<tab>.json automatically — nothing to change here
+   when a tab is added later. Set a value to "" to always use the JSON. */
+window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
+
+(function () {
+  function gviz(tab) {
+    return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
+  }
+  window.ADAM_SHEETS = {
+    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
+    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    publications: gviz("publications"),
+    /* no,title,status,number,date,link,note   status: registered | filed */
+    patents: gviz("patents"),
+    /* date,category,award,recipients,title,event,organizer,link
+       category: paper | presentation | competition */
+    awards: gviz("awards"),
+    /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+    members: gviz("members"),
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    projects: gviz("projects"),
+    /* date,title,venue,location,link */
+    talks: gviz("talks"),
+    /* date,caption,image,group,link   group: PNU | KIT */
+    gallery: gviz("gallery")
+  };
+})();
+
+window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
+
+/* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
+
+   ADAM.load(tab, { required: ["col", ...] })
+     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
+     2) if the request fails, the tab is missing (gviz then silently returns
+        the FIRST tab, so the header is checked against `required`) or the
+        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
+   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
+   for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
+
+   Also exposes helpers shared by every widget: parseCsv, normalizeDate
+   (accepts '2026-08-21', '2026. 8. 21', '26.08.21'), normalizeMonth,
+   safeUrl, asset (repo-relative paths, Google Drive share links), el, debounce. */
+(function () {
+  var ADAM = window.ADAM = window.ADAM || {};
+
+  var script = document.currentScript ||
+    Array.prototype.slice.call(document.scripts).filter(function (s) {
+      return /sheet-loader\.js/.test(s.src);
+    })[0];
+  /* Repo root (…/adam-lab-widgets/) = parent of /shared/. */
+  ADAM.root = window.ADAM_ROOT ||
+    (script && script.src ? new URL("../", script.src).href : new URL("./", location.href).href);
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  ADAM.normalizeDate = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var iso = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
+    var short = s.match(/^(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})$/);
+    if (short) return "20" + short[1] + "-" + pad(short[2]) + "-" + pad(short[3]);
+    /* gviz "Date(2026,7,21)" (month is 0-based) */
+    var gv = s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+    if (gv) return gv[1] + "-" + pad(+gv[2] + 1) + "-" + pad(gv[3]);
+    return "";
+  };
+
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  ADAM.normalizeMonth = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var d = ADAM.normalizeDate(s);
+    if (d) return d.slice(0, 7);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
+    if (m) return m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{2})\.(\d{1,2})$/);
+    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{4})/);
+    return m ? m[1] : "";
+  };
+
+  ADAM.safeUrl = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    try {
+      var url = new URL(raw, ADAM.root);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+    } catch (err) { /* ignore */ }
+    return "";
+  };
+
+  /* Image cell → URL. Repo paths (assets/…) resolve against the Pages root;
+     Drive share links (…/file/d/<id>/view or open?id=<id>) become direct images. */
+  ADAM.asset = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    var id = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{10,})/);
+    if (id) return "https://lh3.googleusercontent.com/d/" + id[1] + "=w800";
+    return ADAM.safeUrl(raw);
+  };
+
+  ADAM.parseCsv = function (text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    var s = String(text || "").replace(/^\uFEFF/, "");
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (s[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return { header: [], rows: [] };
+    var header = rows[0].map(function (h) { return String(h || "").trim().toLowerCase(); });
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
+      var obj = {};
+      for (var c = 0; c < header.length; c++) {
+        if (header[c]) obj[header[c]] = rows[r][c] != null ? String(rows[r][c]).trim() : "";
+      }
+      out.push(obj);
+    }
+    return { header: header, rows: out };
+  };
+
+  function fetchTimeout(url, ms, opts) {
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    opts = opts || {};
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(timer); });
+  }
+
+  ADAM.sheetUrl = function (tab) {
+    var map = window.ADAM_SHEETS || {};
+    if (typeof map[tab] === "string") return map[tab].trim();
+    if (window.ADAM_SHEET_ID) {
+      return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+        "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(tab);
+    }
+    return "";
+  };
+
+  ADAM.load = function (tab, opts) {
+    opts = opts || {};
+    var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
+    var url = ADAM.sheetUrl(tab);
+    var params = new URLSearchParams(location.search);
+    if (params.get("source") === "json") url = "";
+
+    function fromJson() {
+      var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
+      if (Array.isArray(inline) && inline.length) return Promise.resolve({ rows: inline, source: "inline" });
+      return fetchTimeout(ADAM.root + "data/" + tab + ".json", 8000, { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("json " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var list = Array.isArray(data) ? data : (data && data.items) || [];
+          return { rows: list, source: "json" };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson();
+    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("sheet " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        var parsed = ADAM.parseCsv(text);
+        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
+        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
+        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
+        return { rows: parsed.rows, source: "sheet" };
+      })
+      .catch(function (err) {
+        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
+        return fromJson();
+      });
+  };
+
+  /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
+  ADAM.el = function (tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v == null || v === false) return;
+        if (k === "text") node.textContent = v;
+        else if (k === "html") node.innerHTML = v;
+        else if (k === "class") node.className = v;
+        else if (k.slice(0, 2) === "on" && typeof v === "function") node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  };
+
+  ADAM.debounce = function (fn, ms) {
+    var t;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  };
+
+  ADAM.params = new URLSearchParams(location.search);
+
+  /* Normalised text for search (case/space-insensitive, strips * + marks). */
+  ADAM.fold = function (s) {
+    return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
+  };
+
+  /* Lab PI names to emphasise in author lists. */
+  ADAM.PI = ["S. Kwon", "권순조", "Soonjo Kwon"];
+  ADAM.authors = function (text) {
+    var frag = document.createDocumentFragment();
+    String(text || "").split(/,\s*/).forEach(function (name, i, arr) {
+      var clean = name.replace(/[*+]/g, "").trim();
+      var isPI = ADAM.PI.indexOf(clean) !== -1;
+      var span = ADAM.el("span", { class: isPI ? "au au-pi" : "au", text: name.trim() });
+      frag.appendChild(span);
+      if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
+    });
+    return frag;
+  };
+
+  ADAM.status = function (mount, message, kind) {
+    mount.innerHTML = "";
+    mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
+  };
+})();
+
+/* Research projects — sheet tab `projects`.
+   Columns: title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+   status blank → automatic from start/end vs. today (ongoing / completed / upcoming).
+   URL params: ?status=ongoing|completed &group=PNU|KIT &compact=1 (no header/toolbar) */
+(function () {
+  var A = window.ADAM, el = A.el;
+  var mount = document.getElementById("adam-projects");
+  if (!mount) return;
+
+  var GROUPS = { PNU: { t: "Projects @ PNU", ko: "부산대학교" }, KIT: { t: "Projects @ KIT", ko: "국립금오공과대학교" } };
+  var ST = { ongoing: { lb: "Ongoing", ko: "진행중" }, upcoming: { lb: "Upcoming", ko: "예정" }, completed: { lb: "Completed", ko: "종료" } };
+  var p = A.params;
+  var compact = p.get("compact") === "1";
+  var lockGroup = (p.get("group") || "").toUpperCase();
+  var state = { items: [], status: (p.get("status") || "all").toLowerCase(), group: lockGroup || "all" };
+  var refs = {};
+  var now = new Date();
+  var NOW = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0");
+
+  function monthIndex(ym, end) {
+    if (!ym) return null;
+    var y = +ym.slice(0, 4), m = ym.length > 4 ? +ym.slice(5, 7) : (end ? 12 : 1);
+    return y * 12 + (m - 1) + (end ? 1 : 0);
+  }
+
+  function autoStatus(start, end) {
+    var n = monthIndex(NOW), s = monthIndex(start), e = monthIndex(end, true);
+    if (s != null && s > n) return "upcoming";
+    if (e != null && e <= n) return "completed";
+    return "ongoing";
+  }
+
+  function normalize(rows) {
+    var out = [];
+    rows.forEach(function (r, i) {
+      var title = (r.title || "").trim();
+      if (!title) return;
+      var start = A.normalizeMonth(r.start), end = A.normalizeMonth(r.end);
+      var st = String(r.status || "").trim().toLowerCase();
+      st = /진행|ongoing|active/.test(st) ? "ongoing" : /종료|완료|complete|done|finished/.test(st) ? "completed" : /예정|upcoming/.test(st) ? "upcoming" : autoStatus(start, end);
+      var group = String(r.group || "").trim().toUpperCase() || "PNU";
+      if (lockGroup && group !== lockGroup) return;
+      var s = monthIndex(start), e = monthIndex(end, true), n = monthIndex(NOW);
+      var pct = (s != null && e != null && e > s) ? Math.max(0, Math.min(1, (n - s) / (e - s))) : (st === "completed" ? 1 : null);
+      out.push({ title: title, org: r.org_role || "", role: r.researcher_role || "", program: r.program || "", funder: r.funder || "",
+        start: start, end: end, group: group, status: st, pct: pct, logo: A.asset(r.logo), link: A.safeUrl(r.link), order: i });
+    });
+    var rank = { ongoing: 0, upcoming: 1, completed: 2 };
+    out.sort(function (a, b) {
+      if (a.group !== b.group) return a.group === "PNU" ? -1 : b.group === "PNU" ? 1 : (a.group < b.group ? -1 : 1);
+      return a.order - b.order;
+    });
+    out.forEach(function (it) { it.rank = rank[it.status]; });
+    return out;
+  }
+
+  function shell() {
+    mount.innerHTML = "";
+    refs.head = el("div", { class: "pj-head" });
+    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "과제 상태" });
+    refs.gchips = el("div", { class: "ax-chips", role: "group", "aria-label": "소속" });
+    refs.list = el("div", { class: "pj-list" });
+    var bar = el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "pj-sep", "aria-hidden": "true" }), refs.gchips]);
+    mount.appendChild(el("div", { class: "ax-root pj" + (compact ? " compact" : "") }, [compact ? null : refs.head, compact ? null : bar, refs.list]));
+    for (var i = 0; i < 3; i++) refs.list.appendChild(el("div", { class: "ax-skel", style: "height:150px", "aria-hidden": "true" }));
+  }
+
+  function fmt(ym) { return ym ? ym.replace("-", ".") : "—"; }
+
+  function card(it) {
+    var st = ST[it.status];
+    var top = el("div", { class: "pj-top" }, [
+      it.logo ? el("div", { class: "pj-logo" }, [el("img", { src: it.logo, alt: it.funder || "", loading: "lazy" })])
+              : el("div", { class: "pj-funder-mark", text: it.funder }),
+      el("span", { class: "pj-pill " + it.status }, [st.lb, el("span", { class: "ko", text: "· " + st.ko })])
+    ]);
+    var title = el("h4", { class: "pj-title" });
+    if (it.link) title.appendChild(el("a", { href: it.link, target: "_blank", rel: "noopener", text: it.title }));
+    else title.textContent = it.title;
+    var meta = el("div", { class: "pj-meta" }, [
+      it.funder ? el("span", { class: "f", text: it.funder }) : null,
+      it.funder && it.program ? " · " : null,
+      it.program || null
+    ]);
+    var tags = el("div", { class: "pj-tags" }, [
+      it.org ? el("span", { class: "ax-badge ko navy", text: it.org }) : null,
+      it.role ? el("span", { class: "ax-badge ko", text: it.role }) : null
+    ]);
+    var period = el("div", { class: "pj-period" });
+    var dates = el("div", { class: "pj-dates" }, [el("span", { text: fmt(it.start) + " — " + fmt(it.end) })]);
+    if (it.status === "ongoing" && it.pct != null) dates.appendChild(el("span", { class: "pct", text: Math.round(it.pct * 100) + "%" }));
+    period.appendChild(dates);
+    if (it.pct != null) {
+      var track = el("div", { class: "pj-track", role: "img", "aria-label": "진행률 " + Math.round(it.pct * 100) + "%" }, [
+        el("span", { class: "pj-fill", style: "width:" + (it.pct * 100).toFixed(1) + "%" })
+      ]);
+      if (it.status === "ongoing") track.appendChild(el("span", { class: "pj-now", style: "left:" + (it.pct * 100).toFixed(1) + "%" }));
+      period.appendChild(track);
+    }
+    return el("article", { class: "pj-card ax-in", "data-status": it.status }, [top, title, meta, tags, period]);
+  }
+
+  function matches(it, skip) {
+    if (skip !== "status" && state.status !== "all") {
+      if (state.status === "ongoing" ? it.status === "completed" : it.status !== state.status) return false;
+    }
+    if (skip !== "group" && state.group !== "all" && it.group !== state.group) return false;
+    return true;
+  }
+
+  function chipRow(box, list, key) {
+    box.innerHTML = "";
+    list.forEach(function (c) {
+      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state[key] === c.id) }, [
+        c.lb ? el("span", { text: c.lb }) : null, c.ko ? el("span", { class: "ko", text: c.ko }) : null, el("span", { class: "n", text: String(c.n) })
+      ]);
+      b.addEventListener("click", function () { state[key] = c.id; render(); });
+      box.appendChild(b);
+    });
+  }
+
+  function render() {
+    var on = state.items.filter(function (it) { return it.status !== "completed"; }).length;
+    var done = state.items.length - on;
+    refs.head.innerHTML = "";
+    refs.head.appendChild(el("div", { class: "pj-stat on" }, [el("b", { text: String(on) }), el("span", {}, ["Ongoing", el("i", { text: "진행중" })])]));
+    refs.head.appendChild(el("div", { class: "pj-stat" }, [el("b", { text: String(done) }), el("span", {}, ["Completed", el("i", { text: "종료" })])]));
+    refs.head.appendChild(el("div", { class: "pj-stat" }, [el("b", { text: String(state.items.length) }), el("span", {}, ["Total", el("i", { text: "전체 과제" })])]));
+
+    var cnt = function (f) { return state.items.filter(function (it) { return matches(it, "status") && f(it); }).length; };
+    chipRow(refs.chips, [
+      { id: "all", ko: "전체", n: cnt(function () { return true; }) },
+      { id: "ongoing", ko: "진행중", n: cnt(function (it) { return it.status !== "completed"; }) },
+      { id: "completed", ko: "종료", n: cnt(function (it) { return it.status === "completed"; }) }
+    ], "status");
+    var groups = [];
+    state.items.forEach(function (it) { if (groups.indexOf(it.group) === -1) groups.push(it.group); });
+    var gc = function (g) { return state.items.filter(function (it) { return matches(it, "group") && (g === "all" || it.group === g); }).length; };
+    chipRow(refs.gchips, [{ id: "all", lb: "All", n: gc("all") }].concat(groups.map(function (g) { return { id: g, lb: "@" + g, n: gc(g) }; })), "group");
+    refs.gchips.hidden = groups.length < 2;
+
+    refs.list.innerHTML = "";
+    var shown = state.items.filter(function (it) { return matches(it); });
+    if (!shown.length) { refs.list.appendChild(el("p", { class: "adam-state", text: "조건에 맞는 과제가 없습니다." })); return; }
+    groups.forEach(function (g) {
+      var list = shown.filter(function (it) { return it.group === g; });
+      if (!list.length) return;
+      var grid = el("div", { class: "pj-grid" });
+      list.forEach(function (it) { grid.appendChild(card(it)); });
+      var info = GROUPS[g] || { t: "Projects @ " + g, ko: "" };
+      var sec = el("section", { class: "pj-sec" }, [
+        compact ? null : el("h3", { class: "pj-sh" }, [el("span", { class: "t", text: info.t }), el("span", { class: "ko", text: info.ko }), el("span", { class: "ax-count", text: list.length + " projects" })]),
+        grid
+      ]);
+      refs.list.appendChild(sec);
+    });
+  }
+
+  function boot() {
+    shell();
+    A.load("projects", { required: ["title", "funder", "org_role"] }).then(function (res) {
+      state.items = normalize(res.rows);
+      if (!state.items.length) { A.status(refs.list, "표시할 과제가 없습니다."); return; }
+      render();
+    }).catch(function () { A.status(refs.list, "과제 목록을 불러오지 못했습니다."); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+  </script>
+</body>
+</html>

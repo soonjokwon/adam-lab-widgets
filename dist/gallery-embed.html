@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAM Lab · Photos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* ADAM Lab embeddable widgets — design tokens extracted from the
+   home-page hero embed (ADAM Lab Intro, ~187KB inline HTML/SVG on
+   *-atari-embeds.googleusercontent.com / sites.google.com/view/adam-pnu).
+
+   Source :root block (2026-10-08):
+     --ground #FFFFFF  --sheet #FFFFFF  --grid #F0F2F7
+     --line #D8DDE8    --line-soft #E9ECF3
+     --navy #102B86    --blue #0707AA
+     --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
+     --accent #FF9900  --accent-deep #D97E00
+*/
+
+:root {
+  --ground: #ffffff;
+  --sheet: #ffffff;
+  --grid: #f0f2f7;
+  --line: #d8dde8;
+  --line-soft: #e9ecf3;
+  --navy: #102b86;
+  --blue: #0707aa;
+  --ink: #161a2b;
+  --ink-dim: #5a6378;
+  --ink-faint: #9aa3b5;
+  --accent: #ff9900;
+  --accent-deep: #d97e00;
+  --paper: var(--sheet);
+  --muted: var(--ink-dim);
+  --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adam-sheet *,
+  .adam-sheet *::before,
+  .adam-sheet *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ADAM Lab widgets — shared base for the sheet-driven widgets
+   (publications, patents, awards, members, projects, talks, gallery).
+   Palette/fonts come from tokens.css (= hero animation). Each Sites page
+   gets its own layout file on top of this (see widgets/<name>/). */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html {
+  background-color: var(--ground);
+  /* Plain checkerboard grid, ~5% cells (20 across), no border/marks. */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 5vw 5vw;
+  background-attachment: fixed;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ax-root {
+  container-type: inline-size;
+  container-name: ax;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(10px, 2.4vw, 24px) clamp(10px, 2.6vw, 28px) clamp(16px, 3vw, 32px);
+}
+
+/* ---------- toolbar ---------- */
+.ax-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 0;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.ax-bar .ax-grow { flex: 1 1 auto; }
+@container ax (max-width: 600px) {
+  .ax-bar { position: static; }
+}
+
+.ax-chips {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 1px;
+}
+.ax-chips::-webkit-scrollbar { display: none; }
+
+.ax-chip {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-chip:hover { border-color: var(--navy); color: var(--navy); }
+.ax-chip[aria-pressed="true"] {
+  border-color: var(--navy);
+  color: var(--navy);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.ax-chip .n {
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.ax-chip[aria-pressed="true"] .n { color: var(--navy); }
+.ax-chip .ko { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+.ax-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 360px;
+}
+.ax-search input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 30px 0 32px;
+  font: 13px var(--font-body);
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.ax-search input::placeholder { color: var(--ink-faint); }
+.ax-search input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(16, 43, 134, 0.08); }
+.ax-search svg {
+  position: absolute; left: 10px; top: 50%; width: 14px; height: 14px;
+  transform: translateY(-50%); color: var(--ink-faint); pointer-events: none;
+}
+.ax-search .ax-clear {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
+  color: var(--ink-faint); font-size: 16px; line-height: 1;
+}
+.ax-search .ax-clear:hover { color: var(--navy); }
+
+.ax-select {
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: 12px var(--font-mono);
+  color: var(--ink-dim);
+  padding: 0 26px 0 10px;
+  border-radius: 0;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-faint) 50%), linear-gradient(135deg, var(--ink-faint) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.ax-select:focus { border-color: var(--navy); outline: none; }
+
+/* ---------- type ---------- */
+.ax-kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.ax-mono { font-family: var(--font-mono); }
+.ax-dim { color: var(--ink-dim); }
+.ax-faint { color: var(--ink-faint); }
+
+.au-pi { color: var(--ink); font-weight: 700; }
+
+/* ---------- small parts ---------- */
+.ax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  background: #fff;
+  white-space: nowrap;
+}
+.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ax-badge.navy { border-color: var(--navy); color: var(--navy); }
+.ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
+.ax-badge.dash { border-style: dashed; color: var(--blue); border-color: var(--blue); }
+.ax-badge.ko { font-family: var(--font-body); letter-spacing: 0; font-size: 11px; }
+
+.ax-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--navy);
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 4px 7px;
+  line-height: 1;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-link:hover { border-color: var(--navy); background: #f6f8ff; }
+.ax-link::after { content: "↗"; font-size: 10px; }
+
+.ax-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ---------- states ---------- */
+.adam-state {
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: center;
+}
+.ax-skel {
+  height: 64px;
+  margin: 10px 0;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(90deg, #fff 0%, #f6f7fb 50%, #fff 100%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ax-skel { animation: ax-shimmer 1.2s linear infinite; }
+  .ax-in { animation: ax-in 0.4s var(--ease) both; }
+}
+@keyframes ax-shimmer { to { background-position: -200% 0; } }
+@keyframes ax-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Board page (Sites /board) — photo gallery. Card language follows the
+   Latest News cards (white card, 1px line, mono navy date, navy hover). */
+
+.gl-grid { column-gap: 12px; columns: 4 220px; margin-top: 6px; }
+.gl-card {
+  break-inside: avoid;
+  margin: 0 0 12px;
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.95);
+  cursor: zoom-in;
+  overflow: hidden;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.gl-card:hover { border-color: var(--navy); box-shadow: 0 8px 14px rgba(16, 43, 134, 0.06); transform: translateY(-3px); }
+.gl-img { position: relative; background: var(--grid); overflow: hidden; }
+.gl-img img { display: block; width: 100%; height: auto; transition: transform 0.45s var(--ease); }
+.gl-card:hover .gl-img img { transform: scale(1.03); }
+.gl-cap { padding: 9px 11px 10px; display: grid; gap: 3px; }
+.gl-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gl-date { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; color: var(--navy); }
+.gl-tag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim); border: 1px solid var(--line); padding: 2px 6px; background: rgba(255, 255, 255, 0.85); }
+.gl-text { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--ink); }
+
+.gl-year {
+  column-span: all;
+  display: flex; align-items: center; gap: 10px;
+  margin: 8px 0 10px;
+  font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--navy); line-height: 1;
+}
+.gl-year::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+/* lightbox */
+.gl-box {
+  position: fixed; inset: 0; z-index: 100;
+  display: grid; grid-template-rows: auto minmax(0, 1fr) auto;
+  background: rgba(16, 20, 38, 0.92);
+  color: #fff;
+}
+.gl-box-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 10px; }
+.gl-box-top .ax-mono { font-size: 11px; letter-spacing: 0.08em; color: #c9cfdf; }
+.gl-box-stage { position: relative; display: grid; place-items: center; min-height: 0; padding: 0 52px; }
+.gl-box-stage img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); }
+.gl-box-cap { padding: 12px 16px 16px; text-align: center; font-size: 14px; }
+.gl-box-cap .d { font-family: var(--font-mono); font-size: 11px; color: var(--accent); letter-spacing: 0.08em; margin-right: 8px; }
+.gl-btn {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.06); color: #fff; cursor: pointer;
+}
+.gl-btn:hover { border-color: #fff; background: rgba(255, 255, 255, 0.14); }
+.gl-btn svg { width: 14px; height: 14px; }
+.gl-prev, .gl-next { position: absolute; top: 50%; transform: translateY(-50%); }
+.gl-prev { left: 8px; } .gl-next { right: 8px; }
+
+@container ax (max-width: 520px) {
+  .gl-grid { columns: 2; column-gap: 8px; }
+  .gl-card { margin-bottom: 8px; }
+  .gl-text { font-size: 12.5px; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="adam-gallery"></div>
+  <script>
+    window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
+    window.ADAM_INLINE = { "gallery": [{"date":"2026-05-18","caption":"스승의날 기념","image":"assets/gallery/photo-01.jpg","group":"PNU","link":""},{"date":"2026-08-20","caption":"한국CDE학회 2026 하계학술대회 참석 기념","image":"assets/gallery/photo-02.jpg","group":"PNU","link":""},{"date":"2026-08-21","caption":"우수포스터상(박현석)","image":"assets/gallery/photo-03.jpg","group":"PNU","link":""},{"date":"2026-08-20","caption":"한국CDE학회 포스터발표(문광민)","image":"assets/gallery/photo-04.jpg","group":"PNU","link":""},{"date":"2026-08-20","caption":"한국CDE학회 포스터발표(박현석)","image":"assets/gallery/photo-05.jpg","group":"PNU","link":""},{"date":"2026-09-04","caption":"연구실 청소 기념","image":"assets/gallery/photo-06.jpg","group":"PNU","link":""},{"date":"2026-09-09","caption":"오픈랩 행사 기념","image":"assets/gallery/photo-07.jpg","group":"PNU","link":""},{"date":"2025-12-12","caption":"대한기계학회 참석 기념","image":"assets/gallery/photo-08.jpg","group":"KIT","link":""},{"date":"2025-08-12","caption":"금오산 등반","image":"assets/gallery/photo-09.jpg","group":"KIT","link":""},{"date":"2025-08-12","caption":"금오산 등반","image":"assets/gallery/photo-10.jpg","group":"KIT","link":""},{"date":"2025-05-14","caption":"스승의날 기념","image":"assets/gallery/photo-11.jpg","group":"KIT","link":""},{"date":"2025-04-25","caption":"히메지성 관광 기념","image":"assets/gallery/photo-12.jpg","group":"KIT","link":""},{"date":"2024-05-15","caption":"스승의날 원격 축하^^","image":"assets/gallery/photo-13.jpg","group":"KIT","link":""},{"date":"2024-05-15","caption":"스승의날 기념","image":"assets/gallery/photo-14.jpg","group":"KIT","link":""},{"date":"2024-04-02","caption":"교내 벚꽃 구경","image":"assets/gallery/photo-15.jpg","group":"KIT","link":""},{"date":"2024-04-02","caption":"교내 벚꽃 구경","image":"assets/gallery/photo-16.jpg","group":"KIT","link":""},{"date":"2024-04-02","caption":"교내 벚꽃 구경","image":"assets/gallery/photo-17.jpg","group":"KIT","link":""},{"date":"2024-04-02","caption":"교내 벚꽃 구경","image":"assets/gallery/photo-18.jpg","group":"KIT","link":""},{"date":"2024-04-02","caption":"교내 벚꽃 구경","image":"assets/gallery/photo-19.jpg","group":"KIT","link":""},{"date":"2023-05-12","caption":"스승의날 기념","image":"assets/gallery/photo-20.jpg","group":"KIT","link":""},{"date":"2023-11-06","caption":"생일 기념","image":"assets/gallery/photo-21.jpg","group":"KIT","link":""},{"date":"2022-05-17","caption":"스승의날 기념","image":"assets/gallery/photo-22.jpg","group":"KIT","link":""},{"date":"2021-05-12","caption":"스승의날 기념","image":"assets/gallery/photo-23.jpg","group":"KIT","link":""}] };
+  </script>
+  <script>
+/* ADAM Lab workbook → one tab per widget, read through gviz CSV.
+   Sheet: https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw
+   (공유: 링크가 있는 모든 사용자 = 뷰어). 탭 이름은 아래 키와 정확히 같아야 합니다.
+   A tab that does not exist yet (or is empty / has the wrong header) falls
+   back to the bundled data/<tab>.json automatically — nothing to change here
+   when a tab is added later. Set a value to "" to always use the JSON. */
+window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
+
+(function () {
+  function gviz(tab) {
+    return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
+  }
+  window.ADAM_SHEETS = {
+    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
+    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    publications: gviz("publications"),
+    /* no,title,status,number,date,link,note   status: registered | filed */
+    patents: gviz("patents"),
+    /* date,category,award,recipients,title,event,organizer,link
+       category: paper | presentation | competition */
+    awards: gviz("awards"),
+    /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+    members: gviz("members"),
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    projects: gviz("projects"),
+    /* date,title,venue,location,link */
+    talks: gviz("talks"),
+    /* date,caption,image,group,link   group: PNU | KIT */
+    gallery: gviz("gallery")
+  };
+})();
+
+window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
+
+/* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
+
+   ADAM.load(tab, { required: ["col", ...] })
+     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
+     2) if the request fails, the tab is missing (gviz then silently returns
+        the FIRST tab, so the header is checked against `required`) or the
+        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
+   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
+   for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
+
+   Also exposes helpers shared by every widget: parseCsv, normalizeDate
+   (accepts '2026-08-21', '2026. 8. 21', '26.08.21'), normalizeMonth,
+   safeUrl, asset (repo-relative paths, Google Drive share links), el, debounce. */
+(function () {
+  var ADAM = window.ADAM = window.ADAM || {};
+
+  var script = document.currentScript ||
+    Array.prototype.slice.call(document.scripts).filter(function (s) {
+      return /sheet-loader\.js/.test(s.src);
+    })[0];
+  /* Repo root (…/adam-lab-widgets/) = parent of /shared/. */
+  ADAM.root = window.ADAM_ROOT ||
+    (script && script.src ? new URL("../", script.src).href : new URL("./", location.href).href);
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  ADAM.normalizeDate = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var iso = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
+    var short = s.match(/^(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})$/);
+    if (short) return "20" + short[1] + "-" + pad(short[2]) + "-" + pad(short[3]);
+    /* gviz "Date(2026,7,21)" (month is 0-based) */
+    var gv = s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+    if (gv) return gv[1] + "-" + pad(+gv[2] + 1) + "-" + pad(gv[3]);
+    return "";
+  };
+
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  ADAM.normalizeMonth = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var d = ADAM.normalizeDate(s);
+    if (d) return d.slice(0, 7);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
+    if (m) return m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{2})\.(\d{1,2})$/);
+    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{4})/);
+    return m ? m[1] : "";
+  };
+
+  ADAM.safeUrl = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    try {
+      var url = new URL(raw, ADAM.root);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+    } catch (err) { /* ignore */ }
+    return "";
+  };
+
+  /* Image cell → URL. Repo paths (assets/…) resolve against the Pages root;
+     Drive share links (…/file/d/<id>/view or open?id=<id>) become direct images. */
+  ADAM.asset = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    var id = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{10,})/);
+    if (id) return "https://lh3.googleusercontent.com/d/" + id[1] + "=w800";
+    return ADAM.safeUrl(raw);
+  };
+
+  ADAM.parseCsv = function (text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    var s = String(text || "").replace(/^\uFEFF/, "");
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (s[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return { header: [], rows: [] };
+    var header = rows[0].map(function (h) { return String(h || "").trim().toLowerCase(); });
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
+      var obj = {};
+      for (var c = 0; c < header.length; c++) {
+        if (header[c]) obj[header[c]] = rows[r][c] != null ? String(rows[r][c]).trim() : "";
+      }
+      out.push(obj);
+    }
+    return { header: header, rows: out };
+  };
+
+  function fetchTimeout(url, ms, opts) {
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    opts = opts || {};
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(timer); });
+  }
+
+  ADAM.sheetUrl = function (tab) {
+    var map = window.ADAM_SHEETS || {};
+    if (typeof map[tab] === "string") return map[tab].trim();
+    if (window.ADAM_SHEET_ID) {
+      return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+        "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(tab);
+    }
+    return "";
+  };
+
+  ADAM.load = function (tab, opts) {
+    opts = opts || {};
+    var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
+    var url = ADAM.sheetUrl(tab);
+    var params = new URLSearchParams(location.search);
+    if (params.get("source") === "json") url = "";
+
+    function fromJson() {
+      var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
+      if (Array.isArray(inline) && inline.length) return Promise.resolve({ rows: inline, source: "inline" });
+      return fetchTimeout(ADAM.root + "data/" + tab + ".json", 8000, { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("json " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var list = Array.isArray(data) ? data : (data && data.items) || [];
+          return { rows: list, source: "json" };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson();
+    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("sheet " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        var parsed = ADAM.parseCsv(text);
+        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
+        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
+        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
+        return { rows: parsed.rows, source: "sheet" };
+      })
+      .catch(function (err) {
+        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
+        return fromJson();
+      });
+  };
+
+  /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
+  ADAM.el = function (tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v == null || v === false) return;
+        if (k === "text") node.textContent = v;
+        else if (k === "html") node.innerHTML = v;
+        else if (k === "class") node.className = v;
+        else if (k.slice(0, 2) === "on" && typeof v === "function") node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  };
+
+  ADAM.debounce = function (fn, ms) {
+    var t;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  };
+
+  ADAM.params = new URLSearchParams(location.search);
+
+  /* Normalised text for search (case/space-insensitive, strips * + marks). */
+  ADAM.fold = function (s) {
+    return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
+  };
+
+  /* Lab PI names to emphasise in author lists. */
+  ADAM.PI = ["S. Kwon", "권순조", "Soonjo Kwon"];
+  ADAM.authors = function (text) {
+    var frag = document.createDocumentFragment();
+    String(text || "").split(/,\s*/).forEach(function (name, i, arr) {
+      var clean = name.replace(/[*+]/g, "").trim();
+      var isPI = ADAM.PI.indexOf(clean) !== -1;
+      var span = ADAM.el("span", { class: isPI ? "au au-pi" : "au", text: name.trim() });
+      frag.appendChild(span);
+      if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
+    });
+    return frag;
+  };
+
+  ADAM.status = function (mount, message, kind) {
+    mount.innerHTML = "";
+    mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
+  };
+})();
+
+/* Photo gallery — sheet tab `gallery`. Columns: date,caption,image,group,link
+   image: repo path (assets/gallery/…) or a public image URL / Google Drive share link.
+   URL params: ?group=PNU|KIT */
+(function () {
+  var A = window.ADAM, el = A.el;
+  var mount = document.getElementById("adam-gallery");
+  if (!mount) return;
+  var GROUP = { PNU: "ADAM Lab@PNU", KIT: "DADI Lab@KIT" };
+  var state = { items: [], group: (A.params.get("group") || "all").toUpperCase(), open: -1, shown: [] };
+  if (state.group === "ALL") state.group = "all";
+  var refs = {};
+  var ICON = {
+    prev: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.2 2.4 4.6 8l5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+    next: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.8 2.4 11.4 8l-5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+    close: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 3 10 10M13 3 3 13" stroke="currentColor" stroke-width="1.6"/></svg>'
+  };
+
+  function normalize(rows) {
+    var out = [];
+    rows.forEach(function (r, i) {
+      var img = A.asset(r.image), date = A.normalizeDate(r.date);
+      if (!img) return;
+      out.push({ date: date, caption: r.caption || "", image: img, group: String(r.group || "").trim().toUpperCase(), link: A.safeUrl(r.link), order: i });
+    });
+    out.sort(function (a, b) { return a.date === b.date ? a.order - b.order : (a.date < b.date ? 1 : -1); });
+    return out;
+  }
+
+  function shell() {
+    mount.innerHTML = "";
+    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "앨범" });
+    refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
+    refs.grid = el("div", { class: "gl-grid" });
+    mount.appendChild(el("div", { class: "ax-root gl" }, [el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "ax-grow" }), refs.count]), refs.grid]));
+    for (var i = 0; i < 4; i++) refs.grid.appendChild(el("div", { class: "ax-skel", style: "height:180px", "aria-hidden": "true" }));
+  }
+
+  function disp(d) { return d ? d.slice(2).replace(/-/g, ".") : "—"; }
+
+  function render() {
+    var groups = [];
+    state.items.forEach(function (it) { if (it.group && groups.indexOf(it.group) === -1) groups.push(it.group); });
+    refs.chips.innerHTML = "";
+    [{ id: "all", lb: "All" }].concat(groups.map(function (g) { return { id: g, lb: GROUP[g] || g }; })).forEach(function (c) {
+      var n = c.id === "all" ? state.items.length : state.items.filter(function (it) { return it.group === c.id; }).length;
+      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.group === c.id) }, [el("span", { text: c.lb }), el("span", { class: "n", text: String(n) })]);
+      b.addEventListener("click", function () { state.group = c.id; render(); });
+      refs.chips.appendChild(b);
+    });
+    refs.chips.hidden = groups.length < 2;
+    var shown = state.shown = state.items.filter(function (it) { return state.group === "all" || it.group === state.group; });
+    refs.count.textContent = shown.length + " photos";
+    refs.grid.innerHTML = "";
+    var lastY = null;
+    shown.forEach(function (it, i) {
+      var y = it.date ? it.date.slice(0, 4) : "";
+      if (y !== lastY) { refs.grid.appendChild(el("h3", { class: "gl-year", text: y || "—" })); lastY = y; }
+      var card = el("button", { type: "button", class: "gl-card ax-in", "aria-label": (it.caption || "사진") + " 크게 보기" }, [
+        el("div", { class: "gl-img" }, [el("img", { src: it.image, alt: it.caption, loading: i < 8 ? "eager" : "lazy" })]),
+        el("div", { class: "gl-cap" }, [
+          el("div", { class: "gl-top" }, [el("span", { class: "gl-date", text: disp(it.date) }), it.group ? el("span", { class: "gl-tag", text: "@" + it.group }) : null]),
+          it.caption ? el("div", { class: "gl-text", text: it.caption }) : null
+        ])
+      ]);
+      card.addEventListener("click", function () { openBox(i); });
+      refs.grid.appendChild(card);
+    });
+  }
+
+  function openBox(i) {
+    closeBox();
+    state.open = i;
+    var it = state.shown[i];
+    var img = el("img", { src: it.image, alt: it.caption });
+    var prev = el("button", { type: "button", class: "gl-btn gl-prev", "aria-label": "이전 사진", html: ICON.prev });
+    var next = el("button", { type: "button", class: "gl-btn gl-next", "aria-label": "다음 사진", html: ICON.next });
+    var close = el("button", { type: "button", class: "gl-btn", "aria-label": "닫기", html: ICON.close });
+    refs.box = el("div", { class: "gl-box", role: "dialog", "aria-modal": "true", "aria-label": it.caption || "사진" }, [
+      el("div", { class: "gl-box-top" }, [el("span", { class: "ax-mono", text: (i + 1) + " / " + state.shown.length }), close]),
+      el("div", { class: "gl-box-stage" }, [img, prev, next]),
+      el("div", { class: "gl-box-cap" }, [el("span", { class: "d", text: disp(it.date) }), it.caption,
+        it.link ? el("a", { href: it.link, target: "_blank", rel: "noopener", class: "ax-link", style: "margin-left:10px", text: "LINK" }) : null])
+    ]);
+    prev.addEventListener("click", function () { step(-1); });
+    next.addEventListener("click", function () { step(1); });
+    close.addEventListener("click", closeBox);
+    refs.box.addEventListener("click", function (e) { if (e.target === refs.box || e.target.classList.contains("gl-box-stage")) closeBox(); });
+    document.body.appendChild(refs.box);
+    close.focus();
+  }
+  function step(d) { var n = state.shown.length; openBox((state.open + d + n) % n); }
+  function closeBox() { if (refs.box) { refs.box.remove(); refs.box = null; } }
+  document.addEventListener("keydown", function (e) {
+    if (!refs.box) return;
+    if (e.key === "Escape") closeBox();
+    else if (e.key === "ArrowLeft") step(-1);
+    else if (e.key === "ArrowRight") step(1);
+  });
+
+  function boot() {
+    shell();
+    A.load("gallery", { required: ["date", "caption", "image"] }).then(function (res) {
+      state.items = normalize(res.rows);
+      if (!state.items.length) { A.status(refs.grid, "표시할 사진이 없습니다."); return; }
+      render();
+    }).catch(function () { A.status(refs.grid, "사진을 불러오지 못했습니다."); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+  </script>
+</body>
+</html>

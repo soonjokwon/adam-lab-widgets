@@ -12,7 +12,7 @@ items = DATA["items"] if isinstance(DATA, dict) else DATA
 fields = ["date", "title_ko", "title_en", "tag", "link", "image"]
 out = ROOT / "templates" / "sheet" / "news.csv"
 out.parent.mkdir(parents=True, exist_ok=True)
-with out.open("w", encoding="utf-8", newline="") as fh:
+with out.open("w", encoding="utf-8-sig", newline="") as fh:
     writer = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n")
     writer.writeheader()
     for item in items:

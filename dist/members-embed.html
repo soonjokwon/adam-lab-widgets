@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAM Lab · Team</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* ADAM Lab embeddable widgets — design tokens extracted from the
+   home-page hero embed (ADAM Lab Intro, ~187KB inline HTML/SVG on
+   *-atari-embeds.googleusercontent.com / sites.google.com/view/adam-pnu).
+
+   Source :root block (2026-10-08):
+     --ground #FFFFFF  --sheet #FFFFFF  --grid #F0F2F7
+     --line #D8DDE8    --line-soft #E9ECF3
+     --navy #102B86    --blue #0707AA
+     --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
+     --accent #FF9900  --accent-deep #D97E00
+*/
+
+:root {
+  --ground: #ffffff;
+  --sheet: #ffffff;
+  --grid: #f0f2f7;
+  --line: #d8dde8;
+  --line-soft: #e9ecf3;
+  --navy: #102b86;
+  --blue: #0707aa;
+  --ink: #161a2b;
+  --ink-dim: #5a6378;
+  --ink-faint: #9aa3b5;
+  --accent: #ff9900;
+  --accent-deep: #d97e00;
+  --paper: var(--sheet);
+  --muted: var(--ink-dim);
+  --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adam-sheet *,
+  .adam-sheet *::before,
+  .adam-sheet *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ADAM Lab widgets — shared base for the sheet-driven widgets
+   (publications, patents, awards, members, projects, talks, gallery).
+   Palette/fonts come from tokens.css (= hero animation). Each Sites page
+   gets its own layout file on top of this (see widgets/<name>/). */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html {
+  background-color: var(--ground);
+  /* Plain checkerboard grid, ~5% cells (20 across), no border/marks. */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 5vw 5vw;
+  background-attachment: fixed;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ax-root {
+  container-type: inline-size;
+  container-name: ax;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(10px, 2.4vw, 24px) clamp(10px, 2.6vw, 28px) clamp(16px, 3vw, 32px);
+}
+
+/* ---------- toolbar ---------- */
+.ax-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 0;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.ax-bar .ax-grow { flex: 1 1 auto; }
+@container ax (max-width: 600px) {
+  .ax-bar { position: static; }
+}
+
+.ax-chips {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 1px;
+}
+.ax-chips::-webkit-scrollbar { display: none; }
+
+.ax-chip {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-chip:hover { border-color: var(--navy); color: var(--navy); }
+.ax-chip[aria-pressed="true"] {
+  border-color: var(--navy);
+  color: var(--navy);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.ax-chip .n {
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.ax-chip[aria-pressed="true"] .n { color: var(--navy); }
+.ax-chip .ko { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+.ax-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 360px;
+}
+.ax-search input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 30px 0 32px;
+  font: 13px var(--font-body);
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.ax-search input::placeholder { color: var(--ink-faint); }
+.ax-search input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(16, 43, 134, 0.08); }
+.ax-search svg {
+  position: absolute; left: 10px; top: 50%; width: 14px; height: 14px;
+  transform: translateY(-50%); color: var(--ink-faint); pointer-events: none;
+}
+.ax-search .ax-clear {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
+  color: var(--ink-faint); font-size: 16px; line-height: 1;
+}
+.ax-search .ax-clear:hover { color: var(--navy); }
+
+.ax-select {
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: 12px var(--font-mono);
+  color: var(--ink-dim);
+  padding: 0 26px 0 10px;
+  border-radius: 0;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-faint) 50%), linear-gradient(135deg, var(--ink-faint) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.ax-select:focus { border-color: var(--navy); outline: none; }
+
+/* ---------- type ---------- */
+.ax-kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.ax-mono { font-family: var(--font-mono); }
+.ax-dim { color: var(--ink-dim); }
+.ax-faint { color: var(--ink-faint); }
+
+.au-pi { color: var(--ink); font-weight: 700; }
+
+/* ---------- small parts ---------- */
+.ax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  background: #fff;
+  white-space: nowrap;
+}
+.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ax-badge.navy { border-color: var(--navy); color: var(--navy); }
+.ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
+.ax-badge.dash { border-style: dashed; color: var(--blue); border-color: var(--blue); }
+.ax-badge.ko { font-family: var(--font-body); letter-spacing: 0; font-size: 11px; }
+
+.ax-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--navy);
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 4px 7px;
+  line-height: 1;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-link:hover { border-color: var(--navy); background: #f6f8ff; }
+.ax-link::after { content: "↗"; font-size: 10px; }
+
+.ax-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ---------- states ---------- */
+.adam-state {
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: center;
+}
+.ax-skel {
+  height: 64px;
+  margin: 10px 0;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(90deg, #fff 0%, #f6f7fb 50%, #fff 100%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ax-skel { animation: ax-shimmer 1.2s linear infinite; }
+  .ax-in { animation: ax-in 0.4s var(--ease) both; }
+}
+@keyframes ax-shimmer { to { background-position: -200% 0; } }
+@keyframes ax-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Team page (Sites /team) — member gallery grouped by role, alumni toggle. */
+
+.mb-pi {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 20px;
+  align-items: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--navy);
+  margin: 6px 0 4px;
+}
+.mb-pi .mb-photo { aspect-ratio: 1 / 1; }
+.mb-pi .nm { margin: 6px 0 0; font-size: 26px; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+.mb-pi .en { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--navy); margin-left: 8px; letter-spacing: 0.01em; }
+.mb-pi .pos { margin-top: 6px; font-size: 14px; color: var(--ink); }
+.mb-pi .aff { margin-top: 2px; font-size: 13px; color: var(--ink-dim); }
+.mb-pi .act { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.mb-pi .act a.mail { text-transform: none; letter-spacing: 0.02em; }
+.mb-pi .act a.mail::after { content: "✉"; }
+
+.mb-sec { margin-top: 22px; }
+.mb-sh {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding-bottom: 8px;
+  margin: 0 0 12px;
+  border-bottom: 1px solid var(--line);
+}
+.mb-sh .ko { font-size: 15px; font-weight: 700; color: var(--ink); }
+.mb-sh .ax-count { margin-left: auto; }
+
+.mb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(156px, 1fr));
+  gap: 12px;
+}
+
+.mb-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), transform 0.18s var(--ease);
+}
+.mb-card:hover { border-color: var(--navy); box-shadow: 0 10px 22px rgba(16, 43, 134, 0.08); transform: translateY(-2px); }
+.mb-photo {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  background: var(--grid);
+  overflow: hidden;
+}
+.mb-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 22%;
+  display: block;
+  transition: transform 0.4s var(--ease);
+}
+.mb-card:hover .mb-photo img { transform: scale(1.035); }
+.mb-initial {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 44px; color: var(--navy);
+  background:
+    linear-gradient(var(--line-soft) 1px, transparent 1px) 0 0 / 20% 20%,
+    linear-gradient(90deg, var(--line-soft) 1px, transparent 1px) 0 0 / 20% 20%,
+    #f7f8fc;
+}
+.mb-body { padding: 10px 12px 12px; display: grid; gap: 2px; }
+.mb-name { font-size: 15px; font-weight: 700; line-height: 1.3; }
+.mb-en { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--navy); letter-spacing: 0.01em; }
+.mb-pos { font-size: 12.5px; color: var(--ink-dim); }
+.mb-since { margin-top: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: uppercase; }
+.mb-since b { color: var(--navy); font-weight: 500; }
+
+.mb-join {
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.7);
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 220px;
+  padding: 16px;
+  gap: 8px;
+}
+.mb-join .plus {
+  width: 46px; height: 46px; border: 1px solid var(--navy); color: var(--navy);
+  display: grid; place-items: center; font-family: var(--font-display); font-size: 26px; line-height: 1;
+  transition: background 0.18s var(--ease), color 0.18s var(--ease);
+}
+.mb-join:hover .plus { background: var(--navy); color: #fff; }
+.mb-join .t { font-family: var(--font-display); font-weight: 600; font-size: 14px; color: var(--navy); }
+.mb-join .s { font-size: 12px; color: var(--ink-dim); }
+
+/* alumni */
+.mb-alumni-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 8px;
+}
+.mb-alum {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid var(--line);
+}
+.mb-alum .av {
+  width: 38px; height: 38px; display: grid; place-items: center;
+  border: 1px solid var(--line); background: #f7f8fc;
+  font-family: var(--font-display); font-weight: 700; font-size: 16px; color: var(--navy);
+  overflow: hidden;
+}
+.mb-alum .av img { width: 100%; height: 100%; object-fit: cover; }
+.mb-alum .n { font-weight: 700; font-size: 14px; }
+.mb-alum .h { font-size: 12px; color: var(--ink-dim); line-height: 1.45; }
+.mb-alum .a { margin-top: 3px; font-size: 12px; color: var(--blue); }
+.mb-alum .a::before { content: "→ "; color: var(--ink-faint); font-family: var(--font-mono); }
+.mb-lab { margin: 4px 0 8px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: uppercase; }
+
+@container ax (max-width: 520px) {
+  .mb-pi { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; padding: 12px; }
+  .mb-pi .nm { font-size: 21px; }
+  .mb-pi .en { display: block; margin: 2px 0 0; }
+  .mb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .mb-body { padding: 8px 10px 10px; }
+  .mb-join { min-height: 160px; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="adam-members"></div>
+  <script>
+    window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
+    window.ADAM_INLINE = { "members": [{"name_ko":"권순조","name_en":"Soonjo Kwon","role":"professor","position":"조교수","start":"2026-03","end":"","status":"current","photo":"assets/members/member-01.jpg","email":"soonjo.kwon@pusan.ac.kr","link":"https://sites.google.com/view/adam-pnu/team/professor","affiliation":"부산대학교 기계공학부 (지능형제조시스템전공)","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"","name_en":"Dr. Ragul Gandhi","role":"postdoc","position":"박사후연구원","start":"2026-08","end":"","status":"current","photo":"assets/members/member-02.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"전예성","name_en":"","role":"ms","position":"석사과정(금오공대)","start":"2025-03","end":"","status":"current","photo":"assets/members/member-03.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"박현석","name_en":"","role":"ms-phd","position":"석박사통합과정","start":"2026-09","end":"","status":"current","photo":"assets/members/member-04.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"김정현","name_en":"","role":"ms","position":"석사과정","start":"2026-09","end":"","status":"current","photo":"assets/members/member-05.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"예브게니 유가이","name_en":"","role":"ms","position":"석사과정","start":"2026-09","end":"","status":"current","photo":"assets/members/member-06.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"김동빈","name_en":"","role":"undergrad","position":"학사과정","start":"2026-03","end":"","status":"current","photo":"assets/members/member-07.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"문광민","name_en":"","role":"undergrad","position":"학사과정","start":"2026-03","end":"","status":"current","photo":"assets/members/member-08.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"심현수","name_en":"","role":"undergrad","position":"학사과정","start":"2026-03","end":"","status":"current","photo":"assets/members/member-09.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"박우준","name_en":"","role":"undergrad","position":"학사과정","start":"2026-04","end":"","status":"current","photo":"assets/members/member-10.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"김보성","name_en":"","role":"undergrad","position":"학사과정","start":"2026-05","end":"","status":"current","photo":"assets/members/member-11.jpg","email":"","link":"","affiliation":"","history":"","lab":"ADAM Lab@PNU"},{"name_ko":"김군찬","name_en":"","role":"ms","position":"석사 졸업","start":"2023-03","end":"2026-02","status":"alumni","photo":"","email":"","link":"","affiliation":"(주)나비프라","history":"학부 연구생 (2023.03 ~ 2024.02), 석사 졸업 (2024.03 ~ 2026.02)","lab":"DADI Lab@KIT"},{"name_ko":"고민석","name_en":"","role":"ms","position":"석사 졸업","start":"2022-08","end":"2025-02","status":"alumni","photo":"","email":"","link":"","affiliation":"한화오션(주) 설계정보팀","history":"학부 연구생 (2022.08 ~ 2023.02), 석사 졸업 (2023.03 ~ 2025.02)","lab":"DADI Lab@KIT"},{"name_ko":"윤영준","name_en":"","role":"ms","position":"석사과정","start":"2022-02","end":"2024-08","status":"alumni","photo":"","email":"","link":"","affiliation":"한국화낙(주)","history":"학부 연구생 (2022.02 ~ 2024.02), 석사과정 (2024.03 ~ 2024.08)","lab":"DADI Lab@KIT"},{"name_ko":"한혜련","name_en":"","role":"ms","position":"석사과정","start":"2022-09","end":"2023-08","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"석사과정 (2022.09 ~ 2023.08)","lab":"DADI Lab@KIT"},{"name_ko":"이초빈","name_en":"","role":"undergrad","position":"학부 연구생","start":"2025-01","end":"2026-02","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"학부 연구생 (2025.01 ~ 2026.02)","lab":"DADI Lab@KIT"},{"name_ko":"김태길","name_en":"","role":"undergrad","position":"학부 연구생","start":"2025-06","end":"2026-01","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"학부 연구생 (2025.06 ~ 2026.01)","lab":"DADI Lab@KIT"},{"name_ko":"한서희","name_en":"","role":"undergrad","position":"학부 연구생","start":"2024-01","end":"2025-06","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"학부 연구생 (2024.01 ~ 2025.06)","lab":"DADI Lab@KIT"},{"name_ko":"정순겸","name_en":"","role":"undergrad","position":"학부 연구생","start":"2024-01","end":"2024-11","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"학부 연구생 (2024.01 ~ 2024.11)","lab":"DADI Lab@KIT"},{"name_ko":"김재연","name_en":"","role":"undergrad","position":"학부 연구생","start":"2022-02","end":"2024-02","status":"alumni","photo":"","email":"","link":"","affiliation":"LS이모빌리티솔루션(주)","history":"학부 연구생 (2022.02 ~ 2024.02)","lab":"DADI Lab@KIT"},{"name_ko":"이상명","name_en":"","role":"undergrad","position":"학부 연구생","start":"2022-04","end":"2023-06","status":"alumni","photo":"","email":"","link":"","affiliation":"(주)THN 하네스 와이어링 설계팀","history":"학부 연구생 (2022.04 ~ 2023.06)","lab":"DADI Lab@KIT"},{"name_ko":"이주은","name_en":"","role":"undergrad","position":"학부 연구생","start":"2021-04","end":"2022-03","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"학부 연구생 (2021.04 ~ 2022.03)","lab":"DADI Lab@KIT"},{"name_ko":"노태환","name_en":"","role":"undergrad","position":"학부 연구생","start":"2021-03","end":"2022-02","status":"alumni","photo":"","email":"","link":"","affiliation":"","history":"학부 연구생 (2021.03 ~ 2022.02)","lab":"DADI Lab@KIT"},{"name_ko":"김현식","name_en":"","role":"undergrad","position":"학부 연구생","start":"2021-03","end":"2022-08","status":"alumni","photo":"","email":"","link":"","affiliation":"한화오션(주) (구 DSME정보시스템(주)) 설계정보팀","history":"학부 연구생 (2021.03 ~ 2022.08)","lab":"DADI Lab@KIT"}] };
+  </script>
+  <script>
+/* ADAM Lab workbook → one tab per widget, read through gviz CSV.
+   Sheet: https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw
+   (공유: 링크가 있는 모든 사용자 = 뷰어). 탭 이름은 아래 키와 정확히 같아야 합니다.
+   A tab that does not exist yet (or is empty / has the wrong header) falls
+   back to the bundled data/<tab>.json automatically — nothing to change here
+   when a tab is added later. Set a value to "" to always use the JSON. */
+window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
+
+(function () {
+  function gviz(tab) {
+    return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
+  }
+  window.ADAM_SHEETS = {
+    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
+    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    publications: gviz("publications"),
+    /* no,title,status,number,date,link,note   status: registered | filed */
+    patents: gviz("patents"),
+    /* date,category,award,recipients,title,event,organizer,link
+       category: paper | presentation | competition */
+    awards: gviz("awards"),
+    /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+    members: gviz("members"),
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    projects: gviz("projects"),
+    /* date,title,venue,location,link */
+    talks: gviz("talks"),
+    /* date,caption,image,group,link   group: PNU | KIT */
+    gallery: gviz("gallery")
+  };
+})();
+
+window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
+
+/* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
+
+   ADAM.load(tab, { required: ["col", ...] })
+     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
+     2) if the request fails, the tab is missing (gviz then silently returns
+        the FIRST tab, so the header is checked against `required`) or the
+        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
+   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
+   for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
+
+   Also exposes helpers shared by every widget: parseCsv, normalizeDate
+   (accepts '2026-08-21', '2026. 8. 21', '26.08.21'), normalizeMonth,
+   safeUrl, asset (repo-relative paths, Google Drive share links), el, debounce. */
+(function () {
+  var ADAM = window.ADAM = window.ADAM || {};
+
+  var script = document.currentScript ||
+    Array.prototype.slice.call(document.scripts).filter(function (s) {
+      return /sheet-loader\.js/.test(s.src);
+    })[0];
+  /* Repo root (…/adam-lab-widgets/) = parent of /shared/. */
+  ADAM.root = window.ADAM_ROOT ||
+    (script && script.src ? new URL("../", script.src).href : new URL("./", location.href).href);
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  ADAM.normalizeDate = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var iso = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
+    var short = s.match(/^(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})$/);
+    if (short) return "20" + short[1] + "-" + pad(short[2]) + "-" + pad(short[3]);
+    /* gviz "Date(2026,7,21)" (month is 0-based) */
+    var gv = s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+    if (gv) return gv[1] + "-" + pad(+gv[2] + 1) + "-" + pad(gv[3]);
+    return "";
+  };
+
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  ADAM.normalizeMonth = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var d = ADAM.normalizeDate(s);
+    if (d) return d.slice(0, 7);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
+    if (m) return m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{2})\.(\d{1,2})$/);
+    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{4})/);
+    return m ? m[1] : "";
+  };
+
+  ADAM.safeUrl = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    try {
+      var url = new URL(raw, ADAM.root);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+    } catch (err) { /* ignore */ }
+    return "";
+  };
+
+  /* Image cell → URL. Repo paths (assets/…) resolve against the Pages root;
+     Drive share links (…/file/d/<id>/view or open?id=<id>) become direct images. */
+  ADAM.asset = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    var id = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{10,})/);
+    if (id) return "https://lh3.googleusercontent.com/d/" + id[1] + "=w800";
+    return ADAM.safeUrl(raw);
+  };
+
+  ADAM.parseCsv = function (text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    var s = String(text || "").replace(/^\uFEFF/, "");
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (s[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return { header: [], rows: [] };
+    var header = rows[0].map(function (h) { return String(h || "").trim().toLowerCase(); });
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
+      var obj = {};
+      for (var c = 0; c < header.length; c++) {
+        if (header[c]) obj[header[c]] = rows[r][c] != null ? String(rows[r][c]).trim() : "";
+      }
+      out.push(obj);
+    }
+    return { header: header, rows: out };
+  };
+
+  function fetchTimeout(url, ms, opts) {
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    opts = opts || {};
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(timer); });
+  }
+
+  ADAM.sheetUrl = function (tab) {
+    var map = window.ADAM_SHEETS || {};
+    if (typeof map[tab] === "string") return map[tab].trim();
+    if (window.ADAM_SHEET_ID) {
+      return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+        "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(tab);
+    }
+    return "";
+  };
+
+  ADAM.load = function (tab, opts) {
+    opts = opts || {};
+    var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
+    var url = ADAM.sheetUrl(tab);
+    var params = new URLSearchParams(location.search);
+    if (params.get("source") === "json") url = "";
+
+    function fromJson() {
+      var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
+      if (Array.isArray(inline) && inline.length) return Promise.resolve({ rows: inline, source: "inline" });
+      return fetchTimeout(ADAM.root + "data/" + tab + ".json", 8000, { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("json " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var list = Array.isArray(data) ? data : (data && data.items) || [];
+          return { rows: list, source: "json" };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson();
+    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("sheet " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        var parsed = ADAM.parseCsv(text);
+        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
+        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
+        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
+        return { rows: parsed.rows, source: "sheet" };
+      })
+      .catch(function (err) {
+        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
+        return fromJson();
+      });
+  };
+
+  /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
+  ADAM.el = function (tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v == null || v === false) return;
+        if (k === "text") node.textContent = v;
+        else if (k === "html") node.innerHTML = v;
+        else if (k === "class") node.className = v;
+        else if (k.slice(0, 2) === "on" && typeof v === "function") node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  };
+
+  ADAM.debounce = function (fn, ms) {
+    var t;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  };
+
+  ADAM.params = new URLSearchParams(location.search);
+
+  /* Normalised text for search (case/space-insensitive, strips * + marks). */
+  ADAM.fold = function (s) {
+    return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
+  };
+
+  /* Lab PI names to emphasise in author lists. */
+  ADAM.PI = ["S. Kwon", "권순조", "Soonjo Kwon"];
+  ADAM.authors = function (text) {
+    var frag = document.createDocumentFragment();
+    String(text || "").split(/,\s*/).forEach(function (name, i, arr) {
+      var clean = name.replace(/[*+]/g, "").trim();
+      var isPI = ADAM.PI.indexOf(clean) !== -1;
+      var span = ADAM.el("span", { class: isPI ? "au au-pi" : "au", text: name.trim() });
+      frag.appendChild(span);
+      if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
+    });
+    return frag;
+  };
+
+  ADAM.status = function (mount, message, kind) {
+    mount.innerHTML = "";
+    mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
+  };
+})();
+
+/* Team — sheet tab `members`.
+   Columns: name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+   role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni
+   URL params: ?alumni=1 (open alumni) &join=0 (hide "We're looking for you" cards) */
+(function () {
+  var A = window.ADAM, el = A.el;
+  var mount = document.getElementById("adam-members");
+  if (!mount) return;
+
+  var RECRUIT = "https://sites.google.com/view/adam-pnu/team/recruiting";
+  var SECTIONS = [
+    { id: "researcher", roles: ["postdoc", "researcher"], en: "Researchers", ko: "연구원" },
+    { id: "graduate", roles: ["phd", "ms-phd", "ms"], en: "Graduate Students", ko: "대학원생", join: true },
+    { id: "undergrad", roles: ["undergrad"], en: "Undergraduate Researchers", ko: "학부연구생", join: true }
+  ];
+  var ROLE_ALIAS = { "교수": "professor", "책임자": "professor", pi: "professor", "박사후연구원": "postdoc", "연구원": "researcher",
+    "박사과정": "phd", "석박사통합과정": "ms-phd", "통합과정": "ms-phd", "석사과정": "ms", master: "ms", "학부연구생": "undergrad", "학사과정": "undergrad", undergraduate: "undergrad" };
+  var ROLE_ORDER = { professor: 0, postdoc: 1, researcher: 2, phd: 3, "ms-phd": 4, ms: 5, undergrad: 6 };
+  var state = { items: [], filter: "all", alumni: A.params.get("alumni") === "1" };
+  var showJoin = A.params.get("join") !== "0";
+  var refs = {};
+
+  function canonRole(v) {
+    var s = String(v || "").trim().toLowerCase().replace(/[\s_]+/g, "-");
+    if (ROLE_ORDER[s] != null) return s;
+    return ROLE_ALIAS[s] || ROLE_ALIAS[String(v || "").trim()] || "";
+  }
+  function ymText(v) { var m = A.normalizeMonth(v); return m ? m.replace("-", ".") : ""; }
+
+  function normalize(rows) {
+    var out = [];
+    rows.forEach(function (r, i) {
+      var name = (r.name_ko || "").trim() || (r.name_en || "").trim();
+      if (!name) return;
+      var status = /alum|졸업/.test(String(r.status || "").toLowerCase()) ? "alumni" : "current";
+      out.push({ ko: (r.name_ko || "").trim(), en: (r.name_en || "").trim(), name: name, role: canonRole(r.role) || "undergrad",
+        position: r.position || "", start: ymText(r.start), end: ymText(r.end), status: status,
+        photo: A.asset(r.photo), email: (r.email || "").trim(), link: A.safeUrl(r.link),
+        affiliation: r.affiliation || "", history: r.history || "", lab: r.lab || "", order: i });
+    });
+    return out;
+  }
+
+  function photo(it, cls) {
+    var box = el("div", { class: cls || "mb-photo" });
+    var initial = el("span", { class: "mb-initial", text: (it.ko || it.en.replace(/^Dr\.?\s*/, "")).charAt(0), "aria-hidden": "true" });
+    box.appendChild(initial);
+    if (it.photo) {
+      var img = el("img", { src: it.photo, alt: it.name + " 사진" });
+      img.addEventListener("load", function () { initial.hidden = true; });
+      img.addEventListener("error", function () { img.remove(); initial.hidden = false; });
+      box.appendChild(img);
+    }
+    return box;
+  }
+
+  function shell() {
+    mount.innerHTML = "";
+    refs.chips = el("div", { class: "ax-chips", role: "group", "aria-label": "구성원 분류" });
+    refs.alumni = el("button", { type: "button", class: "ax-chip", "aria-pressed": "false" });
+    refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
+    refs.body = el("div", { class: "mb-body-wrap" });
+    mount.appendChild(el("div", { class: "ax-root mb" }, [
+      el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "ax-grow" }), refs.alumni, refs.count]),
+      refs.body
+    ]));
+    refs.alumni.addEventListener("click", function () {
+      state.alumni = !state.alumni;
+      render();
+      if (state.alumni && refs.alumniSec) refs.alumniSec.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    for (var i = 0; i < 3; i++) refs.body.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true", style: "height:120px" }));
+  }
+
+  function piCard(it) {
+    var since = it.start ? it.start + " – " + (it.end || "현재") : "";
+    return el("article", { class: "mb-pi ax-in" }, [
+      photo(it),
+      el("div", {}, [
+        el("div", { class: "ax-kicker", text: "Principal Investigator · 책임자" }),
+        el("h3", { class: "nm" }, [it.ko || it.en, it.ko && it.en ? el("span", { class: "en", text: it.en }) : null]),
+        el("div", { class: "pos", text: [it.position, since && "(" + since + ")"].filter(Boolean).join(" ") }),
+        it.affiliation ? el("div", { class: "aff", text: it.affiliation }) : null,
+        el("div", { class: "act" }, [
+          it.email ? el("a", { class: "ax-link mail", href: "mailto:" + it.email, text: it.email, target: "_top" }) : null,
+          it.link ? el("a", { class: "ax-link", href: it.link, target: "_top", text: "Profile" }) : null
+        ])
+      ])
+    ]);
+  }
+
+  function memberCard(it) {
+    var tag = it.link ? "a" : "article";
+    var attrs = { class: "mb-card ax-in" };
+    if (it.link) { attrs.href = it.link; attrs.target = "_top"; }
+    if (it.email && !it.link) { tag = "a"; attrs.href = "mailto:" + it.email; attrs.target = "_top"; }
+    return el(tag, attrs, [
+      photo(it),
+      el("div", { class: "mb-body" }, [
+        el("div", { class: "mb-name", text: it.ko || it.en }),
+        it.ko && it.en ? el("div", { class: "mb-en", text: it.en }) : null,
+        it.position ? el("div", { class: "mb-pos", text: it.position }) : null,
+        it.start ? el("div", { class: "mb-since" }, ["Since ", el("b", { text: it.start })]) : null
+      ])
+    ]);
+  }
+
+  function joinCard() {
+    return el("a", { class: "mb-card mb-join", href: RECRUIT, target: "_top" }, [
+      el("span", { class: "plus", text: "+", "aria-hidden": "true" }),
+      el("span", { class: "t", text: "We're looking for you" }),
+      el("span", { class: "s", text: "함께할 학생을 모집합니다" })
+    ]);
+  }
+
+  function renderChips(current) {
+    var counts = { all: current.length };
+    var pi = current.filter(function (it) { return it.role === "professor"; }).length;
+    counts.pi = pi;
+    SECTIONS.forEach(function (s) { counts[s.id] = current.filter(function (it) { return s.roles.indexOf(it.role) !== -1; }).length; });
+    refs.chips.innerHTML = "";
+    [{ id: "all", ko: "전체" }, { id: "pi", ko: "교수" }].concat(SECTIONS).forEach(function (s) {
+      if (s.id !== "all" && !counts[s.id]) return;
+      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.filter === s.id) }, [
+        el("span", { class: "ko", text: s.ko }), el("span", { class: "n", text: String(counts[s.id]) })
+      ]);
+      b.addEventListener("click", function () { state.filter = s.id; render(); });
+      refs.chips.appendChild(b);
+    });
+  }
+
+  function render() {
+    var current = state.items.filter(function (it) { return it.status === "current"; });
+    var alumni = state.items.filter(function (it) { return it.status === "alumni"; });
+    renderChips(current);
+    refs.alumni.innerHTML = "";
+    refs.alumni.appendChild(el("span", { class: "ko", text: state.alumni ? "졸업생 숨기기" : "졸업생 보기" }));
+    refs.alumni.appendChild(el("span", { class: "n", text: String(alumni.length) }));
+    refs.alumni.setAttribute("aria-pressed", String(state.alumni));
+    refs.alumni.hidden = !alumni.length;
+    refs.count.textContent = current.length + " members";
+
+    refs.body.innerHTML = "";
+    var f = state.filter;
+    if (f === "all" || f === "pi") {
+      current.filter(function (it) { return it.role === "professor"; }).forEach(function (it) { refs.body.appendChild(piCard(it)); });
+    }
+    SECTIONS.forEach(function (s) {
+      if (f !== "all" && f !== s.id) return;
+      var list = current.filter(function (it) { return s.roles.indexOf(it.role) !== -1; });
+      if (!list.length && !(s.join && showJoin)) return;
+      var grid = el("div", { class: "mb-grid" });
+      list.forEach(function (it) { grid.appendChild(memberCard(it)); });
+      if (s.join && showJoin) grid.appendChild(joinCard());
+      refs.body.appendChild(el("section", { class: "mb-sec" }, [
+        el("h3", { class: "mb-sh" }, [el("span", { class: "ax-kicker", text: s.en }), el("span", { class: "ko", text: s.ko }),
+          el("span", { class: "ax-count", text: String(list.length) })]),
+        grid
+      ]));
+    });
+
+    refs.alumniSec = null;
+    if (state.alumni && alumni.length) {
+      var sec = el("section", { class: "mb-sec ax-in" }, [
+        el("h3", { class: "mb-sh" }, [el("span", { class: "ax-kicker", text: "Alumni" }), el("span", { class: "ko", text: "졸업생" }),
+          el("span", { class: "ax-count", text: String(alumni.length) })])
+      ]);
+      var labs = [];
+      alumni.forEach(function (it) { if (labs.indexOf(it.lab) === -1) labs.push(it.lab); });
+      labs.forEach(function (lab) {
+        if (lab) sec.appendChild(el("div", { class: "mb-lab", text: lab }));
+        var grid = el("div", { class: "mb-alumni-grid" });
+        alumni.filter(function (it) { return it.lab === lab; }).forEach(function (it) {
+          var av = el("div", { class: "av", "aria-hidden": "true", text: it.photo ? "" : (it.ko || it.en).charAt(0) });
+          if (it.photo) av.appendChild(el("img", { src: it.photo, alt: "", loading: "lazy" }));
+          var hist = it.history || [it.position, it.start && "(" + it.start + " ~ " + it.end + ")"].filter(Boolean).join(" ");
+          grid.appendChild(el("div", { class: "mb-alum" }, [av, el("div", {}, [
+            el("div", { class: "n", text: it.ko || it.en }),
+            hist ? el("div", { class: "h", text: hist }) : null,
+            it.affiliation ? el("div", { class: "a", text: it.affiliation }) : null
+          ])]));
+        });
+        sec.appendChild(grid);
+      });
+      refs.alumniSec = sec;
+      refs.body.appendChild(sec);
+    }
+  }
+
+  function boot() {
+    shell();
+    A.load("members", { required: ["name_ko", "role", "status"] }).then(function (res) {
+      state.items = normalize(res.rows);
+      if (!state.items.length) { A.status(refs.body, "표시할 구성원이 없습니다."); return; }
+      render();
+    }).catch(function () { A.status(refs.body, "구성원 목록을 불러오지 못했습니다."); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+  </script>
+</body>
+</html>

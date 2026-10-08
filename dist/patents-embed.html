@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAM Lab · Patents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+/* ADAM Lab embeddable widgets — design tokens extracted from the
+   home-page hero embed (ADAM Lab Intro, ~187KB inline HTML/SVG on
+   *-atari-embeds.googleusercontent.com / sites.google.com/view/adam-pnu).
+
+   Source :root block (2026-10-08):
+     --ground #FFFFFF  --sheet #FFFFFF  --grid #F0F2F7
+     --line #D8DDE8    --line-soft #E9ECF3
+     --navy #102B86    --blue #0707AA
+     --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
+     --accent #FF9900  --accent-deep #D97E00
+*/
+
+:root {
+  --ground: #ffffff;
+  --sheet: #ffffff;
+  --grid: #f0f2f7;
+  --line: #d8dde8;
+  --line-soft: #e9ecf3;
+  --navy: #102b86;
+  --blue: #0707aa;
+  --ink: #161a2b;
+  --ink-dim: #5a6378;
+  --ink-faint: #9aa3b5;
+  --accent: #ff9900;
+  --accent-deep: #d97e00;
+  --paper: var(--sheet);
+  --muted: var(--ink-dim);
+  --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
+  --font-body: "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  color-scheme: light;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adam-sheet *,
+  .adam-sheet *::before,
+  .adam-sheet *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ADAM Lab widgets — shared base for the sheet-driven widgets
+   (publications, patents, awards, members, projects, talks, gallery).
+   Palette/fonts come from tokens.css (= hero animation). Each Sites page
+   gets its own layout file on top of this (see widgets/<name>/). */
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html {
+  background-color: var(--ground);
+  /* Plain checkerboard grid, ~5% cells (20 across), no border/marks. */
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 5vw 5vw;
+  background-attachment: fixed;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.ax-root {
+  container-type: inline-size;
+  container-name: ax;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(10px, 2.4vw, 24px) clamp(10px, 2.6vw, 28px) clamp(16px, 3vw, 32px);
+}
+
+/* ---------- toolbar ---------- */
+.ax-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 10px 0;
+  margin-bottom: 6px;
+  background: rgba(255, 255, 255, 0.86);
+  -webkit-backdrop-filter: saturate(1.4) blur(8px);
+  backdrop-filter: saturate(1.4) blur(8px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.ax-bar .ax-grow { flex: 1 1 auto; }
+@container ax (max-width: 600px) {
+  .ax-bar { position: static; }
+}
+
+.ax-chips {
+  display: flex;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 1px;
+}
+.ax-chips::-webkit-scrollbar { display: none; }
+
+.ax-chip {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  line-height: 1;
+  padding: 7px 10px;
+  border-radius: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.15s var(--ease), color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-chip:hover { border-color: var(--navy); color: var(--navy); }
+.ax-chip[aria-pressed="true"] {
+  border-color: var(--navy);
+  color: var(--navy);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--navy);
+}
+.ax-chip .n {
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-weight: 500;
+}
+.ax-chip[aria-pressed="true"] .n { color: var(--navy); }
+.ax-chip .ko { font-family: var(--font-body); text-transform: none; letter-spacing: 0; font-size: 12px; }
+
+.ax-search {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 160px;
+  max-width: 360px;
+}
+.ax-search input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 0 30px 0 32px;
+  font: 13px var(--font-body);
+  color: var(--ink);
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.ax-search input::placeholder { color: var(--ink-faint); }
+.ax-search input:focus { border-color: var(--navy); box-shadow: 0 0 0 3px rgba(16, 43, 134, 0.08); }
+.ax-search svg {
+  position: absolute; left: 10px; top: 50%; width: 14px; height: 14px;
+  transform: translateY(-50%); color: var(--ink-faint); pointer-events: none;
+}
+.ax-search .ax-clear {
+  position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  width: 24px; height: 24px; border: 0; background: none; cursor: pointer;
+  color: var(--ink-faint); font-size: 16px; line-height: 1;
+}
+.ax-search .ax-clear:hover { color: var(--navy); }
+
+.ax-select {
+  height: 32px;
+  border: 1px solid var(--line);
+  background: #fff;
+  font: 12px var(--font-mono);
+  color: var(--ink-dim);
+  padding: 0 26px 0 10px;
+  border-radius: 0;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--ink-faint) 50%), linear-gradient(135deg, var(--ink-faint) 50%, transparent 50%);
+  background-position: calc(100% - 13px) 50%, calc(100% - 9px) 50%;
+  background-size: 4px 4px;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+.ax-select:focus { border-color: var(--navy); outline: none; }
+
+/* ---------- type ---------- */
+.ax-kicker {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+.ax-mono { font-family: var(--font-mono); }
+.ax-dim { color: var(--ink-dim); }
+.ax-faint { color: var(--ink-faint); }
+
+.au-pi { color: var(--ink); font-weight: 700; }
+
+/* ---------- small parts ---------- */
+.ax-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  color: var(--ink-dim);
+  background: #fff;
+  white-space: nowrap;
+}
+.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.ax-badge.navy { border-color: var(--navy); color: var(--navy); }
+.ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
+.ax-badge.dash { border-style: dashed; color: var(--blue); border-color: var(--blue); }
+.ax-badge.ko { font-family: var(--font-body); letter-spacing: 0; font-size: 11px; }
+
+.ax-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--navy);
+  border: 1px solid var(--line);
+  background: #fff;
+  padding: 4px 7px;
+  line-height: 1;
+  transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.ax-link:hover { border-color: var(--navy); background: #f6f8ff; }
+.ax-link::after { content: "↗"; font-size: 10px; }
+
+.ax-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ---------- states ---------- */
+.adam-state {
+  margin: 24px 0;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: center;
+}
+.ax-skel {
+  height: 64px;
+  margin: 10px 0;
+  border: 1px solid var(--line-soft);
+  background: linear-gradient(90deg, #fff 0%, #f6f7fb 50%, #fff 100%);
+  background-size: 200% 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ax-skel { animation: ax-shimmer 1.2s linear infinite; }
+  .ax-in { animation: ax-in 0.4s var(--ease) both; }
+}
+@keyframes ax-shimmer { to { background-position: -200% 0; } }
+@keyframes ax-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+/* Publications page (Sites /publications): publications + patents widgets.
+   Both use these classes so the two embeds on that page look identical. */
+
+/* stat tiles = primary filter */
+.pub-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.pub-tile {
+  appearance: none;
+  text-align: left;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 10px 12px 11px;
+  cursor: pointer;
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  transition: border-color 0.15s var(--ease), transform 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+.pub-tile:hover { border-color: var(--navy); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(16, 43, 134, 0.06); }
+.pub-tile .lb {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pub-tile .num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(22px, 3.2vw, 30px);
+  line-height: 1.05;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.pub-tile .ko { font-size: 11.5px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pub-tile[aria-pressed="true"] { border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); background: #fff; }
+.pub-tile[aria-pressed="true"] .num,
+.pub-tile[aria-pressed="true"] .lb { color: var(--navy); }
+
+/* year histogram */
+.pub-hist {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 46px;
+  padding: 0 1px;
+  margin: 4px 0 2px;
+}
+.pub-hist button {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: stretch;
+  position: relative;
+}
+.pub-hist .bar {
+  display: block;
+  background: var(--line);
+  min-height: 2px;
+  transition: background 0.15s var(--ease), height 0.3s var(--ease);
+}
+.pub-hist button:hover .bar { background: var(--navy); }
+.pub-hist button[aria-pressed="true"] .bar { background: var(--navy); }
+.pub-hist button.zero .bar { background: var(--line-soft); }
+.pub-hist-axis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  color: var(--ink-faint);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+/* list */
+.pub-year {
+  display: grid;
+  grid-template-columns: 1fr;
+  border-top: 1px solid var(--line);
+  padding-top: 6px;
+  margin-top: 12px;
+}
+.pub-list > .pub-year:first-child { border-top: 0; margin-top: 4px; }
+.pub-yl {
+  margin: 4px 0 2px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--navy);
+  line-height: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.pub-yl .ax-count { font-weight: 400; }
+.pub-ol { list-style: none; margin: 0; padding: 0; }
+
+.pub-item {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 10px;
+  padding: 12px 10px 12px 0;
+  border-bottom: 1px solid var(--line-soft);
+  position: relative;
+}
+.pub-item:last-child { border-bottom: 0; }
+.pub-item::before {
+  content: "";
+  position: absolute;
+  left: -10px; top: 10px; bottom: 10px;
+  width: 2px;
+  background: transparent;
+  transition: background 0.15s var(--ease);
+}
+.pub-item:hover::before { background: var(--navy); }
+.pub-item:hover { background: linear-gradient(90deg, rgba(240, 242, 247, 0.65), rgba(255, 255, 255, 0)); }
+
+.pub-idx {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+  padding-top: 2px;
+  text-align: right;
+}
+.pub-title {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.pub-title a { text-decoration: none; background-image: linear-gradient(var(--navy), var(--navy)); background-size: 0 1px; background-repeat: no-repeat; background-position: 0 100%; transition: background-size 0.2s var(--ease), color 0.15s; }
+.pub-title a:hover { color: var(--navy); background-size: 100% 1px; }
+.pub-authors { margin-top: 3px; font-size: 13px; color: var(--ink-dim); }
+.pub-venue { margin-top: 2px; font-size: 13px; color: var(--ink-dim); }
+.pub-venue .vn { color: var(--blue); font-style: italic; }
+.pub-venue .dt { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }
+.pub-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; align-items: center; }
+.pub-meta:empty { display: none; }
+
+.pub-empty { padding: 28px 0; text-align: center; color: var(--ink-dim); font-size: 13px; }
+
+.pub-more {
+  display: block;
+  width: 100%;
+  margin: 12px 0 0;
+  padding: 10px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--navy);
+  cursor: pointer;
+}
+.pub-more:hover { border-color: var(--navy); }
+
+@container ax (min-width: 760px) {
+  .pub-year { grid-template-columns: 92px minmax(0, 1fr); gap: 0 14px; }
+  .pub-yl {
+    position: sticky;
+    top: 62px;
+    align-self: start;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 28px;
+    margin-top: 10px;
+  }
+  .pub-item { grid-template-columns: 52px minmax(0, 1fr); }
+}
+@container ax (max-width: 460px) {
+  .pub-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .pub-tile { padding: 8px 8px 9px; }
+  .pub-tile .ko { display: none; }
+  .pub-item { grid-template-columns: 34px minmax(0, 1fr); gap: 8px; }
+  .pub-title { font-size: 14px; }
+  .ax-search { max-width: none; flex-basis: 100%; }
+}
+
+  </style>
+</head>
+<body>
+  <div id="adam-patents"></div>
+  <script>
+    window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
+    window.ADAM_INLINE = { "patents": [{"no":"14","title":"삼차원 설계 데이터를 활용한 생성형 인공지능 모델 기반의 제조공정 추천 시스템 및 이를 이용한 제조공정 추천방법","status":"filed","number":"10-2025-0158815","date":"2025-10-29","link":"","note":""},{"no":"13","title":"화재 발생 시 재실자의 탈출을 보조하는 시스템","status":"filed","number":"10-2025-0009095","date":"2025-01-21","link":"https://doi.org/10.8080/1020250009095","note":""},{"no":"12","title":"컴퓨터에 의해 수행되는 삼차원 모델 파일을 이용하여 적층제조 시 탄소 배출량을 예측하는 방법","status":"filed","number":"10-2025-0008362","date":"2025-01-20","link":"https://doi.org/10.8080/1020250008362","note":""},{"no":"11","title":"손 이미지를 이용하여 사용자 맞춤형 마우스를 제조하기 위한 3차원 모델링 생성방법","status":"filed","number":"10-2024-0125347","date":"2024-09-13","link":"https://doi.org/10.8080/1020240125347","note":"PCT 국제출원, PCT/KR2024/017655, 2024.11.08."},{"no":"10","title":"3D 모델링의 분할 및 모듈 조립을 통한 효율적인 3D 프린팅 방법","status":"registered","number":"10-3000341","date":"2026-07-31","link":"https://doi.org/10.8080/1020230023038","note":""},{"no":"9","title":"삼차원 캐드 모델링 교육을 위한 자동 채점 및 피드백 방법","status":"registered","number":"10-2909415","date":"2026-01-05","link":"https://doi.org/10.8080/1020230152411","note":""},{"no":"8","title":"선체 거동특성 시험용 장치","status":"registered","number":"10-2793594","date":"2025-04-04","link":"https://doi.org/10.8080/1020230145960","note":""},{"no":"7","title":"3D 프린팅을 이용한 연질 소재의 유도탄 보호 덮개","status":"registered","number":"10-2729025","date":"2024-11-07","link":"https://doi.org/10.8080/1020230011968","note":""},{"no":"6","title":"경계 표현 기반 3차원 모델 단순화 장치 및 방법","status":"registered","number":"10-1846746","date":"2018-04-02","link":"https://doi.org/10.8080/1020160170443","note":""},{"no":"5","title":"최적 정밀도 결정을 통한 모델 단순화 장치 및 방법","status":"registered","number":"10-1811135","date":"2017-12-14","link":"https://doi.org/10.8080/1020160093623","note":""},{"no":"4","title":"형상 복잡도를 이용한 모델 간략화 장치 및 방법","status":"registered","number":"10-1765414","date":"2017-07-31","link":"https://doi.org/10.8080/1020160041545","note":""},{"no":"3","title":"기자재 정보 공유 시스템 및 방법","status":"registered","number":"10-1715462","date":"2017-03-06","link":"https://doi.org/10.8080/1020150018212","note":""},{"no":"2","title":"모델의 연결성을 보존하는 모델 간략화 장치 및 방법","status":"registered","number":"10-1595303","date":"2016-02-12","link":"https://doi.org/10.8080/1020140118769","note":""},{"no":"1","title":"조립체 모델링 데이터 간략화 장치 및 방법","status":"registered","number":"10-1541887","date":"2015-07-29","link":"https://doi.org/10.8080/1020130143321","note":""}] };
+  </script>
+  <script>
+/* ADAM Lab workbook → one tab per widget, read through gviz CSV.
+   Sheet: https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw
+   (공유: 링크가 있는 모든 사용자 = 뷰어). 탭 이름은 아래 키와 정확히 같아야 합니다.
+   A tab that does not exist yet (or is empty / has the wrong header) falls
+   back to the bundled data/<tab>.json automatically — nothing to change here
+   when a tab is added later. Set a value to "" to always use the JSON. */
+window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
+
+(function () {
+  function gviz(tab) {
+    return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
+  }
+  window.ADAM_SHEETS = {
+    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
+    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* type,no,year,authors,title,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep */
+    publications: gviz("publications"),
+    /* no,title,status,number,date,link,note   status: registered | filed */
+    patents: gviz("patents"),
+    /* date,category,award,recipients,title,event,organizer,link
+       category: paper | presentation | competition */
+    awards: gviz("awards"),
+    /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+    members: gviz("members"),
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    projects: gviz("projects"),
+    /* date,title,venue,location,link */
+    talks: gviz("talks"),
+    /* date,caption,image,group,link   group: PNU | KIT */
+    gallery: gviz("gallery")
+  };
+})();
+
+window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
+
+/* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
+
+   ADAM.load(tab, { required: ["col", ...] })
+     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
+     2) if the request fails, the tab is missing (gviz then silently returns
+        the FIRST tab, so the header is checked against `required`) or the
+        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
+   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
+   for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
+
+   Also exposes helpers shared by every widget: parseCsv, normalizeDate
+   (accepts '2026-08-21', '2026. 8. 21', '26.08.21'), normalizeMonth,
+   safeUrl, asset (repo-relative paths, Google Drive share links), el, debounce. */
+(function () {
+  var ADAM = window.ADAM = window.ADAM || {};
+
+  var script = document.currentScript ||
+    Array.prototype.slice.call(document.scripts).filter(function (s) {
+      return /sheet-loader\.js/.test(s.src);
+    })[0];
+  /* Repo root (…/adam-lab-widgets/) = parent of /shared/. */
+  ADAM.root = window.ADAM_ROOT ||
+    (script && script.src ? new URL("../", script.src).href : new URL("./", location.href).href);
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  ADAM.normalizeDate = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var iso = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
+    var short = s.match(/^(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})$/);
+    if (short) return "20" + short[1] + "-" + pad(short[2]) + "-" + pad(short[3]);
+    /* gviz "Date(2026,7,21)" (month is 0-based) */
+    var gv = s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+    if (gv) return gv[1] + "-" + pad(+gv[2] + 1) + "-" + pad(gv[3]);
+    return "";
+  };
+
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  ADAM.normalizeMonth = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var d = ADAM.normalizeDate(s);
+    if (d) return d.slice(0, 7);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
+    if (m) return m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{2})\.(\d{1,2})$/);
+    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{4})/);
+    return m ? m[1] : "";
+  };
+
+  ADAM.safeUrl = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    try {
+      var url = new URL(raw, ADAM.root);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+    } catch (err) { /* ignore */ }
+    return "";
+  };
+
+  /* Image cell → URL. Repo paths (assets/…) resolve against the Pages root;
+     Drive share links (…/file/d/<id>/view or open?id=<id>) become direct images. */
+  ADAM.asset = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    var id = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{10,})/);
+    if (id) return "https://lh3.googleusercontent.com/d/" + id[1] + "=w800";
+    return ADAM.safeUrl(raw);
+  };
+
+  ADAM.parseCsv = function (text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    var s = String(text || "").replace(/^\uFEFF/, "");
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (s[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return { header: [], rows: [] };
+    var header = rows[0].map(function (h) { return String(h || "").trim().toLowerCase(); });
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
+      var obj = {};
+      for (var c = 0; c < header.length; c++) {
+        if (header[c]) obj[header[c]] = rows[r][c] != null ? String(rows[r][c]).trim() : "";
+      }
+      out.push(obj);
+    }
+    return { header: header, rows: out };
+  };
+
+  function fetchTimeout(url, ms, opts) {
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    opts = opts || {};
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(timer); });
+  }
+
+  ADAM.sheetUrl = function (tab) {
+    var map = window.ADAM_SHEETS || {};
+    if (typeof map[tab] === "string") return map[tab].trim();
+    if (window.ADAM_SHEET_ID) {
+      return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+        "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(tab);
+    }
+    return "";
+  };
+
+  ADAM.load = function (tab, opts) {
+    opts = opts || {};
+    var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
+    var url = ADAM.sheetUrl(tab);
+    var params = new URLSearchParams(location.search);
+    if (params.get("source") === "json") url = "";
+
+    function fromJson() {
+      var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
+      if (Array.isArray(inline) && inline.length) return Promise.resolve({ rows: inline, source: "inline" });
+      return fetchTimeout(ADAM.root + "data/" + tab + ".json", 8000, { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("json " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var list = Array.isArray(data) ? data : (data && data.items) || [];
+          return { rows: list, source: "json" };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson();
+    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
+      .then(function (res) {
+        if (!res.ok) throw new Error("sheet " + res.status);
+        return res.text();
+      })
+      .then(function (text) {
+        var parsed = ADAM.parseCsv(text);
+        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
+        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
+        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
+        return { rows: parsed.rows, source: "sheet" };
+      })
+      .catch(function (err) {
+        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
+        return fromJson();
+      });
+  };
+
+  /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
+  ADAM.el = function (tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v == null || v === false) return;
+        if (k === "text") node.textContent = v;
+        else if (k === "html") node.innerHTML = v;
+        else if (k === "class") node.className = v;
+        else if (k.slice(0, 2) === "on" && typeof v === "function") node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  };
+
+  ADAM.debounce = function (fn, ms) {
+    var t;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  };
+
+  ADAM.params = new URLSearchParams(location.search);
+
+  /* Normalised text for search (case/space-insensitive, strips * + marks). */
+  ADAM.fold = function (s) {
+    return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
+  };
+
+  /* Lab PI names to emphasise in author lists. */
+  ADAM.PI = ["S. Kwon", "권순조", "Soonjo Kwon"];
+  ADAM.authors = function (text) {
+    var frag = document.createDocumentFragment();
+    String(text || "").split(/,\s*/).forEach(function (name, i, arr) {
+      var clean = name.replace(/[*+]/g, "").trim();
+      var isPI = ADAM.PI.indexOf(clean) !== -1;
+      var span = ADAM.el("span", { class: isPI ? "au au-pi" : "au", text: name.trim() });
+      frag.appendChild(span);
+      if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
+    });
+    return frag;
+  };
+
+  ADAM.status = function (mount, message, kind) {
+    mount.innerHTML = "";
+    mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
+  };
+})();
+
+/* Patents — sheet tab `patents`. Same visual system as Publications (same Sites page).
+   Columns: no,title,status,number,date,link,note   status: registered | filed */
+(function () {
+  var A = window.ADAM, el = A.el;
+  var mount = document.getElementById("adam-patents");
+  if (!mount) return;
+
+  var STATUS = {
+    registered: { lb: "Registered", ko: "등록", num: "등록번호" },
+    filed: { lb: "Filed", ko: "출원", num: "출원번호" }
+  };
+  var ALIAS = { "등록": "registered", granted: "registered", registration: "registered", "출원": "filed", pending: "filed", application: "filed" };
+  var state = { items: [], status: (A.params.get("status") || "all").toLowerCase(), q: "" };
+  var refs = {};
+
+  function canon(v) {
+    var s = String(v || "").trim().toLowerCase();
+    return STATUS[s] ? s : (ALIAS[s] || ALIAS[String(v || "").trim()] || "");
+  }
+
+  function normalize(rows) {
+    var out = [];
+    rows.forEach(function (r, i) {
+      var title = (r.title || "").trim();
+      if (!title) return;
+      var date = A.normalizeDate(r.date);
+      out.push({ no: String(r.no || "").replace(/\.0$/, ""), title: title, status: canon(r.status) || "filed",
+        number: r.number || "", date: date, link: A.safeUrl(r.link), note: r.note || "", order: i,
+        hay: A.fold([title, r.number, r.note, date].join(" ")) });
+    });
+    out.sort(function (a, b) {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return (parseInt(b.no, 10) || 0) - (parseInt(a.no, 10) || 0);
+    });
+    return out;
+  }
+
+  function shell() {
+    mount.innerHTML = "";
+    refs.tiles = el("div", { class: "pub-tiles", role: "group", "aria-label": "특허 상태" });
+    refs.q = el("input", { type: "search", placeholder: "특허명·번호 검색", "aria-label": "특허 검색" });
+    var search = el("label", { class: "ax-search" }, [
+      el("span", { html: '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.4 10.4 3.6 3.6" stroke="currentColor" stroke-width="1.5"/></svg>' }),
+      refs.q
+    ]);
+    refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
+    refs.list = el("div", { class: "pub-list" });
+    mount.appendChild(el("div", { class: "ax-root pub" }, [
+      refs.tiles, el("div", { class: "ax-bar" }, [search, el("span", { class: "ax-grow" }), refs.count]), refs.list
+    ]));
+    refs.q.addEventListener("input", A.debounce(function () { state.q = refs.q.value; render(); }, 120));
+    for (var i = 0; i < 4; i++) refs.list.appendChild(el("div", { class: "ax-skel", "aria-hidden": "true" }));
+  }
+
+  function matches(it, skipStatus) {
+    if (!skipStatus && state.status !== "all" && it.status !== state.status) return false;
+    if (state.q) {
+      var words = A.fold(state.q).trim().split(" ");
+      for (var i = 0; i < words.length; i++) if (words[i] && it.hay.indexOf(words[i]) === -1) return false;
+    }
+    return true;
+  }
+
+  function render() {
+    var counts = { all: 0, registered: 0, filed: 0 };
+    state.items.forEach(function (it) { if (matches(it, true)) { counts.all++; counts[it.status]++; } });
+    refs.tiles.innerHTML = "";
+    [{ id: "all", lb: "All", ko: "전체" }, { id: "registered", lb: "Registered", ko: "등록 특허" }, { id: "filed", lb: "Filed", ko: "출원 특허" }]
+      .forEach(function (t) {
+        var b = el("button", { type: "button", class: "pub-tile", "aria-pressed": String(state.status === t.id) }, [
+          el("span", { class: "lb", text: t.lb }), el("span", { class: "num", text: String(counts[t.id]) }), el("span", { class: "ko", text: t.ko })
+        ]);
+        b.addEventListener("click", function () { state.status = t.id; render(); });
+        refs.tiles.appendChild(b);
+      });
+
+    var shown = state.items.filter(function (it) { return matches(it); });
+    refs.count.textContent = shown.length + " / " + state.items.length;
+    refs.list.innerHTML = "";
+    if (!shown.length) { refs.list.appendChild(el("p", { class: "pub-empty", text: "조건에 맞는 특허가 없습니다." })); return; }
+
+    var groups = [], cur = null;
+    shown.forEach(function (it) {
+      var y = it.date ? it.date.slice(0, 4) : "—";
+      if (!cur || cur.key !== y) { cur = { key: y, items: [] }; groups.push(cur); }
+      cur.items.push(it);
+    });
+    groups.forEach(function (g) {
+      var ol = el("ol", { class: "pub-ol" });
+      g.items.forEach(function (it) {
+        var st = STATUS[it.status];
+        var title = el("h4", { class: "pub-title" });
+        if (it.link) title.appendChild(el("a", { href: it.link, target: "_blank", rel: "noopener", text: it.title }));
+        else title.textContent = it.title;
+        var venue = el("div", { class: "pub-venue" }, [
+          el("span", { class: "dt", text: st.num + " " + (it.number || "—") + (it.date ? " · " + it.date.replace(/-/g, ".") : "") })
+        ]);
+        var meta = el("div", { class: "pub-meta" }, [
+          el("span", { class: "ax-badge ko " + (it.status === "registered" ? "solid" : "dash"), text: st.ko + " · " + st.lb.toUpperCase() }),
+          it.note ? el("span", { class: "ax-badge ko navy", text: it.note }) : null,
+          it.link ? el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: /doi\.org/.test(it.link) ? "DOI" : "LINK" }) : null
+        ]);
+        ol.appendChild(el("li", { class: "pub-item" }, [
+          el("div", { class: "pub-idx", text: it.no ? "P" + it.no : "·" }),
+          el("div", { class: "pub-body" }, [title, venue, meta])
+        ]));
+      });
+      refs.list.appendChild(el("section", { class: "pub-year ax-in" }, [
+        el("h3", { class: "pub-yl" }, [g.key, el("span", { class: "ax-count", text: g.items.length + " items" })]), ol
+      ]));
+    });
+  }
+
+  function boot() {
+    shell();
+    A.load("patents", { required: ["title", "status", "number"] }).then(function (res) {
+      state.items = normalize(res.rows);
+      if (!state.items.length) { A.status(refs.list, "표시할 특허가 없습니다."); return; }
+      render();
+    }).catch(function () { A.status(refs.list, "특허 목록을 불러오지 못했습니다."); });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
+})();
+
+  </script>
+</body>
+</html>

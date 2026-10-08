@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADAM Lab · Latest News</title>
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/sheet.css">
+  <link rel="stylesheet" href="../widgets/news/news.css">
+  <style>
+    /* Standalone URL-embed page: fill the Sites iframe, no chrome. */
+    html, body { background: transparent; }
+    #adam-news { max-height: none; height: 100%; }
+  </style>
+</head>
+<body>
+  <div id="adam-news"></div>
+  <script>
+    /* Hosted page: fetch Sheet CSV (or news.json). Do not bake items in. */
+    window.ADAM_NEWS_FALLBACK_URL = "../data/news.json";
+  </script>
+  <script src="../config/sheets.js"></script>
+  <script src="../widgets/news/config.js"></script>
+  <script src="../widgets/news/news.js"></script>
+</body>
+</html>

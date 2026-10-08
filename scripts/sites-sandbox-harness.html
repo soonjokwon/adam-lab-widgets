@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sites-like nested sandbox harness</title>
+  <style>
+    body { font: 14px/1.4 system-ui, sans-serif; margin: 16px; background: #e8ecf2; }
+    h1 { font-size: 16px; }
+    .row { display: grid; gap: 16px; margin-top: 12px; }
+    figure { margin: 0; background: #fff; border: 1px solid #c5ccd8; padding: 8px; }
+    figcaption { font-size: 12px; margin-bottom: 6px; color: #334; }
+    iframe.outer { width: 100%; border: 0; background: #f0f2f7; }
+  </style>
+</head>
+<body>
+  <h1>Google Sites–like nested sandbox harness</h1>
+  <p>Outer page → sandboxed iframe → inner iframe with srcdoc of <code>dist/news-embed.html</code>.</p>
+  <div class="row">
+    <figure>
+      <figcaption>A: allow-scripts allow-popups allow-forms allow-same-origin</figcaption>
+      <iframe class="outer" id="outer-same" title="same-origin sandbox" height="420"
+        sandbox="allow-scripts allow-popups allow-forms allow-same-origin"></iframe>
+    </figure>
+    <figure>
+      <figcaption>B: allow-scripts allow-popups allow-forms (no same-origin)</figcaption>
+      <iframe class="outer" id="outer-opaque" title="opaque sandbox" height="420"
+        sandbox="allow-scripts allow-popups allow-forms"></iframe>
+    </figure>
+  </div>
+  <script>
+    async function wire(id, sandbox) {
+      const embed = await fetch("../dist/news-embed.html").then((r) => r.text());
+      const payload = btoa(unescape(encodeURIComponent(embed)));
+      const outer = document.getElementById(id);
+      const middle = `<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>html,body{margin:0;height:100%;overflow:hidden;background:#f0f2f7}
+iframe{border:0;width:100%;height:100%;display:block}</style></head>
+<body><iframe id="inner" sandbox="${sandbox}"></iframe>
+<script>
+(function(){
+  var html = decodeURIComponent(escape(atob("${payload}")));
+  document.getElementById("inner").srcdoc = html;
+})();
+<\/script></body></html>`;
+      outer.srcdoc = middle;
+    }
+    Promise.all([
+      wire("outer-same", "allow-scripts allow-popups allow-forms allow-same-origin"),
+      wire("outer-opaque", "allow-scripts allow-popups allow-forms"),
+    ]);
+  </script>
+</body>
+</html>

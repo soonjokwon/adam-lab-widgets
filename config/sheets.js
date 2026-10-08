@@ -4,7 +4,7 @@
    the bundled JSON/CSV fallback for that widget. */
 window.ADAM_SHEETS = {
   /* columns: date,title_ko,title_en,tag,link,image */
-  news: "",
+  news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
   /* columns: year,authors,title,venue,type,doi,link
      type: journal | conference | domestic */
   publications: "",

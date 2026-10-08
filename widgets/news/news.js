@@ -50,8 +50,8 @@
 
   function normalizeDate(value) {
     var s = String(value || "").trim().replace(/\.$/, "");
-    var iso = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    if (iso) return iso[1] + "-" + iso[2] + "-" + iso[3];
+    var iso = s.match(/^(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
     var short = s.match(/^(\d{2})[.\-/](\d{2})[.\-/](\d{2})$/);
     if (short) return "20" + short[1] + "-" + short[2] + "-" + short[3];
     return "";

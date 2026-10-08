@@ -17,7 +17,7 @@
      --line #D8DDE8    --line-soft #E9ECF3
      --navy #102B86    --blue #0707AA
      --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
-     --accent #FF9900  --accent-deep #D97E00
+     --accent #FF9900  --accent-deep #D97E00  (+ --accent-ink #9A5200 for text, AA)
 */
 
 :root {
@@ -33,6 +33,7 @@
   --ink-faint: #9aa3b5;
   --accent: #ff9900;
   --accent-deep: #d97e00;
+  --accent-ink: #9a5200;   /* award text on light backgrounds: 5.5:1 on #fff8ec (WCAG AA) */
   --paper: var(--sheet);
   --muted: var(--ink-dim);
   --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
@@ -91,7 +92,7 @@ body {
 
 a { color: inherit; }
 button { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 
 .ax-root {
   container-type: inline-size;
@@ -119,8 +120,11 @@ button { font: inherit; color: inherit; }
   border-bottom: 1px solid var(--line-soft);
 }
 .ax-bar .ax-grow { flex: 1 1 auto; }
+/* Narrow embeds keep the bar sticky but compact: chip rows scroll sideways
+   on one line instead of wrapping, so the bar stays ~1–2 rows tall. */
 @container ax (max-width: 600px) {
-  .ax-bar { position: static; }
+  .ax-bar { padding: 6px 0; gap: 6px; margin-bottom: 4px; }
+  .ax-bar .ax-chips { flex: 1 1 auto; }
 }
 
 .ax-chips {
@@ -163,7 +167,7 @@ button { font: inherit; color: inherit; }
 }
 .ax-chip .n {
   font-size: 10px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   font-weight: 500;
 }
 .ax-chip[aria-pressed="true"] .n { color: var(--navy); }
@@ -248,7 +252,7 @@ button { font: inherit; color: inherit; }
   background: #fff;
   white-space: nowrap;
 }
-.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award { border-color: var(--accent); color: var(--accent-ink); background: #fff8ec; }
 .ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .ax-badge.navy { border-color: var(--navy); color: var(--navy); }
 .ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
@@ -278,7 +282,7 @@ button { font: inherit; color: inherit; }
 .ax-count {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
@@ -309,6 +313,19 @@ button { font: inherit; color: inherit; }
 
 mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
 
+/* ---------- short iframes ----------
+   Google Sites scales an embed's height with its width, so on a phone a
+   widget may get only ~250–400px. The document scrolls inside the iframe;
+   keep the sticky bar to one or two thin rows and drop decorative heads
+   (histogram, sparkline, big totals) so the list is visible at once. */
+@media (max-height: 520px) {
+  .ax-root { padding-top: 4px; padding-bottom: 12px; }
+  .ax-bar { padding: 5px 0; gap: 6px; margin-bottom: 4px; }
+  .ax-chip { padding: 6px 8px; }
+  .ax-search { min-width: 120px; }
+  .ax-search input, .ax-select { height: 30px; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
 }
@@ -323,7 +340,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
 }
 .pj-stat.on b { color: var(--navy); }
 .pj-stat span { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-dim); }
-.pj-stat span i { font-style: normal; font-family: var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink-faint); margin-left: 4px; }
+.pj-stat span i { font-style: normal; font-family: var(--font-body); letter-spacing: 0; text-transform: none; color: var(--ink-dim); margin-left: 4px; }
 
 .pj-sep { width: 1px; height: 22px; background: var(--line); margin: 0 2px; flex: 0 0 auto; }
 
@@ -363,7 +380,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
 .pj-pill {
   display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 4px 8px; border: 1px solid var(--line); color: var(--ink-faint); background: #fff; line-height: 1;
+  padding: 4px 8px; border: 1px solid var(--line); color: var(--ink-dim); background: #fff; line-height: 1;
 }
 .pj-pill .ko { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: 11px; }
 .pj-pill.ongoing { border-color: var(--navy); color: #fff; background: var(--navy); }
@@ -378,7 +395,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
 .pj-title a { text-decoration: none; }
 .pj-title a:hover { color: var(--navy); }
 .pj-meta { font-size: 12.5px; color: var(--ink-dim); line-height: 1.5; }
-.pj-meta .f { color: var(--blue); font-weight: 500; }
+.pj-meta .f { color: var(--ink); font-weight: 500; }
 .pj-tags { display: flex; flex-wrap: wrap; gap: 5px; }
 
 .pj-period { margin-top: auto; padding-top: 6px; }
@@ -399,13 +416,23 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   .pj-sep { display: none; }
 }
 
+@media (max-height: 520px) {
+  .pj-head { gap: 4px 16px; }
+  .pj-stat { grid-auto-flow: column; align-items: baseline; gap: 6px; }
+  .pj-stat b { font-size: 20px; }
+  .pj-stat span i { display: none; }
+  .pj-sec { margin-top: 8px; }
+  .pj-sh { margin-bottom: 8px; padding-bottom: 6px; }
+}
+.pj-period.no-bar .pj-track { display: none; }
+
   </style>
 </head>
 <body>
   <div id="adam-projects"></div>
   <script>
     window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
-    window.ADAM_INLINE = { "projects": [{"title":"지식 그래프 증강 멀티에이전트 시스템 기반 적층제조 특화 자율 재설계 기술 개발","org_role":"주관기관","researcher_role":"책임연구원","program":"신진연구(유형B)","funder":"한국연구재단","start":"2026-03","end":"2030-02","group":"PNU","status":"","logo":"assets/projects/vIT9qcQZeTF.png","link":""},{"title":"생각으로 하는 제조: LLM 연계 생성형 AI 기반 자율 설계·생산 플랫폼 기술","org_role":"공동기관","researcher_role":"책임연구원","program":"산업기술알키미스트프로젝트사업 (3단계)","funder":"산업통상부","start":"2026-01","end":"2030-12","group":"PNU","status":"","logo":"assets/projects/soDrQmp6rStq.png","link":""},{"title":"디자인-생산공정 충돌요소 예측 및 최적화 솔루션 기술 개발","org_role":"공동기관","researcher_role":"책임연구원","program":"디자인산업기술개발사업","funder":"산업통상부","start":"2025-04","end":"2028-12","group":"PNU","status":"","logo":"assets/projects/soDrQmp6rStq.png","link":""},{"title":"전장 최적배치를 위한 원가 산출 알고리즘 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"삼성중공업","start":"2026-05","end":"2026-10","group":"PNU","status":"","logo":"assets/projects/sonnYg5c7E4C.png","link":""},{"title":"AI 기반 OO OO OO 예측 기술 개발","org_role":"연구용역","researcher_role":"공동연구원","program":"","funder":"한화에어로스페이스","start":"2026","end":"2027","group":"PNU","status":"","logo":"assets/projects/sKzABYRKWhgE.png","link":""},{"title":"10·29 이태원역에 대한 공간밀집 시뮬레이션","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"10·29이태원참사 특별조사위원회","start":"2025-12","end":"2026-02","group":"KIT","status":"","logo":"","link":""},{"title":"타이타늄 3D프린팅 기술을 이용한 수출형 중거리 대전차 정밀 유도 미사일 조종날개 양산 기술 개발","org_role":"위탁기관","researcher_role":"책임연구원","program":"창업성장기술개발사업","funder":"중소벤처기업부","start":"2024-10","end":"2025-09","group":"KIT","status":"","logo":"","link":""},{"title":"생각으로 하는 제조: LLM 연계 생성형 AI 기반 자율 설계·생산 플랫폼 기술","org_role":"공동기관","researcher_role":"책임연구원","program":"산업기술알키미스트프로젝트사업 (2단계)","funder":"산업통상자원부","start":"2025-01","end":"2025-12","group":"KIT","status":"","logo":"","link":""},{"title":"인공지능 기반 최적 대피 경로 안내 기술을 활용한 금오공대 3차원 디지털 트윈 기반 군중 대피 시뮬레이션 시스템 개발","org_role":"주관기관","researcher_role":"책임연구원","program":"산학공동기술개발과제","funder":"국립금오공과대학교 LINC3.0 사업단","start":"2024-06","end":"2024-11","group":"KIT","status":"","logo":"","link":""},{"title":"암모니아를 활용한 수소 항만 구축 방안에 대한 분석","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국기계연구원","start":"2024-05","end":"2024-10","group":"KIT","status":"","logo":"","link":""},{"title":"심층 강화학습을 이용한 기계 조립품 3D CAD 모델의 최적 단순화","org_role":"주관기관","researcher_role":"책임연구원","program":"생애첫연구과제","funder":"한국연구재단","start":"2021-03","end":"2024-02","group":"KIT","status":"","logo":"","link":""},{"title":"전기추진선박 모델의 매쉬 경량화 알고리즘 현황 분석 용역","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국기계연구원","start":"2023-04","end":"2023-11","group":"KIT","status":"","logo":"","link":""},{"title":"적층제조 기술을 이용한 연질 소재 유도탄 탐색기 보호덮개 설계 및 제조 기술 개발","org_role":"주관기관","researcher_role":"공동연구원","program":"산학공동기술개발과제","funder":"금오공과대학교 LINC3.0 사업단","start":"2022-08","end":"2023-01","group":"KIT","status":"","logo":"","link":""},{"title":"제조 디지털 트윈의 연동 기술 및 디지털 쓰레드 적용 방안 연구","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국전자통신연구원","start":"2023-06","end":"2023-11","group":"KIT","status":"","logo":"","link":""},{"title":"제조 디지털 트윈 표준모델 설계를 위한 디지털 쓰레드 기술 적용 방안 연구","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국전자통신연구원","start":"2022-07","end":"2022-11","group":"KIT","status":"","logo":"","link":""},{"title":"분산객체모델 기반 전기장치 구조체 모델링 도구 시제품 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"(사)한국산업데이터표준협회","start":"2023-05","end":"2023-12","group":"KIT","status":"","logo":"","link":""},{"title":"분산객체모델 기반 전기장치 구조체 모델링 도구 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"(사)한국산업데이터표준협회","start":"2022-05","end":"2022-10","group":"KIT","status":"","logo":"","link":""},{"title":"플랜트 3D CAD 시스템 인터페이스 분석","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"고려대학교","start":"2021-06","end":"2021-10","group":"KIT","status":"","logo":"","link":""}] };
+    window.ADAM_INLINE = { "projects": [{"title":"지식 그래프 증강 멀티에이전트 시스템 기반 적층제조 특화 자율 재설계 기술 개발","org_role":"주관기관","researcher_role":"책임연구원","program":"신진연구(유형B)","funder":"한국연구재단","start":"2026-03","end":"2030-02","group":"PNU","status":"","recruit":"Y","hidden":"","logo":"assets/projects/vIT9qcQZeTF.png","link":""},{"title":"생각으로 하는 제조: LLM 연계 생성형 AI 기반 자율 설계·생산 플랫폼 기술","org_role":"공동기관","researcher_role":"책임연구원","program":"산업기술알키미스트프로젝트사업 (3단계)","funder":"산업통상부","start":"2026-01","end":"2030-12","group":"PNU","status":"","recruit":"Y","hidden":"","logo":"assets/projects/soDrQmp6rStq.png","link":""},{"title":"디자인-생산공정 충돌요소 예측 및 최적화 솔루션 기술 개발","org_role":"공동기관","researcher_role":"책임연구원","program":"디자인산업기술개발사업","funder":"산업통상부","start":"2025-04","end":"2028-12","group":"PNU","status":"","recruit":"Y","hidden":"","logo":"assets/projects/soDrQmp6rStq.png","link":""},{"title":"전장 최적배치를 위한 원가 산출 알고리즘 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"삼성중공업","start":"2026-05","end":"2026-10","group":"PNU","status":"","recruit":"","hidden":"","logo":"assets/projects/sonnYg5c7E4C.png","link":""},{"title":"AI 기반 OO OO OO 예측 기술 개발","org_role":"연구용역","researcher_role":"공동연구원","program":"","funder":"한화에어로스페이스","start":"26.XX","end":"27.XX","group":"PNU","status":"","recruit":"","hidden":"Y","logo":"assets/projects/sKzABYRKWhgE.png","link":""},{"title":"10·29 이태원역에 대한 공간밀집 시뮬레이션","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"10·29이태원참사 특별조사위원회","start":"2025-12","end":"2026-02","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"타이타늄 3D프린팅 기술을 이용한 수출형 중거리 대전차 정밀 유도 미사일 조종날개 양산 기술 개발","org_role":"위탁기관","researcher_role":"책임연구원","program":"창업성장기술개발사업","funder":"중소벤처기업부","start":"2024-10","end":"2025-09","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"생각으로 하는 제조: LLM 연계 생성형 AI 기반 자율 설계·생산 플랫폼 기술","org_role":"공동기관","researcher_role":"책임연구원","program":"산업기술알키미스트프로젝트사업 (2단계)","funder":"산업통상자원부","start":"2025-01","end":"2025-12","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"인공지능 기반 최적 대피 경로 안내 기술을 활용한 금오공대 3차원 디지털 트윈 기반 군중 대피 시뮬레이션 시스템 개발","org_role":"주관기관","researcher_role":"책임연구원","program":"산학공동기술개발과제","funder":"국립금오공과대학교 LINC3.0 사업단","start":"2024-06","end":"2024-11","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"암모니아를 활용한 수소 항만 구축 방안에 대한 분석","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국기계연구원","start":"2024-05","end":"2024-10","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"심층 강화학습을 이용한 기계 조립품 3D CAD 모델의 최적 단순화","org_role":"주관기관","researcher_role":"책임연구원","program":"생애첫연구과제","funder":"한국연구재단","start":"2021-03","end":"2024-02","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"전기추진선박 모델의 매쉬 경량화 알고리즘 현황 분석 용역","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국기계연구원","start":"2023-04","end":"2023-11","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"적층제조 기술을 이용한 연질 소재 유도탄 탐색기 보호덮개 설계 및 제조 기술 개발","org_role":"주관기관","researcher_role":"공동연구원","program":"산학공동기술개발과제","funder":"금오공과대학교 LINC3.0 사업단","start":"2022-08","end":"2023-01","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"제조 디지털 트윈의 연동 기술 및 디지털 쓰레드 적용 방안 연구","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국전자통신연구원","start":"2023-06","end":"2023-11","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"제조 디지털 트윈 표준모델 설계를 위한 디지털 쓰레드 기술 적용 방안 연구","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"한국전자통신연구원","start":"2022-07","end":"2022-11","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"분산객체모델 기반 전기장치 구조체 모델링 도구 시제품 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"(사)한국산업데이터표준협회","start":"2023-05","end":"2023-12","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"분산객체모델 기반 전기장치 구조체 모델링 도구 개발","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"(사)한국산업데이터표준협회","start":"2022-05","end":"2022-10","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""},{"title":"플랜트 3D CAD 시스템 인터페이스 분석","org_role":"연구용역","researcher_role":"책임연구원","program":"","funder":"고려대학교","start":"2021-06","end":"2021-10","group":"KIT","status":"","recruit":"","hidden":"","logo":"","link":""}] };
   </script>
   <script>
 /* ADAM Lab workbook → one tab per widget, read through gviz CSV.
@@ -422,11 +449,12 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
       "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
   }
   window.ADAM_SHEETS = {
-    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
-    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* date,title_ko,title_en,tag,link,image,link2   (Home · Latest News)
+       tag: Paper | Award | Project | Event | Member   link2: optional second link */
+    news: gviz("news"),
     /* type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
-       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep
-       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu dt lca routing safety ship std) */
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep   (anything else → "기타", see ?debug=1)
+       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu design dt lca routing safety ship std) */
     publications: gviz("publications"),
     /* no,title,topics,status,number,date,link,note   status: registered | filed   topics: as publications */
     patents: gviz("patents"),
@@ -434,28 +462,28 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
        category: paper | presentation | competition */
     awards: gviz("awards"),
     /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
-       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+       role: professor | postdoc | researcher | phd | ms-phd | ms | undergrad   status: current | alumni */
     members: gviz("members"),
-    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
-       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed
+       recruit: Y = 모집 중 (projects/?recruit=1)   hidden: Y = 숨김
+       start/end: 2026.03 · 26.03 · 2026 · 26.XX (연도만 → 진행 막대 없음) */
     projects: gviz("projects"),
     /* date,title,venue,location,link */
     talks: gviz("talks"),
-    /* date,caption,image,group,link   group: PNU | KIT */
+    /* date,caption,image,group,link   group: PNU | KIT   image: assets/gallery/… (권장) */
     gallery: gviz("gallery")
   };
 })();
 
-window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
 
 /* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
 
-   ADAM.load(tab, { required: ["col", ...] })
-     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
-     2) if the request fails, the tab is missing (gviz then silently returns
-        the FIRST tab, so the header is checked against `required`) or the
-        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
-   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   ADAM.load(tab, { required: ["col", ...], onUpdate: fn }) — see below:
+   cache-first (localStorage, refreshed in the background), then the Sheet
+   (gviz CSV, header checked), then the bundled data/<tab>.json.
+   ?debug=1 shows source / detected tab / dropped rows; ADAM.track(tab)
+   lets each widget report rows it dropped or values it did not recognise.
    Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
    for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
 
@@ -488,18 +516,21 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     return "";
   };
 
-  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03';
+     '2026', '26.XX', '2026.XX', '2026년' → '2026' (year only = month unknown). */
   ADAM.normalizeMonth = function (value) {
     var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
     if (!s) return "";
     var d = ADAM.normalizeDate(s);
     if (d) return d.slice(0, 7);
-    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
-    if (m) return m[1] + "-" + pad(m[2]);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})(?!\d)/);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return m[1] + "-" + pad(m[2]);
     m = s.match(/^(\d{2})\.(\d{1,2})$/);
-    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return "20" + m[1] + "-" + pad(m[2]);
     m = s.match(/^(\d{4})/);
-    return m ? m[1] : "";
+    if (m) return m[1];
+    m = s.match(/^(\d{2})\s*[.\-/]\s*(?:[xX?]{1,2}|00)$/);
+    return m ? "20" + m[1] : "";
   };
 
   ADAM.safeUrl = function (value) {
@@ -571,12 +602,137 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     return "";
   };
 
+  ADAM.params = new URLSearchParams(location.search);
+  ADAM.debug = ADAM.params.get("debug") === "1";
+
+  /* Column signature of every tab — used to say which tab gviz actually
+     returned (a missing tab name silently yields the FIRST tab). */
+  var SIGNATURES = {
+    news: ["date", "title_ko", "tag"],
+    publications: ["type", "title", "venue"],
+    patents: ["title", "status", "number"],
+    awards: ["award", "recipients", "category"],
+    members: ["name_ko", "role", "status"],
+    projects: ["title", "funder", "org_role"],
+    talks: ["date", "title", "venue", "location"],
+    gallery: ["caption", "image"]
+  };
+  function detectTab(header) {
+    var best = "";
+    Object.keys(SIGNATURES).forEach(function (t) {
+      if (!best && SIGNATURES[t].every(function (c) { return header.indexOf(c) !== -1; })) best = t;
+    });
+    return best;
+  }
+
+  /* ---------- diagnostics (?debug=1) ---------- */
+  ADAM.diag = {};
+  function diagFor(tab) {
+    return ADAM.diag[tab] || (ADAM.diag[tab] = { tab: tab, events: [], dropped: [], warnings: [] });
+  }
+  function logEvent(d, msg) {
+    d.events.push(new Date().toTimeString().slice(0, 8) + " " + msg);
+    if (window.console && console.info) console.info("[ADAM] " + d.tab + ": " + msg);
+    renderDebug();
+  }
+  /* Row tracker for widget normalizers: T.drop(i, why), T.warn(i, what), T.done(kept). */
+  ADAM.track = function (tab) {
+    var d = diagFor(tab);
+    function rowName(i) { return (d.source === "sheet" || d.source === "cache" ? "시트 " + (i + 2) + "행" : "항목 " + (i + 1)); }
+    return {
+      reset: function () { d.dropped = []; d.warnings = []; },
+      drop: function (i, why) { d.dropped.push(rowName(i) + ": " + why); },
+      warn: function (i, what) { d.warnings.push(rowName(i) + ": " + what); },
+      done: function (kept) {
+        d.kept = kept;
+        if (window.console && (d.dropped.length || d.warnings.length) && console.warn) {
+          console.warn("[ADAM] " + tab + ": " + d.dropped.length + " dropped, " + d.warnings.length + " warnings", { dropped: d.dropped, warnings: d.warnings });
+        }
+        renderDebug();
+      }
+    };
+  };
+  var debugBox = null, debugTimer = null;
+  function renderDebug() {
+    if (!ADAM.debug) return;
+    clearTimeout(debugTimer);
+    debugTimer = setTimeout(function () {
+      if (!document.body) return;
+      if (!debugBox) {
+        debugBox = document.createElement("details");
+        debugBox.className = "adam-debug";
+        debugBox.open = true;
+        document.body.appendChild(debugBox);
+      }
+      var html = "<summary>ADAM debug</summary>";
+      Object.keys(ADAM.diag).forEach(function (t) {
+        var d = ADAM.diag[t];
+        var list = function (title, arr) {
+          if (!arr || !arr.length) return "";
+          return "<div><b>" + title + " (" + arr.length + ")</b><ul>" + arr.slice(0, 40).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+            (arr.length > 40 ? "<li>…</li>" : "") + "</ul></div>";
+        };
+        html += "<section><h4>" + esc(t) + "</h4><dl>" +
+          "<dt>source</dt><dd>" + esc(d.source || "…") + (d.refreshed ? " → sheet (refreshed)" : "") + "</dd>" +
+          "<dt>sheet tab</dt><dd>" + esc(d.detected ? d.detected + (d.detected === t ? " ✓" : " ✗ (탭 이름 확인)") : (d.sheetError ? "—" : "…")) + "</dd>" +
+          (d.header ? "<dt>header</dt><dd>" + esc(d.header.join(", ")) + "</dd>" : "") +
+          (d.sheetError ? "<dt>sheet</dt><dd>" + esc(d.sheetError) + "</dd>" : "") +
+          "<dt>rows</dt><dd>" + (d.rows != null ? d.rows : "…") + " loaded · " + (d.kept != null ? d.kept : "…") + " shown · " + d.dropped.length + " dropped</dd>" +
+          "</dl>" + list("dropped", d.dropped) + list("warnings", d.warnings) + list("log", d.events) + "</section>";
+      });
+      debugBox.innerHTML = html;
+    }, 30);
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  if (ADAM.debug) {
+    var css = document.createElement("style");
+    css.textContent = ".adam-debug{position:fixed;right:8px;bottom:8px;z-index:9999;max-width:min(560px,calc(100vw - 16px));max-height:min(70vh,520px);overflow:auto;" +
+      "background:#fff;border:1px solid #102b86;box-shadow:0 8px 24px rgba(16,43,134,.18);font:11px/1.45 'IBM Plex Mono',ui-monospace,monospace;color:#161a2b;padding:6px 10px}" +
+      ".adam-debug summary{cursor:pointer;font-weight:600;color:#102b86}.adam-debug h4{margin:8px 0 2px;font-size:12px;color:#102b86}" +
+      ".adam-debug dl{display:grid;grid-template-columns:auto 1fr;gap:0 8px;margin:0}.adam-debug dt{color:#5a6378}.adam-debug dd{margin:0;word-break:break-all}" +
+      ".adam-debug ul{margin:2px 0 4px;padding-left:16px}.adam-debug section+section{border-top:1px dashed #d8dde8;margin-top:6px}";
+    document.head.appendChild(css);
+  }
+
+  /* ---------- cache (stale-while-revalidate) ---------- */
+  var CACHE_DAYS = 14;
+  function cacheKey(tab) { return "adam:" + tab + ":" + (ADAM.sheetUrl(tab) || "").length + ":v2"; }
+  function readCache(tab) {
+    try {
+      var c = JSON.parse(localStorage.getItem(cacheKey(tab)) || "null");
+      if (c && Array.isArray(c.rows) && Date.now() - c.t < CACHE_DAYS * 864e5) return c;
+    } catch (err) { /* private mode etc. */ }
+    return null;
+  }
+  function writeCache(tab, res) {
+    try { localStorage.setItem(cacheKey(tab), JSON.stringify({ t: Date.now(), header: res.header, rows: res.rows })); } catch (err) { /* quota */ }
+  }
+  function dropCache(tab) { try { localStorage.removeItem(cacheKey(tab)); } catch (err) { /* ignore */ } }
+
+  /* ADAM.load(tab, { required, onUpdate })
+       1) cached sheet rows (localStorage) → shown at once, sheet re-fetched in
+          the background; if it changed, onUpdate(res) re-renders
+       2) no cache → sheet (header checked against `required`; gviz returns
+          the FIRST tab for a missing name, so a wrong tab is rejected)
+       3) sheet slow (>2.5 s) → bundled data first, sheet result via onUpdate
+       4) sheet failed / wrong / empty → ADAM_INLINE[tab] → data/<tab>.json
+     Resolves { rows, source: "cache" | "sheet" | "inline" | "json", header }.
+     ?source=json skips the sheet, ?nocache=1 skips the cache. */
   ADAM.load = function (tab, opts) {
     opts = opts || {};
+    var d = diagFor(tab);
     var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
     var url = ADAM.sheetUrl(tab);
-    var params = new URLSearchParams(location.search);
-    if (params.get("source") === "json") url = "";
+    if (ADAM.params.get("source") === "json") url = "";
+    d.url = url;
+    var update = typeof opts.onUpdate === "function" ? opts.onUpdate : null;
+
+    function mark(res, how) {
+      d.source = res.source; d.rows = res.rows.length;
+      if (res.header) d.header = res.header;
+      logEvent(d, how || ("loaded from " + res.source + " (" + res.rows.length + " rows)"));
+      return res;
+    }
 
     function fromJson() {
       var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
@@ -588,27 +744,68 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
         })
         .then(function (data) {
           var list = Array.isArray(data) ? data : (data && data.items) || [];
-          return { rows: list, source: "json" };
+          return { rows: list, source: "json", header: data && data.columns };
         });
     }
 
-    if (!ADAM.safeUrl(url)) return fromJson();
-    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
-      .then(function (res) {
-        if (!res.ok) throw new Error("sheet " + res.status);
-        return res.text();
-      })
-      .then(function (text) {
-        var parsed = ADAM.parseCsv(text);
-        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
-        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
-        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
-        return { rows: parsed.rows, source: "sheet" };
-      })
-      .catch(function (err) {
-        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
-        return fromJson();
+    function fetchSheet() {
+      return fetchTimeout(url, 15000, { cache: "no-store", mode: "cors" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.text();
+        })
+        .then(function (text) {
+          var parsed = ADAM.parseCsv(text);
+          d.detected = detectTab(parsed.header) || "(알 수 없음)";
+          var missing = required.filter(function (c) { return parsed.header.indexOf(c) === -1; });
+          if (missing.length) {
+            var e = new Error("header에 " + missing.join(", ") + " 없음 — 받은 탭: " + d.detected + " (탭이 없으면 gviz는 첫 탭을 돌려줌)");
+            e.definitive = true; throw e;
+          }
+          if (!parsed.rows.length) { var e2 = new Error("탭이 비어 있음"); e2.definitive = true; throw e2; }
+          return { rows: parsed.rows, source: "sheet", header: parsed.header };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson().then(function (r) { return mark(r); });
+
+    var sheet = fetchSheet();
+    sheet.then(function (res) { writeCache(tab, res); }, function (err) {
+      d.sheetError = err.message;
+      logEvent(d, "sheet failed: " + err.message);
+      if (err.definitive) dropCache(tab);
+    });
+
+    var cached = ADAM.params.get("nocache") === "1" ? null : readCache(tab);
+    if (cached) {
+      sheet.then(function (res) {
+        if (JSON.stringify(res.rows) !== JSON.stringify(cached.rows) && update) { d.refreshed = true; update(mark(res, "sheet changed → re-rendered")); }
+        else logEvent(d, "sheet checked — cache is current");
+      }, function (err) {
+        if (err.definitive && update) fromJson().then(function (r) { update(mark(r, "sheet rejected → bundled " + r.source)); });
       });
+      return Promise.resolve(mark({ rows: cached.rows, source: "cache", header: cached.header },
+        "cache (" + Math.round((Date.now() - cached.t) / 60000) + " min old) shown; refreshing"));
+    }
+
+    return new Promise(function (resolve, reject) {
+      var settled = false;
+      function fallback() { return fromJson().then(function (r) { resolve(mark(r)); }, reject); }
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        logEvent(d, "sheet slow → bundled data first");
+        fallback();
+        sheet.then(function (res) { if (update) { d.refreshed = true; update(mark(res, "sheet arrived → re-rendered")); } }, function () {});
+      }, opts.wait || 2500);
+      sheet.then(function (res) {
+        if (settled) return;
+        settled = true; clearTimeout(timer); resolve(mark(res));
+      }, function () {
+        if (settled) return;
+        settled = true; clearTimeout(timer); fallback();
+      });
+    });
   };
 
   /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
@@ -641,8 +838,6 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     };
   };
 
-  ADAM.params = new URLSearchParams(location.search);
-
   /* Normalised text for search (case/space-insensitive, strips * + marks). */
   ADAM.fold = function (s) {
     return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
@@ -666,32 +861,38 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
      semicolon-separated). Cells may use the id, the English or the Korean
      label; anything else is shown as a custom tag. Ids match scripts/tag_topics.py. */
   ADAM.TOPICS = [
-    { id: "cad", en: "B-rep / CAD Modeling", short: "CAD Modeling", ko: "B-rep·CAD 모델링" },
-    { id: "assembly", en: "Assembly & Mates", short: "Assembly", ko: "조립·체결" },
-    { id: "am", en: "Additive Manufacturing", short: "Additive Mfg.", ko: "적층 제조" },
-    { id: "kg", en: "Knowledge Graph / Ontology", short: "Knowledge Graph", ko: "지식 그래프·온톨로지" },
-    { id: "llm", en: "LLM / Generative AI", short: "LLM · GenAI", ko: "LLM·생성형 AI" },
-    { id: "mesh", en: "Mesh & Point Cloud", short: "Mesh · Point Cloud", ko: "메쉬·점군" },
-    { id: "rl", en: "Reinforcement Learning", short: "Reinforcement Learning", ko: "강화학습" },
-    { id: "edu", en: "CAD Education / Grading", short: "CAD Education", ko: "CAD 교육·자동 채점" },
-    { id: "dt", en: "Digital Twin / Smart Manufacturing", short: "Digital Twin", ko: "디지털 트윈·스마트 제조" },
-    { id: "lca", en: "Sustainability / LCA", short: "Sustainability", ko: "지속가능성·LCA" },
-    { id: "routing", en: "Cable Routing", short: "Cable Routing", ko: "케이블 라우팅" },
-    { id: "safety", en: "Safety & Evacuation", short: "Safety", ko: "안전·대피" },
-    { id: "ship", en: "Shipbuilding / Ocean", short: "Ship · Ocean", ko: "조선·해양" },
-    { id: "std", en: "Standards (ISO·STEP·AAS)", short: "Standards", ko: "표준 (ISO·STEP·AAS)" }
+    { id: "cad", en: "B-rep / CAD Modeling", ko: "B-rep·CAD 모델링", kos: "CAD 모델링" },
+    { id: "assembly", en: "Assembly & Mates", ko: "조립·메이트", kos: "조립·메이트" },
+    { id: "am", en: "Additive Manufacturing", ko: "적층제조", kos: "적층제조" },
+    { id: "kg", en: "Knowledge Graph / Ontology", ko: "지식 그래프·온톨로지", kos: "지식그래프" },
+    { id: "llm", en: "LLM / Generative AI", ko: "LLM·생성형 AI", kos: "LLM·생성형AI" },
+    { id: "mesh", en: "Mesh & Point Cloud", ko: "메쉬·점군", kos: "메쉬·점군" },
+    { id: "rl", en: "Reinforcement Learning", ko: "강화학습", kos: "강화학습" },
+    { id: "edu", en: "CAD Education / Grading", ko: "CAD 교육·자동 채점", kos: "CAD 교육" },
+    { id: "design", en: "Product Design", ko: "제품 설계", kos: "제품 설계" },
+    { id: "dt", en: "Digital Twin / Smart Manufacturing", ko: "디지털 트윈·스마트 제조", kos: "디지털 트윈" },
+    { id: "lca", en: "Sustainability / LCA", ko: "지속가능성·LCA", kos: "지속가능성" },
+    { id: "routing", en: "Cable Routing", ko: "케이블 라우팅", kos: "케이블 라우팅" },
+    { id: "safety", en: "Safety & Evacuation", ko: "안전·대피", kos: "안전·대피" },
+    { id: "ship", en: "Shipbuilding / Ocean", ko: "조선·해양", kos: "조선·해양" },
+    { id: "std", en: "Standards (ISO·STEP·AAS)", ko: "표준 (ISO·STEP·AAS)", kos: "표준" }
   ];
   function topicKey(s) { return String(s || "").toLowerCase().replace(/[\s·.\/&()_+-]+/g, ""); }
   var TOPIC_BY = {};
   ADAM.TOPICS.forEach(function (t, i) {
     t.order = i;
-    [t.id, t.en, t.short, t.ko].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
+    [t.id, t.en, t.ko, t.kos].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
   });
   TOPIC_BY[topicKey("B-rep")] = TOPIC_BY[topicKey("CAD")] = ADAM.TOPICS[0];
+  ["조립·체결", "적층 제조", "Additive Mfg.", "LLM · GenAI", "Knowledge Graph", "Mesh · Point Cloud", "CAD Modeling", "Assembly",
+   "CAD Education", "Digital Twin", "Sustainability", "Safety", "Ship · Ocean", "Standards"].forEach(function (k, i) {
+    var ids = ["assembly", "am", "am", "llm", "kg", "mesh", "cad", "assembly", "edu", "dt", "lca", "safety", "ship", "std"];
+    ADAM.TOPICS.forEach(function (t) { if (t.id === ids[i]) TOPIC_BY[topicKey(k)] = t; });
+  });
   ADAM.topic = function (v) {
     var raw = String(v || "").trim(), k = topicKey(raw);
     if (!k) return null;
-    return TOPIC_BY[k] || { id: "x-" + k, en: raw, short: raw, ko: raw, order: 900, custom: true };
+    return TOPIC_BY[k] || { id: "x-" + k, en: raw, ko: raw, kos: raw, order: 900, custom: true };
   };
   ADAM.topics = function (cell) {
     var out = [], seen = {};
@@ -704,7 +905,7 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
   /* One clickable tag on an entry. */
   ADAM.topicTag = function (t, active, onPick) {
     var b = ADAM.el("button", { type: "button", class: "ax-tag", "aria-pressed": String(active),
-      title: t.custom ? t.en : t.en + " · " + t.ko, text: t.short });
+      title: t.custom ? t.en : t.ko + " · " + t.en, text: t.kos, lang: "ko" });
     b.addEventListener("click", function () { onPick(t.id); });
     return b;
   };
@@ -718,17 +919,17 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
       row.innerHTML = ""; sel.innerHTML = "";
       row.hidden = sel.hidden = !present.length;
       if (!present.length) return;
-      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { text: "Topics" }), el("span", { class: "ko", text: "연구 주제" })]));
-      var list = [{ id: "all", short: "All", en: "All topics", ko: "전체" }].concat(present);
+      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { class: "ko", text: "연구 주제" }), el("span", { text: "Topics" })]));
+      var list = [{ id: "all", kos: "전체", en: "All topics", ko: "전체" }].concat(present);
       list.forEach(function (t) {
         var n = counts[t.id] || 0, on = active === t.id;
         var b = el("button", { type: "button", class: "ax-topic" + (t.id === "all" ? " all" : ""), "aria-pressed": String(on),
-          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.en + " · " + t.ko }, [
-          el("span", { text: t.short }), el("span", { class: "n", text: String(n) })
+          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.ko + " · " + t.en }, [
+          el("span", { text: t.kos }), el("span", { class: "n", text: String(n) })
         ]);
         b.addEventListener("click", function () { onPick(on && t.id !== "all" ? "all" : t.id); });
         row.appendChild(b);
-        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "ALL TOPICS · 전체 주제 (" + n + ")" : "# " + t.short + " · " + t.ko + " (" + n + ")" }));
+        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "전체 주제 (" + n + ")" : "# " + t.kos + " (" + n + ")" }));
       });
       sel.value = active;
     }
@@ -742,18 +943,23 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
 })();
 
 /* Research projects — sheet tab `projects`.
-   Columns: title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+   Columns: title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link
    status blank → automatic from start/end vs. today (ongoing / completed / upcoming).
-   URL params: ?status=ongoing|completed &group=PNU|KIT &compact=1 (no header/toolbar) */
+   recruit=Y → shown with ?recruit=1 (Team/Recruiting).  hidden=Y → never shown.
+   start/end: '2026-03' (bar drawn) · '2026' / '26.XX' (year only → no progress bar).
+   URL params: ?recruit=1 &status=ongoing|completed &group=PNU|KIT &compact=1 (no header/toolbar) */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-projects");
   if (!mount) return;
 
-  var GROUPS = { PNU: { t: "Projects @ PNU", ko: "부산대학교" }, KIT: { t: "Projects @ KIT", ko: "국립금오공과대학교" } };
+  var GROUPS = { PNU: { t: "Projects @ PNU", ko: "부산대학교" }, KIT: { t: "Projects @ KIT", ko: "국립금오공과대학교" },
+    OTHER: { t: "Projects", ko: "소속 미지정 (group 칸 확인)" } };
   var ST = { ongoing: { lb: "Ongoing", ko: "진행중" }, upcoming: { lb: "Upcoming", ko: "예정" }, completed: { lb: "Completed", ko: "종료" } };
   var p = A.params;
   var compact = p.get("compact") === "1";
+  var recruitOnly = p.get("recruit") === "1";
+  function yes(v) { return /^(y|yes|true|1|o|예|✓|v)$/i.test(String(v || "").trim()); }
   var lockGroup = (p.get("group") || "").toUpperCase();
   var state = { items: [], status: (p.get("status") || "all").toLowerCase(), group: lockGroup || "all" };
   var refs = {};
@@ -773,24 +979,39 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     return "ongoing";
   }
 
+  var T = A.track("projects");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var title = (r.title || "").trim();
-      if (!title) return;
+      if (!title) { T.drop(i, "title 비어 있음"); return; }
+      if (yes(r.hidden)) { T.drop(i, "hidden=Y (숨김)"); return; }
+      if (recruitOnly && !yes(r.recruit)) return;   // ?recruit=1 filter, not an error
       var start = A.normalizeMonth(r.start), end = A.normalizeMonth(r.end);
-      var st = String(r.status || "").trim().toLowerCase();
-      st = /진행|ongoing|active/.test(st) ? "ongoing" : /종료|완료|complete|done|finished/.test(st) ? "completed" : /예정|upcoming/.test(st) ? "upcoming" : autoStatus(start, end);
-      var group = String(r.group || "").trim().toUpperCase() || "PNU";
+      if (r.start && !start) T.warn(i, "start '" + r.start + "' 날짜로 못 읽음");
+      if (r.end && !end) T.warn(i, "end '" + r.end + "' 날짜로 못 읽음");
+      var raw = String(r.status || "").trim().toLowerCase();
+      var st = /진행|ongoing|active/.test(raw) ? "ongoing" : /종료|완료|complete|done|finished/.test(raw) ? "completed" : /예정|upcoming/.test(raw) ? "upcoming" : "";
+      if (raw && !st) T.warn(i, "status '" + r.status + "' 모름 → 기간으로 자동 계산");
+      st = st || autoStatus(start, end);
+      var group = String(r.group || "").trim().toUpperCase();
+      if (!group) { T.warn(i, "group 비어 있음 → '소속 미지정'"); group = "OTHER"; }
       if (lockGroup && group !== lockGroup) return;
+      /* progress bar only when both ends have a month */
+      var full = start.length === 7 && end.length === 7;
       var s = monthIndex(start), e = monthIndex(end, true), n = monthIndex(NOW);
-      var pct = (s != null && e != null && e > s) ? Math.max(0, Math.min(1, (n - s) / (e - s))) : (st === "completed" ? 1 : null);
+      var pct = full && e > s ? Math.max(0, Math.min(1, (n - s) / (e - s))) : null;
       out.push({ title: title, org: r.org_role || "", role: r.researcher_role || "", program: r.program || "", funder: r.funder || "",
-        start: start, end: end, group: group, status: st, pct: pct, logo: A.asset(r.logo), link: A.safeUrl(r.link), order: i });
+        start: start, end: end, startRaw: r.start || "", endRaw: r.end || "", group: group, status: st, pct: pct,
+        logo: A.asset(r.logo), link: A.safeUrl(r.link), order: i });
     });
+    T.done(out.length);
     var rank = { ongoing: 0, upcoming: 1, completed: 2 };
     out.sort(function (a, b) {
-      if (a.group !== b.group) return a.group === "PNU" ? -1 : b.group === "PNU" ? 1 : (a.group < b.group ? -1 : 1);
+      var ga = a.group === "PNU" ? 0 : a.group === "OTHER" ? 2 : 1, gb = b.group === "PNU" ? 0 : b.group === "OTHER" ? 2 : 1;
+      if (ga !== gb) return ga - gb;
+      if (a.group !== b.group) return a.group < b.group ? -1 : 1;
       return a.order - b.order;
     });
     out.forEach(function (it) { it.rank = rank[it.status]; });
@@ -808,7 +1029,11 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     for (var i = 0; i < 3; i++) refs.list.appendChild(el("div", { class: "ax-skel", style: "height:150px", "aria-hidden": "true" }));
   }
 
-  function fmt(ym) { return ym ? ym.replace("-", ".") : "—"; }
+  function fmt(ym, raw) {
+    if (ym.length === 7) return ym.replace("-", ".");
+    if (ym) return /x|\?/i.test(raw) ? ym + ".?" : ym;
+    return raw || "—";
+  }
 
   function card(it) {
     var st = ST[it.status];
@@ -830,9 +1055,10 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
       it.role ? el("span", { class: "ax-badge ko", text: it.role }) : null
     ]);
     var period = el("div", { class: "pj-period" });
-    var dates = el("div", { class: "pj-dates" }, [el("span", { text: fmt(it.start) + " — " + fmt(it.end) })]);
+    var dates = el("div", { class: "pj-dates" }, [el("span", { text: fmt(it.start, it.startRaw) + " — " + fmt(it.end, it.endRaw) })]);
     if (it.status === "ongoing" && it.pct != null) dates.appendChild(el("span", { class: "pct", text: Math.round(it.pct * 100) + "%" }));
     period.appendChild(dates);
+    if (it.pct == null) period.classList.add("no-bar");
     if (it.pct != null) {
       var track = el("div", { class: "pj-track", role: "img", "aria-label": "진행률 " + Math.round(it.pct * 100) + "%" }, [
         el("span", { class: "pj-fill", style: "width:" + (it.pct * 100).toFixed(1) + "%" })
@@ -879,7 +1105,9 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     var groups = [];
     state.items.forEach(function (it) { if (groups.indexOf(it.group) === -1) groups.push(it.group); });
     var gc = function (g) { return state.items.filter(function (it) { return matches(it, "group") && (g === "all" || it.group === g); }).length; };
-    chipRow(refs.gchips, [{ id: "all", lb: "All", n: gc("all") }].concat(groups.map(function (g) { return { id: g, lb: "@" + g, n: gc(g) }; })), "group");
+    chipRow(refs.gchips, [{ id: "all", ko: "전체", n: gc("all") }].concat(groups.map(function (g) {
+      return g === "OTHER" ? { id: g, ko: "소속 미지정", n: gc(g) } : { id: g, lb: "@" + g, n: gc(g) };
+    })), "group");
     refs.gchips.hidden = groups.length < 2;
 
     refs.list.innerHTML = "";
@@ -901,11 +1129,12 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
 
   function boot() {
     shell();
-    A.load("projects", { required: ["title", "funder", "org_role"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 과제가 없습니다."); return; }
       render();
-    }).catch(function () { A.status(refs.list, "과제 목록을 불러오지 못했습니다."); });
+    }
+    A.load("projects", { required: ["title", "funder", "org_role"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "과제 목록을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

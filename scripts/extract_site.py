@@ -6,6 +6,11 @@ Usage: python3 scripts/extract_site.py <dump_dir> [--no-images]
   publications.html awards.html board.html (and the *.txt made by the same
   text walker below). Content is copied as published; only the fixes listed
   in docs/site_audit.md marked 확실 are applied (see FIXES).
+
+WARNING: this was the 2026-10 bootstrap. The CSV/JSON were edited afterwards
+(projects.recruit/hidden, news backfill + link2, topics). Once the Google
+Sheet tabs exist the Sheet is the source of truth — use
+scripts/snapshot_sheet.py to refresh data/*.json instead of re-running this.
 """
 import csv, io, json, re, sys, urllib.parse as up, urllib.request
 from pathlib import Path

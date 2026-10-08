@@ -6,15 +6,19 @@
   var state = { items: [], lang: "all", q: "" };
   var refs = {};
 
+  var T = A.track("talks");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var title = (r.title || "").trim(), date = A.normalizeDate(r.date);
-      if (!title || !date) return;
+      if (!title) { T.drop(i, "title 비어 있음"); return; }
+      if (!date) { T.drop(i, title.slice(0, 30) + ": date '" + (r.date || "") + "' 날짜로 못 읽음"); return; }
       out.push({ date: date, title: title, venue: r.venue || "", location: r.location || "", link: A.safeUrl(r.link), order: i,
         lang: /[가-힣]/.test(title) ? "ko" : "en", hay: A.fold([title, r.venue, r.location, date].join(" ")) });
     });
     out.sort(function (a, b) { return a.date === b.date ? a.order - b.order : (a.date < b.date ? 1 : -1); });
+    T.done(out.length);
     return out;
   }
 
@@ -61,7 +65,7 @@
     var c = { all: 0, ko: 0, en: 0 };
     state.items.forEach(function (it) { if (matches(it, true)) { c.all++; c[it.lang]++; } });
     refs.chips.innerHTML = "";
-    [{ id: "all", ko: "전체" }, { id: "ko", ko: "국문" }, { id: "en", lb: "English" }].forEach(function (x) {
+    [{ id: "all", ko: "전체" }, { id: "ko", ko: "국문" }, { id: "en", ko: "영문" }].forEach(function (x) {
       var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.lang === x.id) }, [
         x.ko ? el("span", { class: "ko", text: x.ko }) : el("span", { text: x.lb }), el("span", { class: "n", text: String(c[x.id]) })]);
       b.addEventListener("click", function () { state.lang = x.id; render(); });
@@ -98,11 +102,12 @@
 
   function boot() {
     shell();
-    A.load("talks", { required: ["date", "title", "venue", "location"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 강연이 없습니다."); return; }
       renderHead(); render();
-    }).catch(function () { A.status(refs.list, "초청 강연 목록을 불러오지 못했습니다."); });
+    }
+    A.load("talks", { required: ["date", "title", "venue", "location"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "초청 강연 목록을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

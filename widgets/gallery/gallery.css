@@ -1,11 +1,13 @@
 /* Board page (Sites /board) — photo gallery. Card language follows the
    Latest News cards (white card, 1px line, mono navy date, navy hover). */
 
-.gl-grid { column-gap: 12px; columns: 4 220px; margin-top: 6px; }
+/* row-wise grid (newest first, left → right), uniform 4:3 tiles */
+.gl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 6px; align-items: start; }
+.gl-skel { height: auto; aspect-ratio: 4 / 4.2; margin: 0; }
 .gl-card {
-  break-inside: avoid;
-  margin: 0 0 12px;
-  display: block;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   padding: 0;
   text-align: left;
@@ -16,8 +18,8 @@
   transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), transform 0.18s var(--ease);
 }
 .gl-card:hover { border-color: var(--navy); box-shadow: 0 8px 14px rgba(16, 43, 134, 0.06); transform: translateY(-3px); }
-.gl-img { position: relative; background: var(--grid); overflow: hidden; }
-.gl-img img { display: block; width: 100%; height: auto; transition: transform 0.45s var(--ease); }
+.gl-img { position: relative; background: var(--grid); overflow: hidden; aspect-ratio: 4 / 3; }
+.gl-img img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%; transition: transform 0.45s var(--ease); }
 .gl-card:hover .gl-img img { transform: scale(1.03); }
 .gl-cap { padding: 9px 11px 10px; display: grid; gap: 3px; }
 .gl-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -26,9 +28,9 @@
 .gl-text { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--ink); }
 
 .gl-year {
-  column-span: all;
+  grid-column: 1 / -1;
   display: flex; align-items: center; gap: 10px;
-  margin: 8px 0 10px;
+  margin: 6px 0 -2px;
   font-family: var(--font-display); font-weight: 700; font-size: 18px; color: var(--navy); line-height: 1;
 }
 .gl-year::after { content: ""; flex: 1; height: 1px; background: var(--line); }
@@ -41,7 +43,7 @@
   color: #fff;
 }
 .gl-box-top { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; gap: 10px; }
-.gl-box-top .ax-mono { font-size: 11px; letter-spacing: 0.08em; color: #c9cfdf; }
+.gl-box-top .ax-mono { font-size: 11px; letter-spacing: 0.08em; color: #d5dae8; }
 .gl-box-stage { position: relative; display: grid; place-items: center; min-height: 0; padding: 0 52px; }
 .gl-box-stage img { max-width: 100%; max-height: 100%; object-fit: contain; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35); }
 .gl-box-cap { padding: 12px 16px 16px; text-align: center; font-size: 14px; }
@@ -55,8 +57,18 @@
 .gl-prev, .gl-next { position: absolute; top: 50%; transform: translateY(-50%); }
 .gl-prev { left: 8px; } .gl-next { right: 8px; }
 
+html.gl-locked { overflow: hidden; }
+.gl-box-stage img { width: auto; height: auto; }
+
 @container ax (max-width: 520px) {
-  .gl-grid { columns: 2; column-gap: 8px; }
-  .gl-card { margin-bottom: 8px; }
+  .gl-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .gl-cap { padding: 7px 8px 8px; }
   .gl-text { font-size: 12.5px; }
+}
+/* short iframes (Sites scales embed height with width on phones) */
+@media (max-height: 420px) {
+  .gl-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  .gl-box-cap { padding: 6px 12px 8px; font-size: 12.5px; }
+  .gl-box-top { padding: 6px 10px; }
+  .gl-btn { width: 32px; height: 32px; }
 }

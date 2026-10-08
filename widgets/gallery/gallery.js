@@ -1,6 +1,7 @@
 /* Photo gallery — sheet tab `gallery`. Columns: date,caption,image,group,link
-   image: repo path (assets/gallery/…) or a public image URL / Google Drive share link.
-   URL params: ?group=PNU|KIT */
+   image: repo path (assets/gallery/…, recommended) or a public image URL / Google Drive share link (unofficial).
+   Repo photos get a 480px 4:3 thumbnail (assets/gallery/thumbs/<name>-480.jpg, scripts/make_thumbs.py).
+   Grid is row-wise by date (newest first). URL params: ?group=PNU|KIT */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-gallery");
@@ -10,19 +11,32 @@
   if (state.group === "ALL") state.group = "all";
   var refs = {};
   var ICON = {
-    prev: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.2 2.4 4.6 8l5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
-    next: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.8 2.4 11.4 8l-5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
-    close: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 3 10 10M13 3 3 13" stroke="currentColor" stroke-width="1.6"/></svg>'
+    prev: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10.2 2.4 4.6 8l5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+    next: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5.8 2.4 11.4 8l-5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+    close: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m3 3 10 10M13 3 3 13" stroke="currentColor" stroke-width="1.6"/></svg>'
   };
 
+  /* assets/gallery/photo-07.jpg → assets/gallery/thumbs/photo-07-480.jpg */
+  function thumbOf(url) {
+    var m = String(url).match(/^(.*\/assets\/gallery\/)([\w.-]+?)\.(jpe?g|png|webp)$/i);
+    return m ? m[1] + "thumbs/" + m[2] + "-480.jpg" : "";
+  }
+
+  var T = A.track("gallery");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var img = A.asset(r.image), date = A.normalizeDate(r.date);
-      if (!img) return;
-      out.push({ date: date, caption: r.caption || "", image: img, group: String(r.group || "").trim().toUpperCase(), link: A.safeUrl(r.link), order: i });
+      if (!img) { T.drop(i, "image '" + (r.image || "") + "' 비어 있거나 주소가 아님"); return; }
+      if (r.date && !date) T.warn(i, "date '" + r.date + "' 날짜로 못 읽음");
+      var group = String(r.group || "").trim().toUpperCase();
+      if (group && !GROUP[group]) T.warn(i, "group '" + r.group + "' 은 PNU/KIT가 아님 → 그대로 표시");
+      if (/drive\.google\.com/.test(r.image || "")) T.warn(i, "Google Drive 사진(비공식 지원) — 저장소 assets/gallery 권장");
+      out.push({ date: date, caption: r.caption || "", image: img, thumb: thumbOf(img), group: group, link: A.safeUrl(r.link), order: i });
     });
     out.sort(function (a, b) { return a.date === b.date ? a.order - b.order : (a.date < b.date ? 1 : -1); });
+    T.done(out.length);
     return out;
   }
 
@@ -32,43 +46,60 @@
     refs.count = el("span", { class: "ax-count", "aria-live": "polite" });
     refs.grid = el("div", { class: "gl-grid" });
     mount.appendChild(el("div", { class: "ax-root gl" }, [el("div", { class: "ax-bar" }, [refs.chips, el("span", { class: "ax-grow" }), refs.count]), refs.grid]));
-    for (var i = 0; i < 4; i++) refs.grid.appendChild(el("div", { class: "ax-skel", style: "height:180px", "aria-hidden": "true" }));
+    for (var i = 0; i < 4; i++) refs.grid.appendChild(el("div", { class: "ax-skel gl-skel", "aria-hidden": "true" }));
   }
 
   function disp(d) { return d ? d.slice(2).replace(/-/g, ".") : "—"; }
+
+  function picture(it, eager) {
+    var attrs = { alt: it.caption, width: "480", height: "360", decoding: "async" };
+    if (!eager) attrs.loading = "lazy";
+    if (it.thumb) {
+      attrs.src = it.thumb;
+      attrs.srcset = it.thumb + " 480w, " + it.image + " 1000w";
+      attrs.sizes = "(max-width: 520px) 50vw, 300px";
+    } else attrs.src = it.image;
+    var img = el("img", attrs);
+    img.addEventListener("error", function onErr() {   // no thumbnail yet → original
+      img.removeEventListener("error", onErr);
+      img.removeAttribute("srcset"); img.src = it.image;
+    });
+    return img;
+  }
 
   function render() {
     var groups = [];
     state.items.forEach(function (it) { if (it.group && groups.indexOf(it.group) === -1) groups.push(it.group); });
     refs.chips.innerHTML = "";
-    [{ id: "all", lb: "All" }].concat(groups.map(function (g) { return { id: g, lb: GROUP[g] || g }; })).forEach(function (c) {
+    [{ id: "all", lb: "전체" }].concat(groups.map(function (g) { return { id: g, lb: GROUP[g] || g }; })).forEach(function (c) {
       var n = c.id === "all" ? state.items.length : state.items.filter(function (it) { return it.group === c.id; }).length;
-      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.group === c.id) }, [el("span", { text: c.lb }), el("span", { class: "n", text: String(n) })]);
+      var b = el("button", { type: "button", class: "ax-chip", "aria-pressed": String(state.group === c.id) },
+        [el("span", { class: c.id === "all" ? "ko" : "", text: c.lb }), el("span", { class: "n", text: String(n) })]);
       b.addEventListener("click", function () { state.group = c.id; render(); });
       refs.chips.appendChild(b);
     });
     refs.chips.hidden = groups.length < 2;
     var shown = state.shown = state.items.filter(function (it) { return state.group === "all" || it.group === state.group; });
-    refs.count.textContent = shown.length + " photos";
+    refs.count.textContent = shown.length + "장";
     refs.grid.innerHTML = "";
     var lastY = null;
     shown.forEach(function (it, i) {
       var y = it.date ? it.date.slice(0, 4) : "";
       if (y !== lastY) { refs.grid.appendChild(el("h3", { class: "gl-year", text: y || "—" })); lastY = y; }
       var card = el("button", { type: "button", class: "gl-card ax-in", "aria-label": (it.caption || "사진") + " 크게 보기" }, [
-        el("div", { class: "gl-img" }, [el("img", { src: it.image, alt: it.caption, loading: i < 8 ? "eager" : "lazy" })]),
+        el("div", { class: "gl-img" }, [picture(it, i < 8)]),
         el("div", { class: "gl-cap" }, [
           el("div", { class: "gl-top" }, [el("span", { class: "gl-date", text: disp(it.date) }), it.group ? el("span", { class: "gl-tag", text: "@" + it.group }) : null]),
           it.caption ? el("div", { class: "gl-text", text: it.caption }) : null
         ])
       ]);
-      card.addEventListener("click", function () { openBox(i); });
+      card.addEventListener("click", function () { refs.opener = card; openBox(i); });
       refs.grid.appendChild(card);
     });
   }
 
   function openBox(i) {
-    closeBox();
+    removeBox();
     state.open = i;
     var it = state.shown[i];
     var img = el("img", { src: it.image, alt: it.caption });
@@ -86,24 +117,38 @@
     close.addEventListener("click", closeBox);
     refs.box.addEventListener("click", function (e) { if (e.target === refs.box || e.target.classList.contains("gl-box-stage")) closeBox(); });
     document.body.appendChild(refs.box);
+    document.documentElement.classList.add("gl-locked");
     close.focus();
   }
   function step(d) { var n = state.shown.length; openBox((state.open + d + n) % n); }
-  function closeBox() { if (refs.box) { refs.box.remove(); refs.box = null; } }
+  function removeBox() { if (refs.box) { refs.box.remove(); refs.box = null; } }
+  function closeBox() {
+    removeBox();
+    document.documentElement.classList.remove("gl-locked");
+    if (refs.opener && document.contains(refs.opener)) refs.opener.focus({ preventScroll: true });   // back to the photo that opened it
+  }
   document.addEventListener("keydown", function (e) {
     if (!refs.box) return;
     if (e.key === "Escape") closeBox();
     else if (e.key === "ArrowLeft") step(-1);
     else if (e.key === "ArrowRight") step(1);
+    else if (e.key === "Tab") {   // keep focus inside the dialog
+      var f = refs.box.querySelectorAll("button, a[href]");
+      if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
   });
 
   function boot() {
     shell();
-    A.load("gallery", { required: ["date", "caption", "image"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.grid, "표시할 사진이 없습니다."); return; }
       render();
-    }).catch(function () { A.status(refs.grid, "사진을 불러오지 못했습니다."); });
+    }
+    A.load("gallery", { required: ["date", "caption", "image"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.grid, "사진을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

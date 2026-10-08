@@ -9,7 +9,8 @@
   var CATS = [
     { id: "paper", lb: "Paper", ko: "논문" },
     { id: "presentation", lb: "Presentation", ko: "학술발표" },
-    { id: "competition", lb: "Competition", ko: "경진대회" }
+    { id: "competition", lb: "Competition", ko: "경진대회" },
+    { id: "other", lb: "Other", ko: "기타(분류 확인)" }
   ];
   var ALIAS = { "논문": "paper", papers: "paper", journal: "paper", "발표": "presentation", presentations: "presentation", conference: "presentation", poster: "presentation",
     "경진대회": "competition", competitions: "competition", contest: "competition" };
@@ -24,17 +25,23 @@
     return CAT_BY[s] ? s : (ALIAS[s] || ALIAS[String(v || "").trim()] || "");
   }
 
+  var T = A.track("awards");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var award = (r.award || "").trim();
       var date = A.normalizeDate(r.date);
-      if (!award || !date) return;
-      out.push({ date: date, cat: canon(r.category) || "competition", award: award, recipients: r.recipients || "",
+      if (!award) { T.drop(i, "award 비어 있음"); return; }
+      if (!date) { T.drop(i, award + ": date '" + (r.date || "") + "' 날짜로 못 읽음"); return; }
+      var cat = canon(r.category);
+      if (!cat) { T.warn(i, award + ": category '" + (r.category || "") + "' 모름 → '기타'"); cat = "other"; }
+      out.push({ date: date, cat: cat, award: award, recipients: r.recipients || "",
         title: r.title || "", event: r.event || "", organizer: r.organizer || "", link: A.safeUrl(r.link), order: i,
         hay: A.fold([award, r.recipients, r.title, r.event, r.organizer, date].join(" ")) });
     });
     out.sort(function (a, b) { return a.date === b.date ? a.order - b.order : (a.date < b.date ? 1 : -1); });
+    T.done(out.length);
     return out;
   }
 
@@ -68,7 +75,7 @@
   }
 
   function renderHead() {
-    var c = { paper: 0, presentation: 0, competition: 0 };
+    var c = { paper: 0, presentation: 0, competition: 0, other: 0 };
     state.items.forEach(function (it) { c[it.cat]++; });
     var years = state.items.map(function (it) { return it.date.slice(0, 4); });
     refs.head.innerHTML = "";
@@ -138,12 +145,13 @@
 
   function boot() {
     shell();
-    A.load("awards", { required: ["date", "award", "recipients", "category"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 수상 내역이 없습니다."); return; }
       renderHead();
       render();
-    }).catch(function () { A.status(refs.list, "수상 내역을 불러오지 못했습니다."); });
+    }
+    A.load("awards", { required: ["date", "award", "recipients", "category"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "수상 내역을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

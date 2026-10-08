@@ -17,7 +17,7 @@
      --line #D8DDE8    --line-soft #E9ECF3
      --navy #102B86    --blue #0707AA
      --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
-     --accent #FF9900  --accent-deep #D97E00
+     --accent #FF9900  --accent-deep #D97E00  (+ --accent-ink #9A5200 for text, AA)
 */
 
 :root {
@@ -33,6 +33,7 @@
   --ink-faint: #9aa3b5;
   --accent: #ff9900;
   --accent-deep: #d97e00;
+  --accent-ink: #9a5200;   /* award text on light backgrounds: 5.5:1 on #fff8ec (WCAG AA) */
   --paper: var(--sheet);
   --muted: var(--ink-dim);
   --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
@@ -91,7 +92,7 @@ body {
 
 a { color: inherit; }
 button { font: inherit; color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--navy); outline-offset: 2px; }
 
 .ax-root {
   container-type: inline-size;
@@ -119,8 +120,11 @@ button { font: inherit; color: inherit; }
   border-bottom: 1px solid var(--line-soft);
 }
 .ax-bar .ax-grow { flex: 1 1 auto; }
+/* Narrow embeds keep the bar sticky but compact: chip rows scroll sideways
+   on one line instead of wrapping, so the bar stays ~1–2 rows tall. */
 @container ax (max-width: 600px) {
-  .ax-bar { position: static; }
+  .ax-bar { padding: 6px 0; gap: 6px; margin-bottom: 4px; }
+  .ax-bar .ax-chips { flex: 1 1 auto; }
 }
 
 .ax-chips {
@@ -163,7 +167,7 @@ button { font: inherit; color: inherit; }
 }
 .ax-chip .n {
   font-size: 10px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   font-weight: 500;
 }
 .ax-chip[aria-pressed="true"] .n { color: var(--navy); }
@@ -248,7 +252,7 @@ button { font: inherit; color: inherit; }
   background: #fff;
   white-space: nowrap;
 }
-.ax-badge.award { border-color: var(--accent); color: var(--accent-deep); background: #fff8ec; }
+.ax-badge.award { border-color: var(--accent); color: var(--accent-ink); background: #fff8ec; }
 .ax-badge.award::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
 .ax-badge.navy { border-color: var(--navy); color: var(--navy); }
 .ax-badge.solid { background: var(--navy); border-color: var(--navy); color: #fff; }
@@ -278,7 +282,7 @@ button { font: inherit; color: inherit; }
 .ax-count {
   font-family: var(--font-mono);
   font-size: 11px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
@@ -308,6 +312,19 @@ button { font: inherit; color: inherit; }
 @keyframes ax-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
+
+/* ---------- short iframes ----------
+   Google Sites scales an embed's height with its width, so on a phone a
+   widget may get only ~250–400px. The document scrolls inside the iframe;
+   keep the sticky bar to one or two thin rows and drop decorative heads
+   (histogram, sparkline, big totals) so the list is visible at once. */
+@media (max-height: 520px) {
+  .ax-root { padding-top: 4px; padding-bottom: 12px; }
+  .ax-bar { padding: 5px 0; gap: 6px; margin-bottom: 4px; }
+  .ax-chip { padding: 6px 8px; }
+  .ax-search { min-width: 120px; }
+  .ax-search input, .ax-select { height: 30px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
@@ -354,7 +371,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   color: var(--ink);
   font-variant-numeric: tabular-nums;
 }
-.pub-tile .ko { font-size: 11.5px; color: var(--ink-faint); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pub-tile .ko { font-size: 11.5px; color: var(--ink-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pub-tile[aria-pressed="true"] { border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); background: #fff; }
 .pub-tile[aria-pressed="true"] .num,
 .pub-tile[aria-pressed="true"] .lb { color: var(--navy); }
@@ -396,7 +413,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   justify-content: space-between;
   font-family: var(--font-mono);
   font-size: 9.5px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   letter-spacing: 0.05em;
   margin-bottom: 4px;
 }
@@ -418,7 +435,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
 }
 .ax-topics-lb .ko { font-family: var(--font-body); letter-spacing: 0; text-transform: none; font-size: 11px; }
 .ax-topic {
@@ -437,12 +454,12 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
 }
 .ax-topic::before { content: "#"; font-family: var(--font-mono); font-size: 11px; color: var(--blue); opacity: 0.5; margin-right: -2px; }
 .ax-topic.all::before { content: none; }
-.ax-topic .n { font-family: var(--font-mono); font-size: 10px; color: var(--ink-faint); font-variant-numeric: tabular-nums; }
+.ax-topic .n { font-family: var(--font-mono); font-size: 10px; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
 .ax-topic:hover { background: rgba(16, 43, 134, 0.1); }
 .ax-topic[aria-pressed="true"] { background: #fff; border-color: var(--navy); box-shadow: inset 0 0 0 1px var(--navy); }
 .ax-topic[aria-pressed="true"] .n { color: var(--navy); }
 .ax-topic:disabled { opacity: 0.4; cursor: default; background: rgba(16, 43, 134, 0.03); }
-.ax-topic:focus-visible, .ax-tag:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.ax-topic:focus-visible, .ax-tag:focus-visible { outline: 2px solid var(--navy); outline-offset: 1px; }
 .ax-topic-select { max-width: 100%; }
 
 /* topic tags on each entry */
@@ -523,7 +540,7 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   letter-spacing: 0.03em;
   padding-top: 2px;
   text-align: right;
@@ -539,8 +556,8 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
 .pub-title a:hover { color: var(--navy); background-size: 100% 1px; }
 .pub-authors { margin-top: 3px; font-size: 13px; color: var(--ink-dim); }
 .pub-venue { margin-top: 2px; font-size: 13px; color: var(--ink-dim); }
-.pub-venue .vn { color: var(--blue); font-style: italic; }
-.pub-venue .dt { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-faint); }
+.pub-venue .vn { color: var(--ink); font-style: italic; }   /* not a link → not blue */
+.pub-venue .dt { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-dim); }
 .pub-meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; align-items: center; }
 .pub-meta:empty { display: none; }
 
@@ -587,13 +604,33 @@ mark { background: #ffe9c4; color: inherit; padding: 0 1px; }
   .pub-meta .pub-tags, .pub-meta .pub-tags:not(:first-child) { order: 9; flex-basis: 100%; padding-left: 0; margin-left: 0; border-left: 0; }
 }
 
+/* short iframes: stat tiles shrink to one scrolling row, no histogram,
+   filters fold into two thin rows (search · topic + year + award). */
+@media (max-height: 520px) {
+  .pub-hist, .pub-hist-axis { display: none; }
+  .pub-tiles { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-bottom: 4px; padding: 1px; }
+  .pub-tiles::-webkit-scrollbar { display: none; }
+  .pub-tile { flex: 0 0 auto; grid-auto-flow: column; align-items: baseline; gap: 6px; padding: 5px 9px; }
+  .pub-tile .num { font-size: 16px; }
+  .pub-tile .ko { display: none; }
+  .pub-year { margin-top: 6px; }
+}
+@container ax (max-width: 600px) {
+  @media (max-height: 520px) {
+    .ax-bar > .ax-search { flex: 1 1 100%; }
+    .ax-bar > .ax-topic-select { flex: 1 1 140px; }
+    .ax-bar > .ax-select:not(.ax-topic-select) { flex: 0 1 auto; }
+    .ax-bar > .ax-count { display: none; }
+  }
+}
+
   </style>
 </head>
 <body>
   <div id="adam-patents"></div>
   <script>
     window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
-    window.ADAM_INLINE = { "patents": [{"no":"14","title":"삼차원 설계 데이터를 활용한 생성형 인공지능 모델 기반의 제조공정 추천 시스템 및 이를 이용한 제조공정 추천방법","topics":"llm","status":"filed","number":"10-2025-0158815","date":"2025-10-29","link":"","note":""},{"no":"13","title":"화재 발생 시 재실자의 탈출을 보조하는 시스템","topics":"safety","status":"filed","number":"10-2025-0009095","date":"2025-01-21","link":"https://doi.org/10.8080/1020250009095","note":""},{"no":"12","title":"컴퓨터에 의해 수행되는 삼차원 모델 파일을 이용하여 적층제조 시 탄소 배출량을 예측하는 방법","topics":"am; lca","status":"filed","number":"10-2025-0008362","date":"2025-01-20","link":"https://doi.org/10.8080/1020250008362","note":""},{"no":"11","title":"손 이미지를 이용하여 사용자 맞춤형 마우스를 제조하기 위한 3차원 모델링 생성방법","topics":"","status":"filed","number":"10-2024-0125347","date":"2024-09-13","link":"https://doi.org/10.8080/1020240125347","note":"PCT 국제출원, PCT/KR2024/017655, 2024.11.08."},{"no":"10","title":"3D 모델링의 분할 및 모듈 조립을 통한 효율적인 3D 프린팅 방법","topics":"assembly; am","status":"registered","number":"10-3000341","date":"2026-07-31","link":"https://doi.org/10.8080/1020230023038","note":""},{"no":"9","title":"삼차원 캐드 모델링 교육을 위한 자동 채점 및 피드백 방법","topics":"edu","status":"registered","number":"10-2909415","date":"2026-01-05","link":"https://doi.org/10.8080/1020230152411","note":""},{"no":"8","title":"선체 거동특성 시험용 장치","topics":"ship","status":"registered","number":"10-2793594","date":"2025-04-04","link":"https://doi.org/10.8080/1020230145960","note":""},{"no":"7","title":"3D 프린팅을 이용한 연질 소재의 유도탄 보호 덮개","topics":"am","status":"registered","number":"10-2729025","date":"2024-11-07","link":"https://doi.org/10.8080/1020230011968","note":""},{"no":"6","title":"경계 표현 기반 3차원 모델 단순화 장치 및 방법","topics":"cad","status":"registered","number":"10-1846746","date":"2018-04-02","link":"https://doi.org/10.8080/1020160170443","note":""},{"no":"5","title":"최적 정밀도 결정을 통한 모델 단순화 장치 및 방법","topics":"cad","status":"registered","number":"10-1811135","date":"2017-12-14","link":"https://doi.org/10.8080/1020160093623","note":""},{"no":"4","title":"형상 복잡도를 이용한 모델 간략화 장치 및 방법","topics":"cad","status":"registered","number":"10-1765414","date":"2017-07-31","link":"https://doi.org/10.8080/1020160041545","note":""},{"no":"3","title":"기자재 정보 공유 시스템 및 방법","topics":"","status":"registered","number":"10-1715462","date":"2017-03-06","link":"https://doi.org/10.8080/1020150018212","note":""},{"no":"2","title":"모델의 연결성을 보존하는 모델 간략화 장치 및 방법","topics":"cad","status":"registered","number":"10-1595303","date":"2016-02-12","link":"https://doi.org/10.8080/1020140118769","note":""},{"no":"1","title":"조립체 모델링 데이터 간략화 장치 및 방법","topics":"cad; assembly","status":"registered","number":"10-1541887","date":"2015-07-29","link":"https://doi.org/10.8080/1020130143321","note":""}] };
+    window.ADAM_INLINE = { "patents": [{"no":"14","title":"삼차원 설계 데이터를 활용한 생성형 인공지능 모델 기반의 제조공정 추천 시스템 및 이를 이용한 제조공정 추천방법","topics":"llm","status":"filed","number":"10-2025-0158815","date":"2025-10-29","link":"","note":""},{"no":"13","title":"화재 발생 시 재실자의 탈출을 보조하는 시스템","topics":"safety","status":"filed","number":"10-2025-0009095","date":"2025-01-21","link":"https://doi.org/10.8080/1020250009095","note":""},{"no":"12","title":"컴퓨터에 의해 수행되는 삼차원 모델 파일을 이용하여 적층제조 시 탄소 배출량을 예측하는 방법","topics":"am; lca","status":"filed","number":"10-2025-0008362","date":"2025-01-20","link":"https://doi.org/10.8080/1020250008362","note":""},{"no":"11","title":"손 이미지를 이용하여 사용자 맞춤형 마우스를 제조하기 위한 3차원 모델링 생성방법","topics":"design","status":"filed","number":"10-2024-0125347","date":"2024-09-13","link":"https://doi.org/10.8080/1020240125347","note":"PCT 국제출원, PCT/KR2024/017655, 2024.11.08."},{"no":"10","title":"3D 모델링의 분할 및 모듈 조립을 통한 효율적인 3D 프린팅 방법","topics":"assembly; am","status":"registered","number":"10-3000341","date":"2026-07-31","link":"https://doi.org/10.8080/1020230023038","note":""},{"no":"9","title":"삼차원 캐드 모델링 교육을 위한 자동 채점 및 피드백 방법","topics":"edu","status":"registered","number":"10-2909415","date":"2026-01-05","link":"https://doi.org/10.8080/1020230152411","note":""},{"no":"8","title":"선체 거동특성 시험용 장치","topics":"ship","status":"registered","number":"10-2793594","date":"2025-04-04","link":"https://doi.org/10.8080/1020230145960","note":""},{"no":"7","title":"3D 프린팅을 이용한 연질 소재의 유도탄 보호 덮개","topics":"am","status":"registered","number":"10-2729025","date":"2024-11-07","link":"https://doi.org/10.8080/1020230011968","note":""},{"no":"6","title":"경계 표현 기반 3차원 모델 단순화 장치 및 방법","topics":"cad","status":"registered","number":"10-1846746","date":"2018-04-02","link":"https://doi.org/10.8080/1020160170443","note":""},{"no":"5","title":"최적 정밀도 결정을 통한 모델 단순화 장치 및 방법","topics":"cad","status":"registered","number":"10-1811135","date":"2017-12-14","link":"https://doi.org/10.8080/1020160093623","note":""},{"no":"4","title":"형상 복잡도를 이용한 모델 간략화 장치 및 방법","topics":"cad","status":"registered","number":"10-1765414","date":"2017-07-31","link":"https://doi.org/10.8080/1020160041545","note":""},{"no":"3","title":"기자재 정보 공유 시스템 및 방법","topics":"","status":"registered","number":"10-1715462","date":"2017-03-06","link":"https://doi.org/10.8080/1020150018212","note":""},{"no":"2","title":"모델의 연결성을 보존하는 모델 간략화 장치 및 방법","topics":"cad","status":"registered","number":"10-1595303","date":"2016-02-12","link":"https://doi.org/10.8080/1020140118769","note":""},{"no":"1","title":"조립체 모델링 데이터 간략화 장치 및 방법","topics":"cad; assembly","status":"registered","number":"10-1541887","date":"2015-07-29","link":"https://doi.org/10.8080/1020130143321","note":""}] };
   </script>
   <script>
 /* ADAM Lab workbook → one tab per widget, read through gviz CSV.
@@ -610,11 +647,12 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
       "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
   }
   window.ADAM_SHEETS = {
-    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
-    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* date,title_ko,title_en,tag,link,image,link2   (Home · Latest News)
+       tag: Paper | Award | Project | Event | Member   link2: optional second link */
+    news: gviz("news"),
     /* type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
-       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep
-       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu dt lca routing safety ship std) */
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep   (anything else → "기타", see ?debug=1)
+       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu design dt lca routing safety ship std) */
     publications: gviz("publications"),
     /* no,title,topics,status,number,date,link,note   status: registered | filed   topics: as publications */
     patents: gviz("patents"),
@@ -622,28 +660,28 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
        category: paper | presentation | competition */
     awards: gviz("awards"),
     /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
-       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+       role: professor | postdoc | researcher | phd | ms-phd | ms | undergrad   status: current | alumni */
     members: gviz("members"),
-    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
-       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed
+       recruit: Y = 모집 중 (projects/?recruit=1)   hidden: Y = 숨김
+       start/end: 2026.03 · 26.03 · 2026 · 26.XX (연도만 → 진행 막대 없음) */
     projects: gviz("projects"),
     /* date,title,venue,location,link */
     talks: gviz("talks"),
-    /* date,caption,image,group,link   group: PNU | KIT */
+    /* date,caption,image,group,link   group: PNU | KIT   image: assets/gallery/… (권장) */
     gallery: gviz("gallery")
   };
 })();
 
-window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
 
 /* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
 
-   ADAM.load(tab, { required: ["col", ...] })
-     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
-     2) if the request fails, the tab is missing (gviz then silently returns
-        the FIRST tab, so the header is checked against `required`) or the
-        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
-   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   ADAM.load(tab, { required: ["col", ...], onUpdate: fn }) — see below:
+   cache-first (localStorage, refreshed in the background), then the Sheet
+   (gviz CSV, header checked), then the bundled data/<tab>.json.
+   ?debug=1 shows source / detected tab / dropped rows; ADAM.track(tab)
+   lets each widget report rows it dropped or values it did not recognise.
    Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
    for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
 
@@ -676,18 +714,21 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     return "";
   };
 
-  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03';
+     '2026', '26.XX', '2026.XX', '2026년' → '2026' (year only = month unknown). */
   ADAM.normalizeMonth = function (value) {
     var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
     if (!s) return "";
     var d = ADAM.normalizeDate(s);
     if (d) return d.slice(0, 7);
-    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
-    if (m) return m[1] + "-" + pad(m[2]);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})(?!\d)/);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return m[1] + "-" + pad(m[2]);
     m = s.match(/^(\d{2})\.(\d{1,2})$/);
-    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return "20" + m[1] + "-" + pad(m[2]);
     m = s.match(/^(\d{4})/);
-    return m ? m[1] : "";
+    if (m) return m[1];
+    m = s.match(/^(\d{2})\s*[.\-/]\s*(?:[xX?]{1,2}|00)$/);
+    return m ? "20" + m[1] : "";
   };
 
   ADAM.safeUrl = function (value) {
@@ -759,12 +800,137 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     return "";
   };
 
+  ADAM.params = new URLSearchParams(location.search);
+  ADAM.debug = ADAM.params.get("debug") === "1";
+
+  /* Column signature of every tab — used to say which tab gviz actually
+     returned (a missing tab name silently yields the FIRST tab). */
+  var SIGNATURES = {
+    news: ["date", "title_ko", "tag"],
+    publications: ["type", "title", "venue"],
+    patents: ["title", "status", "number"],
+    awards: ["award", "recipients", "category"],
+    members: ["name_ko", "role", "status"],
+    projects: ["title", "funder", "org_role"],
+    talks: ["date", "title", "venue", "location"],
+    gallery: ["caption", "image"]
+  };
+  function detectTab(header) {
+    var best = "";
+    Object.keys(SIGNATURES).forEach(function (t) {
+      if (!best && SIGNATURES[t].every(function (c) { return header.indexOf(c) !== -1; })) best = t;
+    });
+    return best;
+  }
+
+  /* ---------- diagnostics (?debug=1) ---------- */
+  ADAM.diag = {};
+  function diagFor(tab) {
+    return ADAM.diag[tab] || (ADAM.diag[tab] = { tab: tab, events: [], dropped: [], warnings: [] });
+  }
+  function logEvent(d, msg) {
+    d.events.push(new Date().toTimeString().slice(0, 8) + " " + msg);
+    if (window.console && console.info) console.info("[ADAM] " + d.tab + ": " + msg);
+    renderDebug();
+  }
+  /* Row tracker for widget normalizers: T.drop(i, why), T.warn(i, what), T.done(kept). */
+  ADAM.track = function (tab) {
+    var d = diagFor(tab);
+    function rowName(i) { return (d.source === "sheet" || d.source === "cache" ? "시트 " + (i + 2) + "행" : "항목 " + (i + 1)); }
+    return {
+      reset: function () { d.dropped = []; d.warnings = []; },
+      drop: function (i, why) { d.dropped.push(rowName(i) + ": " + why); },
+      warn: function (i, what) { d.warnings.push(rowName(i) + ": " + what); },
+      done: function (kept) {
+        d.kept = kept;
+        if (window.console && (d.dropped.length || d.warnings.length) && console.warn) {
+          console.warn("[ADAM] " + tab + ": " + d.dropped.length + " dropped, " + d.warnings.length + " warnings", { dropped: d.dropped, warnings: d.warnings });
+        }
+        renderDebug();
+      }
+    };
+  };
+  var debugBox = null, debugTimer = null;
+  function renderDebug() {
+    if (!ADAM.debug) return;
+    clearTimeout(debugTimer);
+    debugTimer = setTimeout(function () {
+      if (!document.body) return;
+      if (!debugBox) {
+        debugBox = document.createElement("details");
+        debugBox.className = "adam-debug";
+        debugBox.open = true;
+        document.body.appendChild(debugBox);
+      }
+      var html = "<summary>ADAM debug</summary>";
+      Object.keys(ADAM.diag).forEach(function (t) {
+        var d = ADAM.diag[t];
+        var list = function (title, arr) {
+          if (!arr || !arr.length) return "";
+          return "<div><b>" + title + " (" + arr.length + ")</b><ul>" + arr.slice(0, 40).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+            (arr.length > 40 ? "<li>…</li>" : "") + "</ul></div>";
+        };
+        html += "<section><h4>" + esc(t) + "</h4><dl>" +
+          "<dt>source</dt><dd>" + esc(d.source || "…") + (d.refreshed ? " → sheet (refreshed)" : "") + "</dd>" +
+          "<dt>sheet tab</dt><dd>" + esc(d.detected ? d.detected + (d.detected === t ? " ✓" : " ✗ (탭 이름 확인)") : (d.sheetError ? "—" : "…")) + "</dd>" +
+          (d.header ? "<dt>header</dt><dd>" + esc(d.header.join(", ")) + "</dd>" : "") +
+          (d.sheetError ? "<dt>sheet</dt><dd>" + esc(d.sheetError) + "</dd>" : "") +
+          "<dt>rows</dt><dd>" + (d.rows != null ? d.rows : "…") + " loaded · " + (d.kept != null ? d.kept : "…") + " shown · " + d.dropped.length + " dropped</dd>" +
+          "</dl>" + list("dropped", d.dropped) + list("warnings", d.warnings) + list("log", d.events) + "</section>";
+      });
+      debugBox.innerHTML = html;
+    }, 30);
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  if (ADAM.debug) {
+    var css = document.createElement("style");
+    css.textContent = ".adam-debug{position:fixed;right:8px;bottom:8px;z-index:9999;max-width:min(560px,calc(100vw - 16px));max-height:min(70vh,520px);overflow:auto;" +
+      "background:#fff;border:1px solid #102b86;box-shadow:0 8px 24px rgba(16,43,134,.18);font:11px/1.45 'IBM Plex Mono',ui-monospace,monospace;color:#161a2b;padding:6px 10px}" +
+      ".adam-debug summary{cursor:pointer;font-weight:600;color:#102b86}.adam-debug h4{margin:8px 0 2px;font-size:12px;color:#102b86}" +
+      ".adam-debug dl{display:grid;grid-template-columns:auto 1fr;gap:0 8px;margin:0}.adam-debug dt{color:#5a6378}.adam-debug dd{margin:0;word-break:break-all}" +
+      ".adam-debug ul{margin:2px 0 4px;padding-left:16px}.adam-debug section+section{border-top:1px dashed #d8dde8;margin-top:6px}";
+    document.head.appendChild(css);
+  }
+
+  /* ---------- cache (stale-while-revalidate) ---------- */
+  var CACHE_DAYS = 14;
+  function cacheKey(tab) { return "adam:" + tab + ":" + (ADAM.sheetUrl(tab) || "").length + ":v2"; }
+  function readCache(tab) {
+    try {
+      var c = JSON.parse(localStorage.getItem(cacheKey(tab)) || "null");
+      if (c && Array.isArray(c.rows) && Date.now() - c.t < CACHE_DAYS * 864e5) return c;
+    } catch (err) { /* private mode etc. */ }
+    return null;
+  }
+  function writeCache(tab, res) {
+    try { localStorage.setItem(cacheKey(tab), JSON.stringify({ t: Date.now(), header: res.header, rows: res.rows })); } catch (err) { /* quota */ }
+  }
+  function dropCache(tab) { try { localStorage.removeItem(cacheKey(tab)); } catch (err) { /* ignore */ } }
+
+  /* ADAM.load(tab, { required, onUpdate })
+       1) cached sheet rows (localStorage) → shown at once, sheet re-fetched in
+          the background; if it changed, onUpdate(res) re-renders
+       2) no cache → sheet (header checked against `required`; gviz returns
+          the FIRST tab for a missing name, so a wrong tab is rejected)
+       3) sheet slow (>2.5 s) → bundled data first, sheet result via onUpdate
+       4) sheet failed / wrong / empty → ADAM_INLINE[tab] → data/<tab>.json
+     Resolves { rows, source: "cache" | "sheet" | "inline" | "json", header }.
+     ?source=json skips the sheet, ?nocache=1 skips the cache. */
   ADAM.load = function (tab, opts) {
     opts = opts || {};
+    var d = diagFor(tab);
     var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
     var url = ADAM.sheetUrl(tab);
-    var params = new URLSearchParams(location.search);
-    if (params.get("source") === "json") url = "";
+    if (ADAM.params.get("source") === "json") url = "";
+    d.url = url;
+    var update = typeof opts.onUpdate === "function" ? opts.onUpdate : null;
+
+    function mark(res, how) {
+      d.source = res.source; d.rows = res.rows.length;
+      if (res.header) d.header = res.header;
+      logEvent(d, how || ("loaded from " + res.source + " (" + res.rows.length + " rows)"));
+      return res;
+    }
 
     function fromJson() {
       var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
@@ -776,27 +942,68 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
         })
         .then(function (data) {
           var list = Array.isArray(data) ? data : (data && data.items) || [];
-          return { rows: list, source: "json" };
+          return { rows: list, source: "json", header: data && data.columns };
         });
     }
 
-    if (!ADAM.safeUrl(url)) return fromJson();
-    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
-      .then(function (res) {
-        if (!res.ok) throw new Error("sheet " + res.status);
-        return res.text();
-      })
-      .then(function (text) {
-        var parsed = ADAM.parseCsv(text);
-        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
-        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
-        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
-        return { rows: parsed.rows, source: "sheet" };
-      })
-      .catch(function (err) {
-        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
-        return fromJson();
+    function fetchSheet() {
+      return fetchTimeout(url, 15000, { cache: "no-store", mode: "cors" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.text();
+        })
+        .then(function (text) {
+          var parsed = ADAM.parseCsv(text);
+          d.detected = detectTab(parsed.header) || "(알 수 없음)";
+          var missing = required.filter(function (c) { return parsed.header.indexOf(c) === -1; });
+          if (missing.length) {
+            var e = new Error("header에 " + missing.join(", ") + " 없음 — 받은 탭: " + d.detected + " (탭이 없으면 gviz는 첫 탭을 돌려줌)");
+            e.definitive = true; throw e;
+          }
+          if (!parsed.rows.length) { var e2 = new Error("탭이 비어 있음"); e2.definitive = true; throw e2; }
+          return { rows: parsed.rows, source: "sheet", header: parsed.header };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson().then(function (r) { return mark(r); });
+
+    var sheet = fetchSheet();
+    sheet.then(function (res) { writeCache(tab, res); }, function (err) {
+      d.sheetError = err.message;
+      logEvent(d, "sheet failed: " + err.message);
+      if (err.definitive) dropCache(tab);
+    });
+
+    var cached = ADAM.params.get("nocache") === "1" ? null : readCache(tab);
+    if (cached) {
+      sheet.then(function (res) {
+        if (JSON.stringify(res.rows) !== JSON.stringify(cached.rows) && update) { d.refreshed = true; update(mark(res, "sheet changed → re-rendered")); }
+        else logEvent(d, "sheet checked — cache is current");
+      }, function (err) {
+        if (err.definitive && update) fromJson().then(function (r) { update(mark(r, "sheet rejected → bundled " + r.source)); });
       });
+      return Promise.resolve(mark({ rows: cached.rows, source: "cache", header: cached.header },
+        "cache (" + Math.round((Date.now() - cached.t) / 60000) + " min old) shown; refreshing"));
+    }
+
+    return new Promise(function (resolve, reject) {
+      var settled = false;
+      function fallback() { return fromJson().then(function (r) { resolve(mark(r)); }, reject); }
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        logEvent(d, "sheet slow → bundled data first");
+        fallback();
+        sheet.then(function (res) { if (update) { d.refreshed = true; update(mark(res, "sheet arrived → re-rendered")); } }, function () {});
+      }, opts.wait || 2500);
+      sheet.then(function (res) {
+        if (settled) return;
+        settled = true; clearTimeout(timer); resolve(mark(res));
+      }, function () {
+        if (settled) return;
+        settled = true; clearTimeout(timer); fallback();
+      });
+    });
   };
 
   /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
@@ -829,8 +1036,6 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     };
   };
 
-  ADAM.params = new URLSearchParams(location.search);
-
   /* Normalised text for search (case/space-insensitive, strips * + marks). */
   ADAM.fold = function (s) {
     return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
@@ -854,32 +1059,38 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
      semicolon-separated). Cells may use the id, the English or the Korean
      label; anything else is shown as a custom tag. Ids match scripts/tag_topics.py. */
   ADAM.TOPICS = [
-    { id: "cad", en: "B-rep / CAD Modeling", short: "CAD Modeling", ko: "B-rep·CAD 모델링" },
-    { id: "assembly", en: "Assembly & Mates", short: "Assembly", ko: "조립·체결" },
-    { id: "am", en: "Additive Manufacturing", short: "Additive Mfg.", ko: "적층 제조" },
-    { id: "kg", en: "Knowledge Graph / Ontology", short: "Knowledge Graph", ko: "지식 그래프·온톨로지" },
-    { id: "llm", en: "LLM / Generative AI", short: "LLM · GenAI", ko: "LLM·생성형 AI" },
-    { id: "mesh", en: "Mesh & Point Cloud", short: "Mesh · Point Cloud", ko: "메쉬·점군" },
-    { id: "rl", en: "Reinforcement Learning", short: "Reinforcement Learning", ko: "강화학습" },
-    { id: "edu", en: "CAD Education / Grading", short: "CAD Education", ko: "CAD 교육·자동 채점" },
-    { id: "dt", en: "Digital Twin / Smart Manufacturing", short: "Digital Twin", ko: "디지털 트윈·스마트 제조" },
-    { id: "lca", en: "Sustainability / LCA", short: "Sustainability", ko: "지속가능성·LCA" },
-    { id: "routing", en: "Cable Routing", short: "Cable Routing", ko: "케이블 라우팅" },
-    { id: "safety", en: "Safety & Evacuation", short: "Safety", ko: "안전·대피" },
-    { id: "ship", en: "Shipbuilding / Ocean", short: "Ship · Ocean", ko: "조선·해양" },
-    { id: "std", en: "Standards (ISO·STEP·AAS)", short: "Standards", ko: "표준 (ISO·STEP·AAS)" }
+    { id: "cad", en: "B-rep / CAD Modeling", ko: "B-rep·CAD 모델링", kos: "CAD 모델링" },
+    { id: "assembly", en: "Assembly & Mates", ko: "조립·메이트", kos: "조립·메이트" },
+    { id: "am", en: "Additive Manufacturing", ko: "적층제조", kos: "적층제조" },
+    { id: "kg", en: "Knowledge Graph / Ontology", ko: "지식 그래프·온톨로지", kos: "지식그래프" },
+    { id: "llm", en: "LLM / Generative AI", ko: "LLM·생성형 AI", kos: "LLM·생성형AI" },
+    { id: "mesh", en: "Mesh & Point Cloud", ko: "메쉬·점군", kos: "메쉬·점군" },
+    { id: "rl", en: "Reinforcement Learning", ko: "강화학습", kos: "강화학습" },
+    { id: "edu", en: "CAD Education / Grading", ko: "CAD 교육·자동 채점", kos: "CAD 교육" },
+    { id: "design", en: "Product Design", ko: "제품 설계", kos: "제품 설계" },
+    { id: "dt", en: "Digital Twin / Smart Manufacturing", ko: "디지털 트윈·스마트 제조", kos: "디지털 트윈" },
+    { id: "lca", en: "Sustainability / LCA", ko: "지속가능성·LCA", kos: "지속가능성" },
+    { id: "routing", en: "Cable Routing", ko: "케이블 라우팅", kos: "케이블 라우팅" },
+    { id: "safety", en: "Safety & Evacuation", ko: "안전·대피", kos: "안전·대피" },
+    { id: "ship", en: "Shipbuilding / Ocean", ko: "조선·해양", kos: "조선·해양" },
+    { id: "std", en: "Standards (ISO·STEP·AAS)", ko: "표준 (ISO·STEP·AAS)", kos: "표준" }
   ];
   function topicKey(s) { return String(s || "").toLowerCase().replace(/[\s·.\/&()_+-]+/g, ""); }
   var TOPIC_BY = {};
   ADAM.TOPICS.forEach(function (t, i) {
     t.order = i;
-    [t.id, t.en, t.short, t.ko].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
+    [t.id, t.en, t.ko, t.kos].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
   });
   TOPIC_BY[topicKey("B-rep")] = TOPIC_BY[topicKey("CAD")] = ADAM.TOPICS[0];
+  ["조립·체결", "적층 제조", "Additive Mfg.", "LLM · GenAI", "Knowledge Graph", "Mesh · Point Cloud", "CAD Modeling", "Assembly",
+   "CAD Education", "Digital Twin", "Sustainability", "Safety", "Ship · Ocean", "Standards"].forEach(function (k, i) {
+    var ids = ["assembly", "am", "am", "llm", "kg", "mesh", "cad", "assembly", "edu", "dt", "lca", "safety", "ship", "std"];
+    ADAM.TOPICS.forEach(function (t) { if (t.id === ids[i]) TOPIC_BY[topicKey(k)] = t; });
+  });
   ADAM.topic = function (v) {
     var raw = String(v || "").trim(), k = topicKey(raw);
     if (!k) return null;
-    return TOPIC_BY[k] || { id: "x-" + k, en: raw, short: raw, ko: raw, order: 900, custom: true };
+    return TOPIC_BY[k] || { id: "x-" + k, en: raw, ko: raw, kos: raw, order: 900, custom: true };
   };
   ADAM.topics = function (cell) {
     var out = [], seen = {};
@@ -892,7 +1103,7 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
   /* One clickable tag on an entry. */
   ADAM.topicTag = function (t, active, onPick) {
     var b = ADAM.el("button", { type: "button", class: "ax-tag", "aria-pressed": String(active),
-      title: t.custom ? t.en : t.en + " · " + t.ko, text: t.short });
+      title: t.custom ? t.en : t.ko + " · " + t.en, text: t.kos, lang: "ko" });
     b.addEventListener("click", function () { onPick(t.id); });
     return b;
   };
@@ -906,17 +1117,17 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
       row.innerHTML = ""; sel.innerHTML = "";
       row.hidden = sel.hidden = !present.length;
       if (!present.length) return;
-      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { text: "Topics" }), el("span", { class: "ko", text: "연구 주제" })]));
-      var list = [{ id: "all", short: "All", en: "All topics", ko: "전체" }].concat(present);
+      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { class: "ko", text: "연구 주제" }), el("span", { text: "Topics" })]));
+      var list = [{ id: "all", kos: "전체", en: "All topics", ko: "전체" }].concat(present);
       list.forEach(function (t) {
         var n = counts[t.id] || 0, on = active === t.id;
         var b = el("button", { type: "button", class: "ax-topic" + (t.id === "all" ? " all" : ""), "aria-pressed": String(on),
-          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.en + " · " + t.ko }, [
-          el("span", { text: t.short }), el("span", { class: "n", text: String(n) })
+          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.ko + " · " + t.en }, [
+          el("span", { text: t.kos }), el("span", { class: "n", text: String(n) })
         ]);
         b.addEventListener("click", function () { onPick(on && t.id !== "all" ? "all" : t.id); });
         row.appendChild(b);
-        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "ALL TOPICS · 전체 주제 (" + n + ")" : "# " + t.short + " · " + t.ko + " (" + n + ")" }));
+        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "전체 주제 (" + n + ")" : "# " + t.kos + " (" + n + ")" }));
       });
       sel.value = active;
     }
@@ -940,7 +1151,8 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
 
   var STATUS = {
     registered: { lb: "Registered", ko: "등록", num: "등록번호" },
-    filed: { lb: "Filed", ko: "출원", num: "출원번호" }
+    filed: { lb: "Filed", ko: "출원", num: "출원번호" },
+    other: { lb: "Status?", ko: "상태 확인", num: "번호" }
   };
   var ALIAS = { "등록": "registered", granted: "registered", registration: "registered", "출원": "filed", pending: "filed", application: "filed" };
   var state = { items: [], status: (A.params.get("status") || "all").toLowerCase(), q: "", topic: "all" };
@@ -952,14 +1164,18 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
     return STATUS[s] ? s : (ALIAS[s] || ALIAS[String(v || "").trim()] || "");
   }
 
+  var T = A.track("patents");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var title = (r.title || "").trim();
-      if (!title) return;
+      if (!title) { T.drop(i, "title 비어 있음"); return; }
+      var st = canon(r.status);
+      if (!st) { T.warn(i, "status '" + (r.status || "") + "' 모름 → '상태 확인'"); st = "other"; }
       var date = A.normalizeDate(r.date);
       var topics = A.topics(r.topics);
-      out.push({ topics: topics, topicIds: topics.map(function (t) { return t.id; }), no: String(r.no || "").replace(/\.0$/, ""), title: title, status: canon(r.status) || "filed",
+      out.push({ topics: topics, topicIds: topics.map(function (t) { return t.id; }), no: String(r.no || "").replace(/\.0$/, ""), title: title, status: st,
         number: r.number || "", date: date, link: A.safeUrl(r.link), note: r.note || "", order: i,
         hay: A.fold([title, r.number, r.note, date].concat(topics.map(function (t) { return t.en + " " + t.ko; })).join(" ")) });
     });
@@ -967,6 +1183,7 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;
       return (parseInt(b.no, 10) || 0) - (parseInt(a.no, 10) || 0);
     });
+    T.done(out.length);
     return out;
   }
 
@@ -1010,10 +1227,12 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
   }
 
   function render() {
-    var counts = { all: 0, registered: 0, filed: 0 };
+    var counts = { all: 0, registered: 0, filed: 0, other: 0 };
     state.items.forEach(function (it) { if (matches(it, true)) { counts.all++; counts[it.status]++; } });
     refs.tiles.innerHTML = "";
+    var hasOther = state.items.some(function (it) { return it.status === "other"; });
     [{ id: "all", lb: "All", ko: "전체" }, { id: "registered", lb: "Registered", ko: "등록 특허" }, { id: "filed", lb: "Filed", ko: "출원 특허" }]
+      .concat(hasOther ? [{ id: "other", lb: "Status?", ko: "상태 확인" }] : [])
       .forEach(function (t) {
         var b = el("button", { type: "button", class: "pub-tile", "aria-pressed": String(state.status === t.id) }, [
           el("span", { class: "lb", text: t.lb }), el("span", { class: "num", text: String(counts[t.id]) }), el("span", { class: "ko", text: t.ko })
@@ -1051,7 +1270,7 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
           el("span", { class: "dt", text: st.num + " " + (it.number || "—") + (it.date ? " · " + it.date.replace(/-/g, ".") : "") })
         ]);
         var meta = el("div", { class: "pub-meta" }, [
-          el("span", { class: "ax-badge ko " + (it.status === "registered" ? "solid" : "dash"), text: st.ko + " · " + st.lb.toUpperCase() }),
+          el("span", { class: "ax-badge ko " + (it.status === "registered" ? "solid" : it.status === "filed" ? "dash" : ""), text: st.ko + " · " + st.lb.toUpperCase() }),
           it.note ? el("span", { class: "ax-badge ko navy", text: it.note }) : null,
           it.topics.length ? el("span", { class: "pub-tags" }, it.topics.map(function (tp) {
             return A.topicTag(tp, state.topic === tp.id, function (id) { pickTopic(state.topic === id ? "all" : id, true); });
@@ -1071,7 +1290,7 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
 
   function boot() {
     shell();
-    A.load("patents", { required: ["title", "status", "number"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 특허가 없습니다."); return; }
       var by = {};
@@ -1079,8 +1298,11 @@ window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";
       refs.present = Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return a.order - b.order; });
       var tp = A.topic(topicParam);
       if (tp && by[tp.id]) state.topic = tp.id;
+      topicParam = "";
+      if (state.topic !== "all" && !by[state.topic]) state.topic = "all";
       render();
-    }).catch(function () { A.status(refs.list, "특허 목록을 불러오지 못했습니다."); });
+    }
+    A.load("patents", { required: ["title", "status", "number"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "특허 목록을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

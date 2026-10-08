@@ -20,7 +20,7 @@
 .aw-split { display: flex; gap: 16px; flex-wrap: wrap; }
 .aw-split div { display: grid; gap: 1px; }
 .aw-split b { font-family: var(--font-display); font-size: 20px; line-height: 1; font-weight: 700; color: var(--ink); }
-.aw-split span { font-size: 11.5px; color: var(--ink-faint); }
+.aw-split span { font-size: 11.5px; color: var(--ink-dim); }
 .aw-split i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
 
 .aw-dot-paper { background: var(--navy); }
@@ -93,7 +93,7 @@
 
 .aw-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
 .aw-date { font-family: var(--font-mono); font-size: 11px; color: var(--navy); letter-spacing: 0.04em; font-weight: 500; }
-.aw-cat { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-faint); }
+.aw-cat { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-dim); }
 .aw-name {
   margin: 2px 0 0;
   display: flex;
@@ -107,8 +107,8 @@
 .aw-name svg { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 2px; color: var(--accent); }
 .aw-title { font-size: 13px; color: var(--ink); line-height: 1.5; }
 .aw-rec { font-size: 12.5px; color: var(--ink-dim); }
-.aw-event { font-size: 12.5px; color: var(--blue); }
-.aw-event .org { color: var(--ink-faint); }
+.aw-event { font-size: 12.5px; color: var(--ink); }
+.aw-event .org { color: var(--ink-dim); }
 .aw-foot { display: flex; gap: 6px; margin-top: 4px; }
 .aw-foot:empty { display: none; }
 
@@ -135,4 +135,11 @@
 @container ax (max-width: 460px) {
   .aw-split { gap: 12px; }
   .ax-search { max-width: none; flex-basis: 100%; }
+}
+
+@media (max-height: 520px) {
+  .aw-head { gap: 4px 14px; align-items: baseline; }
+  .aw-total .num { font-size: 26px; }
+  .aw-split { display: none; }
+  .aw-timeline { margin-top: 2px; }
 }

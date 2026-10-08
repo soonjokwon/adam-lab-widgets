@@ -78,7 +78,7 @@
 .mb-name { font-size: 15px; font-weight: 700; line-height: 1.3; }
 .mb-en { font-family: var(--font-display); font-size: 12px; font-weight: 600; color: var(--navy); letter-spacing: 0.01em; }
 .mb-pos { font-size: 12.5px; color: var(--ink-dim); }
-.mb-since { margin-top: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: uppercase; }
+.mb-since { margin-top: 6px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; color: var(--ink-dim); text-transform: uppercase; }
 .mb-since b { color: var(--navy); font-weight: 500; }
 
 .mb-join {
@@ -124,9 +124,9 @@
 .mb-alum .av img { width: 100%; height: 100%; object-fit: cover; }
 .mb-alum .n { font-weight: 700; font-size: 14px; }
 .mb-alum .h { font-size: 12px; color: var(--ink-dim); line-height: 1.45; }
-.mb-alum .a { margin-top: 3px; font-size: 12px; color: var(--blue); }
+.mb-alum .a { margin-top: 3px; font-size: 12px; color: var(--ink); }
 .mb-alum .a::before { content: "→ "; color: var(--ink-faint); font-family: var(--font-mono); }
-.mb-lab { margin: 4px 0 8px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--ink-faint); text-transform: uppercase; }
+.mb-lab { margin: 4px 0 8px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; color: var(--ink-dim); text-transform: uppercase; }
 
 @container ax (max-width: 520px) {
   .mb-pi { grid-template-columns: 96px minmax(0, 1fr); gap: 14px; padding: 12px; }
@@ -135,4 +135,10 @@
   .mb-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .mb-body { padding: 8px 10px 10px; }
   .mb-join { min-height: 160px; }
+}
+
+@media (max-height: 520px) {
+  .mb-pi { grid-template-columns: 72px minmax(0, 1fr); gap: 12px; padding: 10px; }
+  .mb-pi .nm { font-size: 19px; }
+  .mb-pi .act { margin-top: 6px; }
 }

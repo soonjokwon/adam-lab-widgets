@@ -11,11 +11,12 @@
   var SECTIONS = [
     { id: "researcher", roles: ["postdoc", "researcher"], en: "Researchers", ko: "연구원" },
     { id: "graduate", roles: ["phd", "ms-phd", "ms"], en: "Graduate Students", ko: "대학원생", join: true },
-    { id: "undergrad", roles: ["undergrad"], en: "Undergraduate Researchers", ko: "학부연구생", join: true }
+    { id: "undergrad", roles: ["undergrad"], en: "Undergraduate Researchers", ko: "학부연구생", join: true },
+    { id: "other", roles: ["other"], en: "Others", ko: "기타 (role 확인)" }
   ];
   var ROLE_ALIAS = { "교수": "professor", "책임자": "professor", pi: "professor", "박사후연구원": "postdoc", "연구원": "researcher",
     "박사과정": "phd", "석박사통합과정": "ms-phd", "통합과정": "ms-phd", "석사과정": "ms", master: "ms", "학부연구생": "undergrad", "학사과정": "undergrad", undergraduate: "undergrad" };
-  var ROLE_ORDER = { professor: 0, postdoc: 1, researcher: 2, phd: 3, "ms-phd": 4, ms: 5, undergrad: 6 };
+  var ROLE_ORDER = { professor: 0, postdoc: 1, researcher: 2, phd: 3, "ms-phd": 4, ms: 5, undergrad: 6 };   // "other" = unrecognised role
   var state = { items: [], filter: "all", alumni: A.params.get("alumni") === "1" };
   var showJoin = A.params.get("join") !== "0";
   var refs = {};
@@ -27,17 +28,24 @@
   }
   function ymText(v) { var m = A.normalizeMonth(v); return m ? m.replace("-", ".") : ""; }
 
+  var T = A.track("members");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var name = (r.name_ko || "").trim() || (r.name_en || "").trim();
-      if (!name) return;
-      var status = /alum|졸업/.test(String(r.status || "").toLowerCase()) ? "alumni" : "current";
-      out.push({ ko: (r.name_ko || "").trim(), en: (r.name_en || "").trim(), name: name, role: canonRole(r.role) || "undergrad",
+      if (!name) { T.drop(i, "name_ko·name_en 모두 비어 있음"); return; }
+      var rawStatus = String(r.status || "").trim().toLowerCase();
+      var status = /alum|졸업/.test(rawStatus) ? "alumni" : "current";
+      if (rawStatus && !/alum|졸업|current|재학|재직|현재/.test(rawStatus)) T.warn(i, name + ": status '" + r.status + "' 모름 → current");
+      var role = canonRole(r.role);
+      if (!role) { T.warn(i, name + ": role '" + (r.role || "") + "' 모름 → '기타'"); role = "other"; }
+      out.push({ ko: (r.name_ko || "").trim(), en: (r.name_en || "").trim(), name: name, role: role,
         position: r.position || "", start: ymText(r.start), end: ymText(r.end), status: status,
         photo: A.asset(r.photo), email: (r.email || "").trim(), link: A.safeUrl(r.link),
         affiliation: r.affiliation || "", history: r.history || "", lab: r.lab || "", order: i });
     });
+    T.done(out.length);
     return out;
   }
 
@@ -82,8 +90,8 @@
         el("div", { class: "pos", text: [it.position, since && "(" + since + ")"].filter(Boolean).join(" ") }),
         it.affiliation ? el("div", { class: "aff", text: it.affiliation }) : null,
         el("div", { class: "act" }, [
-          it.email ? el("a", { class: "ax-link mail", href: "mailto:" + it.email, text: it.email, target: "_top" }) : null,
-          it.link ? el("a", { class: "ax-link", href: it.link, target: "_top", text: "Profile" }) : null
+          it.email ? el("a", { class: "ax-link mail", href: "mailto:" + it.email, text: it.email, target: "_blank", rel: "noopener" }) : null,
+          it.link ? el("a", { class: "ax-link", href: it.link, target: "_blank", rel: "noopener", text: "Profile" }) : null
         ])
       ])
     ]);
@@ -92,8 +100,8 @@
   function memberCard(it) {
     var tag = it.link ? "a" : "article";
     var attrs = { class: "mb-card ax-in" };
-    if (it.link) { attrs.href = it.link; attrs.target = "_top"; }
-    if (it.email && !it.link) { tag = "a"; attrs.href = "mailto:" + it.email; attrs.target = "_top"; }
+    if (it.link) { attrs.href = it.link; attrs.target = "_blank"; attrs.rel = "noopener"; }
+    if (it.email && !it.link) { tag = "a"; attrs.href = "mailto:" + it.email; attrs.target = "_blank"; attrs.rel = "noopener"; }
     return el(tag, attrs, [
       photo(it),
       el("div", { class: "mb-body" }, [
@@ -106,7 +114,7 @@
   }
 
   function joinCard() {
-    return el("a", { class: "mb-card mb-join", href: RECRUIT, target: "_top" }, [
+    return el("a", { class: "mb-card mb-join", href: RECRUIT, target: "_blank", rel: "noopener" }, [
       el("span", { class: "plus", text: "+", "aria-hidden": "true" }),
       el("span", { class: "t", text: "We're looking for you" }),
       el("span", { class: "s", text: "함께할 학생을 모집합니다" })
@@ -189,11 +197,12 @@
 
   function boot() {
     shell();
-    A.load("members", { required: ["name_ko", "role", "status"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.body, "표시할 구성원이 없습니다."); return; }
       render();
-    }).catch(function () { A.status(refs.body, "구성원 목록을 불러오지 못했습니다."); });
+    }
+    A.load("members", { required: ["name_ko", "role", "status"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.body, "구성원 목록을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

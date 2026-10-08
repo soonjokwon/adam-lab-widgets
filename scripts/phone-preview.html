@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>ADAM widgets · iframe size preview</title>
+<meta name="robots" content="noindex">
+<style>
+  body { margin: 0; background: #fff; }
+  iframe { display: block; border: 0; }
+</style>
+</head>
+<body>
+<!-- Shows one widget in an iframe of a given size, like a Google Sites embed on a phone.
+     ?src=../publications/&w=390&h=350&scroll=600   (scroll = px to scroll inside the iframe after load) -->
+<script>
+  var p = new URLSearchParams(location.search);
+  var f = document.createElement("iframe");
+  f.width = p.get("w") || 390; f.height = p.get("h") || 350;
+  f.src = p.get("src") || "../publications/";
+  document.body.appendChild(f);
+  var y = +p.get("scroll") || 0;
+  if (y) f.addEventListener("load", function () {
+    setTimeout(function () { try { f.contentWindow.scrollTo(0, y); } catch (e) {} }, 2500);
+  });
+</script>
+</body>
+</html>

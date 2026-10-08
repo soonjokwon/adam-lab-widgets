@@ -1,9 +1,6 @@
-/* Latest News timeline. Vanilla, no dependencies.
-   Load order:
-   1) window.ADAM_NEWS_CSV_URL (or ADAM_SHEETS.news) → published Sheet CSV
-   2) window.ADAM_NEWS_ITEMS (paste embed fallback)
-   3) fetch window.ADAM_NEWS_FALLBACK_URL / data/news.json
-   Hosted /news/ never bakes items in; content updates need no rebuild when CSV is set. */
+/* Latest News timeline — sheet tab `news`. Vanilla, uses shared/sheet-loader.js.
+   Columns: date,title_ko,title_en,tag,link,image,link2   (tag: Paper | Award | Project | Event | Member)
+   Data: ADAM.load("news") — cache → Sheet (header must contain date,title_ko) → ADAM_INLINE.news → data/news.json. */
 (function () {
   var TAGS = ["Paper", "Award", "Project", "Event", "Member"];
   var TAG_KO = {
@@ -31,31 +28,8 @@
     return reduced ? "auto" : "smooth";
   }
 
-  function safeUrl(value) {
-    var raw = String(value || "").trim();
-    if (!raw) return "";
-    try {
-      var url = new URL(raw, window.location.href);
-      if (url.protocol === "http:" || url.protocol === "https:") return url.href;
-    } catch (err) {
-      if (/^https?:\/\//i.test(raw)) return raw;
-      return "";
-    }
-    return "";
-  }
-
-  function pad(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function normalizeDate(value) {
-    var s = String(value || "").trim().replace(/\.$/, "");
-    var iso = s.match(/^(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})/);
-    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
-    var short = s.match(/^(\d{2})[.\-/](\d{2})[.\-/](\d{2})$/);
-    if (short) return "20" + short[1] + "-" + short[2] + "-" + short[3];
-    return "";
-  }
+  var A = window.ADAM;
+  function pad(n) { return String(n).padStart(2, "0"); }
 
   function displayDate(iso) {
     if (!iso) return "—";
@@ -71,100 +45,30 @@
     return raw;
   }
 
-  function normalizeItem(raw, index) {
-    if (!raw || typeof raw !== "object") return null;
-    var date = normalizeDate(raw.date);
-    var titleKo = String(raw.title_ko || raw.title || "").trim();
-    var titleEn = String(raw.title_en || "").trim();
-    if (!date || (!titleKo && !titleEn)) return null;
-    return {
-      date: date,
-      title_ko: titleKo || titleEn,
-      title_en: titleEn,
-      tag: canonTag(raw.tag),
-      link: safeUrl(raw.link),
-      image: safeUrl(raw.image),
-      order: index
-    };
-  }
-
+  var T = A.track("news");
   function normalizeList(list) {
     var items = [];
+    T.reset();
     (list || []).forEach(function (raw, index) {
-      var item = normalizeItem(raw, index);
-      if (item) items.push(item);
+      if (!raw || typeof raw !== "object") return;
+      var date = A.normalizeDate(raw.date);
+      var titleKo = String(raw.title_ko || raw.title || "").trim();
+      var titleEn = String(raw.title_en || "").trim();
+      if (!titleKo && !titleEn) { T.drop(index, "title_ko·title_en 비어 있음"); return; }
+      if (!date) { T.drop(index, titleKo.slice(0, 24) + ": date '" + (raw.date || "") + "' 날짜로 못 읽음"); return; }
+      var tag = canonTag(raw.tag);
+      if (tag && TAGS.indexOf(tag) === -1) T.warn(index, "tag '" + tag + "' 은 기본 분류가 아님 → 그대로 칩으로 표시");
+      items.push({
+        date: date, title_ko: titleKo || titleEn, title_en: titleEn, tag: tag,
+        link: A.safeUrl(raw.link), link2: A.safeUrl(raw.link2), image: A.asset(raw.image), order: index
+      });
     });
     items.sort(function (a, b) {
       if (a.date === b.date) return a.order - b.order;
       return a.date < b.date ? 1 : -1;
     });
+    T.done(items.length);
     return items;
-  }
-
-  function parseCsv(text) {
-    var rows = [];
-    var row = [];
-    var cell = "";
-    var quoted = false;
-    var s = String(text || "").replace(/^\uFEFF/, "");
-    for (var i = 0; i < s.length; i++) {
-      var ch = s[i];
-      if (quoted) {
-        if (ch === '"') {
-          if (s[i + 1] === '"') {
-            cell += '"';
-            i++;
-          } else {
-            quoted = false;
-          }
-        } else {
-          cell += ch;
-        }
-        continue;
-      }
-      if (ch === '"') {
-        quoted = true;
-      } else if (ch === ",") {
-        row.push(cell);
-        cell = "";
-      } else if (ch === "\n") {
-        row.push(cell);
-        rows.push(row);
-        row = [];
-        cell = "";
-      } else if (ch !== "\r") {
-        cell += ch;
-      }
-    }
-    if (cell.length || row.length) {
-      row.push(cell);
-      rows.push(row);
-    }
-    if (!rows.length) return [];
-    var header = rows[0].map(function (h) {
-      return String(h || "").trim().toLowerCase();
-    });
-    var out = [];
-    for (var r = 1; r < rows.length; r++) {
-      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
-      var obj = {};
-      for (var c = 0; c < header.length; c++) {
-        if (!header[c]) continue;
-        obj[header[c]] = rows[r][c] != null ? rows[r][c] : "";
-      }
-      out.push(obj);
-    }
-    return out;
-  }
-
-  function fetchTimeout(url, ms) {
-    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
-    var timer = setTimeout(function () {
-      if (ctrl) ctrl.abort();
-    }, ms);
-    var opts = { cache: "no-store", mode: "cors" };
-    if (ctrl) opts.signal = ctrl.signal;
-    return fetch(url, opts).finally(function () { clearTimeout(timer); });
   }
 
   function shell() {
@@ -268,7 +172,7 @@
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "adam-chip";
-      btn.textContent = tag === "All" ? "ALL" : tag;
+      btn.textContent = TAG_KO[tag] || tag;
       btn.setAttribute("aria-pressed", tag === state.filter ? "true" : "false");
       btn.setAttribute("aria-label", (TAG_KO[tag] || tag) + " 소식만 보기");
       btn.setAttribute("data-tag", tag);
@@ -277,14 +181,11 @@
   }
 
   function cardElement(item, index) {
-    var card = document.createElement(item.link ? "a" : "article");
+    /* <article> with a stretched primary link (OPEN ↗ covers the card) so a
+       second link (link2) can sit on top of it — no nested anchors. */
+    var card = document.createElement("article");
     card.className = "news-card" + (item.link ? " is-link" : "");
     card.setAttribute("data-tag", item.tag || "");
-    if (item.link) {
-      card.href = item.link;
-      card.target = "_blank";
-      card.rel = "noopener noreferrer";
-    }
 
     var node = document.createElement("span");
     node.className = "news-node";
@@ -295,6 +196,7 @@
       var img = document.createElement("img");
       img.className = "news-photo";
       img.alt = "";
+      img.loading = "lazy";
       img.src = item.image;
       img.addEventListener("error", function () { img.remove(); });
       card.appendChild(img);
@@ -341,11 +243,31 @@
     var det = document.createElement("span");
     det.className = "news-det";
     det.textContent = "DET " + pad(index + 1);
-    var open = document.createElement("span");
-    open.className = "news-open" + (item.link ? "" : " is-empty");
-    open.textContent = item.link ? "OPEN ↗" : "NO REF";
     foot.appendChild(det);
-    foot.appendChild(open);
+    var links = document.createElement("span");
+    links.className = "news-links";
+    if (item.link2) {
+      var two = document.createElement("a");
+      two.className = "news-open2";
+      two.href = item.link2; two.target = "_blank"; two.rel = "noopener";
+      two.textContent = "LINK 2 ↗";
+      two.setAttribute("aria-label", item.title_ko + " — 두 번째 링크");
+      links.appendChild(two);
+    }
+    var open;
+    if (item.link) {
+      open = document.createElement("a");
+      open.href = item.link; open.target = "_blank"; open.rel = "noopener";
+      open.className = "news-open";
+      open.textContent = item.link2 ? "LINK 1 ↗" : "OPEN ↗";
+      open.setAttribute("aria-label", item.title_ko + " — 링크 열기");
+    } else {
+      open = document.createElement("span");
+      open.className = "news-open is-empty";
+      open.textContent = "NO REF";
+    }
+    links.appendChild(open);
+    foot.appendChild(links);
     card.appendChild(foot);
     return card;
   }
@@ -555,77 +477,23 @@
     });
   }
 
-  function embeddedItems() {
-    return Array.isArray(window.ADAM_NEWS_ITEMS) ? window.ADAM_NEWS_ITEMS : null;
-  }
-
-  function loadFallback() {
-    var inline = embeddedItems();
-    if (inline && inline.length) {
-      return Promise.resolve(normalizeList(inline));
-    }
-    var url = window.ADAM_NEWS_FALLBACK_URL || "../../data/news.json";
-    if (!url) return Promise.resolve([]);
-    return fetch(url, { cache: "no-store" }).then(function (res) {
-      if (!res.ok) throw new Error("news.json");
-      return res.json();
-    }).then(function (data) {
-      var list = Array.isArray(data) ? data : (data && data.items) || [];
-      return normalizeList(list);
-    });
-  }
-
-  function loadCsv(url) {
-    return fetchTimeout(url, 4500).then(function (res) {
-      if (!res.ok) throw new Error("csv");
-      return res.text();
-    }).then(function (text) {
-      return normalizeList(parseCsv(text));
-    });
-  }
-
   function boot() {
     shell();
     bind();
-    var csvUrl = String(
-      window.ADAM_NEWS_CSV_URL ||
-      (window.ADAM_SHEETS && window.ADAM_SHEETS.news) ||
-      ""
-    ).trim();
-    var inline = embeddedItems();
-
-    function useJson(items) {
-      state.items = items;
-      state.source = "JSON";
-      if (!items.length) {
-        showStatus("소식을 불러오지 못했습니다.");
-        return;
-      }
-      renderItems();
-    }
-
-    if (!safeUrl(csvUrl)) {
-      if (inline) {
-        useJson(normalizeList(inline));
-        return;
-      }
-      showLoading();
-      loadFallback().then(useJson).catch(function () {
-        showStatus("소식을 불러오지 못했습니다.");
-      });
-      return;
-    }
-
     showLoading();
-    loadCsv(csvUrl).then(function (items) {
-      if (!items.length) throw new Error("empty");
-      state.items = items;
-      state.source = "SHEET";
+    /* paste build (dist/news-embed.html) may still set ADAM_NEWS_ITEMS */
+    if (Array.isArray(window.ADAM_NEWS_ITEMS) && !(window.ADAM_INLINE && window.ADAM_INLINE.news)) {
+      window.ADAM_INLINE = window.ADAM_INLINE || {};
+      window.ADAM_INLINE.news = window.ADAM_NEWS_ITEMS;
+    }
+    function apply(res) {
+      state.items = normalizeList(res.rows);
+      state.source = res.source;
+      if (!state.items.length) { showStatus("소식을 불러오지 못했습니다."); return; }
       renderItems();
-    }).catch(function () {
-      loadFallback().then(useJson).catch(function () {
-        showStatus("소식을 불러오지 못했습니다.");
-      });
+    }
+    A.load("news", { required: ["date", "title_ko"], onUpdate: apply }).then(apply).catch(function () {
+      showStatus("소식을 불러오지 못했습니다.");
     });
   }
 

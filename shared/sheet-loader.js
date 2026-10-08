@@ -1,11 +1,10 @@
 /* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
 
-   ADAM.load(tab, { required: ["col", ...] })
-     1) ADAM_SHEETS[tab] (gviz CSV of the lab workbook, one tab per widget)
-     2) if the request fails, the tab is missing (gviz then silently returns
-        the FIRST tab, so the header is checked against `required`) or the
-        tab has no rows → <root>/data/<tab>.json (bundled copy of the site)
-   Resolves { rows: [...], source: "sheet" | "inline" | "json" }.
+   ADAM.load(tab, { required: ["col", ...], onUpdate: fn }) — see below:
+   cache-first (localStorage, refreshed in the background), then the Sheet
+   (gviz CSV, header checked), then the bundled data/<tab>.json.
+   ?debug=1 shows source / detected tab / dropped rows; ADAM.track(tab)
+   lets each widget report rows it dropped or values it did not recognise.
    Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
    for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
 
@@ -38,18 +37,21 @@
     return "";
   };
 
-  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03'; '2026' → '2026'. */
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03';
+     '2026', '26.XX', '2026.XX', '2026년' → '2026' (year only = month unknown). */
   ADAM.normalizeMonth = function (value) {
     var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
     if (!s) return "";
     var d = ADAM.normalizeDate(s);
     if (d) return d.slice(0, 7);
-    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})/);
-    if (m) return m[1] + "-" + pad(m[2]);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})(?!\d)/);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return m[1] + "-" + pad(m[2]);
     m = s.match(/^(\d{2})\.(\d{1,2})$/);
-    if (m) return "20" + m[1] + "-" + pad(m[2]);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return "20" + m[1] + "-" + pad(m[2]);
     m = s.match(/^(\d{4})/);
-    return m ? m[1] : "";
+    if (m) return m[1];
+    m = s.match(/^(\d{2})\s*[.\-/]\s*(?:[xX?]{1,2}|00)$/);
+    return m ? "20" + m[1] : "";
   };
 
   ADAM.safeUrl = function (value) {
@@ -121,12 +123,137 @@
     return "";
   };
 
+  ADAM.params = new URLSearchParams(location.search);
+  ADAM.debug = ADAM.params.get("debug") === "1";
+
+  /* Column signature of every tab — used to say which tab gviz actually
+     returned (a missing tab name silently yields the FIRST tab). */
+  var SIGNATURES = {
+    news: ["date", "title_ko", "tag"],
+    publications: ["type", "title", "venue"],
+    patents: ["title", "status", "number"],
+    awards: ["award", "recipients", "category"],
+    members: ["name_ko", "role", "status"],
+    projects: ["title", "funder", "org_role"],
+    talks: ["date", "title", "venue", "location"],
+    gallery: ["caption", "image"]
+  };
+  function detectTab(header) {
+    var best = "";
+    Object.keys(SIGNATURES).forEach(function (t) {
+      if (!best && SIGNATURES[t].every(function (c) { return header.indexOf(c) !== -1; })) best = t;
+    });
+    return best;
+  }
+
+  /* ---------- diagnostics (?debug=1) ---------- */
+  ADAM.diag = {};
+  function diagFor(tab) {
+    return ADAM.diag[tab] || (ADAM.diag[tab] = { tab: tab, events: [], dropped: [], warnings: [] });
+  }
+  function logEvent(d, msg) {
+    d.events.push(new Date().toTimeString().slice(0, 8) + " " + msg);
+    if (window.console && console.info) console.info("[ADAM] " + d.tab + ": " + msg);
+    renderDebug();
+  }
+  /* Row tracker for widget normalizers: T.drop(i, why), T.warn(i, what), T.done(kept). */
+  ADAM.track = function (tab) {
+    var d = diagFor(tab);
+    function rowName(i) { return (d.source === "sheet" || d.source === "cache" ? "시트 " + (i + 2) + "행" : "항목 " + (i + 1)); }
+    return {
+      reset: function () { d.dropped = []; d.warnings = []; },
+      drop: function (i, why) { d.dropped.push(rowName(i) + ": " + why); },
+      warn: function (i, what) { d.warnings.push(rowName(i) + ": " + what); },
+      done: function (kept) {
+        d.kept = kept;
+        if (window.console && (d.dropped.length || d.warnings.length) && console.warn) {
+          console.warn("[ADAM] " + tab + ": " + d.dropped.length + " dropped, " + d.warnings.length + " warnings", { dropped: d.dropped, warnings: d.warnings });
+        }
+        renderDebug();
+      }
+    };
+  };
+  var debugBox = null, debugTimer = null;
+  function renderDebug() {
+    if (!ADAM.debug) return;
+    clearTimeout(debugTimer);
+    debugTimer = setTimeout(function () {
+      if (!document.body) return;
+      if (!debugBox) {
+        debugBox = document.createElement("details");
+        debugBox.className = "adam-debug";
+        debugBox.open = true;
+        document.body.appendChild(debugBox);
+      }
+      var html = "<summary>ADAM debug</summary>";
+      Object.keys(ADAM.diag).forEach(function (t) {
+        var d = ADAM.diag[t];
+        var list = function (title, arr) {
+          if (!arr || !arr.length) return "";
+          return "<div><b>" + title + " (" + arr.length + ")</b><ul>" + arr.slice(0, 40).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+            (arr.length > 40 ? "<li>…</li>" : "") + "</ul></div>";
+        };
+        html += "<section><h4>" + esc(t) + "</h4><dl>" +
+          "<dt>source</dt><dd>" + esc(d.source || "…") + (d.refreshed ? " → sheet (refreshed)" : "") + "</dd>" +
+          "<dt>sheet tab</dt><dd>" + esc(d.detected ? d.detected + (d.detected === t ? " ✓" : " ✗ (탭 이름 확인)") : (d.sheetError ? "—" : "…")) + "</dd>" +
+          (d.header ? "<dt>header</dt><dd>" + esc(d.header.join(", ")) + "</dd>" : "") +
+          (d.sheetError ? "<dt>sheet</dt><dd>" + esc(d.sheetError) + "</dd>" : "") +
+          "<dt>rows</dt><dd>" + (d.rows != null ? d.rows : "…") + " loaded · " + (d.kept != null ? d.kept : "…") + " shown · " + d.dropped.length + " dropped</dd>" +
+          "</dl>" + list("dropped", d.dropped) + list("warnings", d.warnings) + list("log", d.events) + "</section>";
+      });
+      debugBox.innerHTML = html;
+    }, 30);
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  if (ADAM.debug) {
+    var css = document.createElement("style");
+    css.textContent = ".adam-debug{position:fixed;right:8px;bottom:8px;z-index:9999;max-width:min(560px,calc(100vw - 16px));max-height:min(70vh,520px);overflow:auto;" +
+      "background:#fff;border:1px solid #102b86;box-shadow:0 8px 24px rgba(16,43,134,.18);font:11px/1.45 'IBM Plex Mono',ui-monospace,monospace;color:#161a2b;padding:6px 10px}" +
+      ".adam-debug summary{cursor:pointer;font-weight:600;color:#102b86}.adam-debug h4{margin:8px 0 2px;font-size:12px;color:#102b86}" +
+      ".adam-debug dl{display:grid;grid-template-columns:auto 1fr;gap:0 8px;margin:0}.adam-debug dt{color:#5a6378}.adam-debug dd{margin:0;word-break:break-all}" +
+      ".adam-debug ul{margin:2px 0 4px;padding-left:16px}.adam-debug section+section{border-top:1px dashed #d8dde8;margin-top:6px}";
+    document.head.appendChild(css);
+  }
+
+  /* ---------- cache (stale-while-revalidate) ---------- */
+  var CACHE_DAYS = 14;
+  function cacheKey(tab) { return "adam:" + tab + ":" + (ADAM.sheetUrl(tab) || "").length + ":v2"; }
+  function readCache(tab) {
+    try {
+      var c = JSON.parse(localStorage.getItem(cacheKey(tab)) || "null");
+      if (c && Array.isArray(c.rows) && Date.now() - c.t < CACHE_DAYS * 864e5) return c;
+    } catch (err) { /* private mode etc. */ }
+    return null;
+  }
+  function writeCache(tab, res) {
+    try { localStorage.setItem(cacheKey(tab), JSON.stringify({ t: Date.now(), header: res.header, rows: res.rows })); } catch (err) { /* quota */ }
+  }
+  function dropCache(tab) { try { localStorage.removeItem(cacheKey(tab)); } catch (err) { /* ignore */ } }
+
+  /* ADAM.load(tab, { required, onUpdate })
+       1) cached sheet rows (localStorage) → shown at once, sheet re-fetched in
+          the background; if it changed, onUpdate(res) re-renders
+       2) no cache → sheet (header checked against `required`; gviz returns
+          the FIRST tab for a missing name, so a wrong tab is rejected)
+       3) sheet slow (>2.5 s) → bundled data first, sheet result via onUpdate
+       4) sheet failed / wrong / empty → ADAM_INLINE[tab] → data/<tab>.json
+     Resolves { rows, source: "cache" | "sheet" | "inline" | "json", header }.
+     ?source=json skips the sheet, ?nocache=1 skips the cache. */
   ADAM.load = function (tab, opts) {
     opts = opts || {};
+    var d = diagFor(tab);
     var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
     var url = ADAM.sheetUrl(tab);
-    var params = new URLSearchParams(location.search);
-    if (params.get("source") === "json") url = "";
+    if (ADAM.params.get("source") === "json") url = "";
+    d.url = url;
+    var update = typeof opts.onUpdate === "function" ? opts.onUpdate : null;
+
+    function mark(res, how) {
+      d.source = res.source; d.rows = res.rows.length;
+      if (res.header) d.header = res.header;
+      logEvent(d, how || ("loaded from " + res.source + " (" + res.rows.length + " rows)"));
+      return res;
+    }
 
     function fromJson() {
       var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
@@ -138,27 +265,68 @@
         })
         .then(function (data) {
           var list = Array.isArray(data) ? data : (data && data.items) || [];
-          return { rows: list, source: "json" };
+          return { rows: list, source: "json", header: data && data.columns };
         });
     }
 
-    if (!ADAM.safeUrl(url)) return fromJson();
-    return fetchTimeout(url, 6000, { cache: "no-store", mode: "cors" })
-      .then(function (res) {
-        if (!res.ok) throw new Error("sheet " + res.status);
-        return res.text();
-      })
-      .then(function (text) {
-        var parsed = ADAM.parseCsv(text);
-        var ok = required.every(function (c) { return parsed.header.indexOf(c) !== -1; });
-        if (!ok) throw new Error("tab '" + tab + "' missing or wrong header");
-        if (!parsed.rows.length) throw new Error("tab '" + tab + "' empty");
-        return { rows: parsed.rows, source: "sheet" };
-      })
-      .catch(function (err) {
-        if (window.console && console.info) console.info("[ADAM] " + tab + ": " + err.message + " → bundled JSON");
-        return fromJson();
+    function fetchSheet() {
+      return fetchTimeout(url, 15000, { cache: "no-store", mode: "cors" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.text();
+        })
+        .then(function (text) {
+          var parsed = ADAM.parseCsv(text);
+          d.detected = detectTab(parsed.header) || "(알 수 없음)";
+          var missing = required.filter(function (c) { return parsed.header.indexOf(c) === -1; });
+          if (missing.length) {
+            var e = new Error("header에 " + missing.join(", ") + " 없음 — 받은 탭: " + d.detected + " (탭이 없으면 gviz는 첫 탭을 돌려줌)");
+            e.definitive = true; throw e;
+          }
+          if (!parsed.rows.length) { var e2 = new Error("탭이 비어 있음"); e2.definitive = true; throw e2; }
+          return { rows: parsed.rows, source: "sheet", header: parsed.header };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson().then(function (r) { return mark(r); });
+
+    var sheet = fetchSheet();
+    sheet.then(function (res) { writeCache(tab, res); }, function (err) {
+      d.sheetError = err.message;
+      logEvent(d, "sheet failed: " + err.message);
+      if (err.definitive) dropCache(tab);
+    });
+
+    var cached = ADAM.params.get("nocache") === "1" ? null : readCache(tab);
+    if (cached) {
+      sheet.then(function (res) {
+        if (JSON.stringify(res.rows) !== JSON.stringify(cached.rows) && update) { d.refreshed = true; update(mark(res, "sheet changed → re-rendered")); }
+        else logEvent(d, "sheet checked — cache is current");
+      }, function (err) {
+        if (err.definitive && update) fromJson().then(function (r) { update(mark(r, "sheet rejected → bundled " + r.source)); });
       });
+      return Promise.resolve(mark({ rows: cached.rows, source: "cache", header: cached.header },
+        "cache (" + Math.round((Date.now() - cached.t) / 60000) + " min old) shown; refreshing"));
+    }
+
+    return new Promise(function (resolve, reject) {
+      var settled = false;
+      function fallback() { return fromJson().then(function (r) { resolve(mark(r)); }, reject); }
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        logEvent(d, "sheet slow → bundled data first");
+        fallback();
+        sheet.then(function (res) { if (update) { d.refreshed = true; update(mark(res, "sheet arrived → re-rendered")); } }, function () {});
+      }, opts.wait || 2500);
+      sheet.then(function (res) {
+        if (settled) return;
+        settled = true; clearTimeout(timer); resolve(mark(res));
+      }, function () {
+        if (settled) return;
+        settled = true; clearTimeout(timer); fallback();
+      });
+    });
   };
 
   /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
@@ -191,8 +359,6 @@
     };
   };
 
-  ADAM.params = new URLSearchParams(location.search);
-
   /* Normalised text for search (case/space-insensitive, strips * + marks). */
   ADAM.fold = function (s) {
     return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
@@ -216,32 +382,38 @@
      semicolon-separated). Cells may use the id, the English or the Korean
      label; anything else is shown as a custom tag. Ids match scripts/tag_topics.py. */
   ADAM.TOPICS = [
-    { id: "cad", en: "B-rep / CAD Modeling", short: "CAD Modeling", ko: "B-rep·CAD 모델링" },
-    { id: "assembly", en: "Assembly & Mates", short: "Assembly", ko: "조립·체결" },
-    { id: "am", en: "Additive Manufacturing", short: "Additive Mfg.", ko: "적층 제조" },
-    { id: "kg", en: "Knowledge Graph / Ontology", short: "Knowledge Graph", ko: "지식 그래프·온톨로지" },
-    { id: "llm", en: "LLM / Generative AI", short: "LLM · GenAI", ko: "LLM·생성형 AI" },
-    { id: "mesh", en: "Mesh & Point Cloud", short: "Mesh · Point Cloud", ko: "메쉬·점군" },
-    { id: "rl", en: "Reinforcement Learning", short: "Reinforcement Learning", ko: "강화학습" },
-    { id: "edu", en: "CAD Education / Grading", short: "CAD Education", ko: "CAD 교육·자동 채점" },
-    { id: "dt", en: "Digital Twin / Smart Manufacturing", short: "Digital Twin", ko: "디지털 트윈·스마트 제조" },
-    { id: "lca", en: "Sustainability / LCA", short: "Sustainability", ko: "지속가능성·LCA" },
-    { id: "routing", en: "Cable Routing", short: "Cable Routing", ko: "케이블 라우팅" },
-    { id: "safety", en: "Safety & Evacuation", short: "Safety", ko: "안전·대피" },
-    { id: "ship", en: "Shipbuilding / Ocean", short: "Ship · Ocean", ko: "조선·해양" },
-    { id: "std", en: "Standards (ISO·STEP·AAS)", short: "Standards", ko: "표준 (ISO·STEP·AAS)" }
+    { id: "cad", en: "B-rep / CAD Modeling", ko: "B-rep·CAD 모델링", kos: "CAD 모델링" },
+    { id: "assembly", en: "Assembly & Mates", ko: "조립·메이트", kos: "조립·메이트" },
+    { id: "am", en: "Additive Manufacturing", ko: "적층제조", kos: "적층제조" },
+    { id: "kg", en: "Knowledge Graph / Ontology", ko: "지식 그래프·온톨로지", kos: "지식그래프" },
+    { id: "llm", en: "LLM / Generative AI", ko: "LLM·생성형 AI", kos: "LLM·생성형AI" },
+    { id: "mesh", en: "Mesh & Point Cloud", ko: "메쉬·점군", kos: "메쉬·점군" },
+    { id: "rl", en: "Reinforcement Learning", ko: "강화학습", kos: "강화학습" },
+    { id: "edu", en: "CAD Education / Grading", ko: "CAD 교육·자동 채점", kos: "CAD 교육" },
+    { id: "design", en: "Product Design", ko: "제품 설계", kos: "제품 설계" },
+    { id: "dt", en: "Digital Twin / Smart Manufacturing", ko: "디지털 트윈·스마트 제조", kos: "디지털 트윈" },
+    { id: "lca", en: "Sustainability / LCA", ko: "지속가능성·LCA", kos: "지속가능성" },
+    { id: "routing", en: "Cable Routing", ko: "케이블 라우팅", kos: "케이블 라우팅" },
+    { id: "safety", en: "Safety & Evacuation", ko: "안전·대피", kos: "안전·대피" },
+    { id: "ship", en: "Shipbuilding / Ocean", ko: "조선·해양", kos: "조선·해양" },
+    { id: "std", en: "Standards (ISO·STEP·AAS)", ko: "표준 (ISO·STEP·AAS)", kos: "표준" }
   ];
   function topicKey(s) { return String(s || "").toLowerCase().replace(/[\s·.\/&()_+-]+/g, ""); }
   var TOPIC_BY = {};
   ADAM.TOPICS.forEach(function (t, i) {
     t.order = i;
-    [t.id, t.en, t.short, t.ko].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
+    [t.id, t.en, t.ko, t.kos].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
   });
   TOPIC_BY[topicKey("B-rep")] = TOPIC_BY[topicKey("CAD")] = ADAM.TOPICS[0];
+  ["조립·체결", "적층 제조", "Additive Mfg.", "LLM · GenAI", "Knowledge Graph", "Mesh · Point Cloud", "CAD Modeling", "Assembly",
+   "CAD Education", "Digital Twin", "Sustainability", "Safety", "Ship · Ocean", "Standards"].forEach(function (k, i) {
+    var ids = ["assembly", "am", "am", "llm", "kg", "mesh", "cad", "assembly", "edu", "dt", "lca", "safety", "ship", "std"];
+    ADAM.TOPICS.forEach(function (t) { if (t.id === ids[i]) TOPIC_BY[topicKey(k)] = t; });
+  });
   ADAM.topic = function (v) {
     var raw = String(v || "").trim(), k = topicKey(raw);
     if (!k) return null;
-    return TOPIC_BY[k] || { id: "x-" + k, en: raw, short: raw, ko: raw, order: 900, custom: true };
+    return TOPIC_BY[k] || { id: "x-" + k, en: raw, ko: raw, kos: raw, order: 900, custom: true };
   };
   ADAM.topics = function (cell) {
     var out = [], seen = {};
@@ -254,7 +426,7 @@
   /* One clickable tag on an entry. */
   ADAM.topicTag = function (t, active, onPick) {
     var b = ADAM.el("button", { type: "button", class: "ax-tag", "aria-pressed": String(active),
-      title: t.custom ? t.en : t.en + " · " + t.ko, text: t.short });
+      title: t.custom ? t.en : t.ko + " · " + t.en, text: t.kos, lang: "ko" });
     b.addEventListener("click", function () { onPick(t.id); });
     return b;
   };
@@ -268,17 +440,17 @@
       row.innerHTML = ""; sel.innerHTML = "";
       row.hidden = sel.hidden = !present.length;
       if (!present.length) return;
-      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { text: "Topics" }), el("span", { class: "ko", text: "연구 주제" })]));
-      var list = [{ id: "all", short: "All", en: "All topics", ko: "전체" }].concat(present);
+      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { class: "ko", text: "연구 주제" }), el("span", { text: "Topics" })]));
+      var list = [{ id: "all", kos: "전체", en: "All topics", ko: "전체" }].concat(present);
       list.forEach(function (t) {
         var n = counts[t.id] || 0, on = active === t.id;
         var b = el("button", { type: "button", class: "ax-topic" + (t.id === "all" ? " all" : ""), "aria-pressed": String(on),
-          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.en + " · " + t.ko }, [
-          el("span", { text: t.short }), el("span", { class: "n", text: String(n) })
+          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.ko + " · " + t.en }, [
+          el("span", { text: t.kos }), el("span", { class: "n", text: String(n) })
         ]);
         b.addEventListener("click", function () { onPick(on && t.id !== "all" ? "all" : t.id); });
         row.appendChild(b);
-        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "ALL TOPICS · 전체 주제 (" + n + ")" : "# " + t.short + " · " + t.ko + " (" + n + ")" }));
+        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "전체 주제 (" + n + ")" : "# " + t.kos + " (" + n + ")" }));
       });
       sel.value = active;
     }

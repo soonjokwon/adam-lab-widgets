@@ -12,11 +12,12 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
       "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
   }
   window.ADAM_SHEETS = {
-    /* date,title_ko,title_en,tag,link,image  (Home · Latest News) */
-    news: "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news",
+    /* date,title_ko,title_en,tag,link,image,link2   (Home · Latest News)
+       tag: Paper | Award | Project | Event | Member   link2: optional second link */
+    news: gviz("news"),
     /* type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
-       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep
-       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu dt lca routing safety ship std) */
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep   (anything else → "기타", see ?debug=1)
+       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu design dt lca routing safety ship std) */
     publications: gviz("publications"),
     /* no,title,topics,status,number,date,link,note   status: registered | filed   topics: as publications */
     patents: gviz("patents"),
@@ -24,16 +25,17 @@ window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
        category: paper | presentation | competition */
     awards: gviz("awards"),
     /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
-       role: professor | postdoc | phd | ms-phd | ms | undergrad   status: current | alumni */
+       role: professor | postdoc | researcher | phd | ms-phd | ms | undergrad   status: current | alumni */
     members: gviz("members"),
-    /* title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
-       group: PNU | KIT   status: (blank=auto) | ongoing | completed */
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed
+       recruit: Y = 모집 중 (projects/?recruit=1)   hidden: Y = 숨김
+       start/end: 2026.03 · 26.03 · 2026 · 26.XX (연도만 → 진행 막대 없음) */
     projects: gviz("projects"),
     /* date,title,venue,location,link */
     talks: gviz("talks"),
-    /* date,caption,image,group,link   group: PNU | KIT */
+    /* date,caption,image,group,link   group: PNU | KIT   image: assets/gallery/… (권장) */
     gallery: gviz("gallery")
   };
 })();
 
-window.ADAM_NEWS_CSV_URL = window.ADAM_SHEETS.news || "";

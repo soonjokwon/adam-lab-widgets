@@ -7,7 +7,7 @@
      --line #D8DDE8    --line-soft #E9ECF3
      --navy #102B86    --blue #0707AA
      --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
-     --accent #FF9900  --accent-deep #D97E00
+     --accent #FF9900  --accent-deep #D97E00  (+ --accent-ink #9A5200 for text, AA)
 */
 
 :root {
@@ -23,6 +23,7 @@
   --ink-faint: #9aa3b5;
   --accent: #ff9900;
   --accent-deep: #d97e00;
+  --accent-ink: #9a5200;   /* award text on light backgrounds: 5.5:1 on #fff8ec (WCAG AA) */
   --paper: var(--sheet);
   --muted: var(--ink-dim);
   --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;

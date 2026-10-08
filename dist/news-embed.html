@@ -6,7 +6,7 @@
   <title>ADAM Lab · Latest News</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
 /* ADAM Lab embeddable widgets — design tokens extracted from the
    home-page hero embed (ADAM Lab Intro, ~187KB inline HTML/SVG on
@@ -17,7 +17,7 @@
      --line #D8DDE8    --line-soft #E9ECF3
      --navy #102B86    --blue #0707AA
      --ink #161A2B     --ink-dim #5A6378  --ink-faint #9AA3B5
-     --accent #FF9900  --accent-deep #D97E00
+     --accent #FF9900  --accent-deep #D97E00  (+ --accent-ink #9A5200 for text, AA)
 */
 
 :root {
@@ -33,6 +33,7 @@
   --ink-faint: #9aa3b5;
   --accent: #ff9900;
   --accent-deep: #d97e00;
+  --accent-ink: #9a5200;   /* award text on light backgrounds: 5.5:1 on #fff8ec (WCAG AA) */
   --paper: var(--sheet);
   --muted: var(--ink-dim);
   --font-display: "Chakra Petch", "Noto Sans KR", system-ui, sans-serif;
@@ -75,7 +76,7 @@ body {
 #adam-news {
   height: 100%;
   width: 100%;
-  max-height: 420px;
+  max-height: 520px;
   min-width: 0;
 }
 
@@ -177,7 +178,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--navy);
   outline-offset: 2px;
 }
 
@@ -278,7 +279,7 @@ body {
   max-width: 100%;
   scroll-snap-align: start;
   height: calc(100% - 4px);
-  max-height: 100%;
+  max-height: min(100%, 340px);   /* tall iframes: cards stop growing */
   align-self: start;
   display: flex;
   flex-direction: column;
@@ -391,7 +392,7 @@ body {
 }
 
 .news-tag[data-tag="Award"] {
-  color: var(--accent-deep);
+  color: var(--accent-ink);
   border-color: var(--accent);
   background: rgba(255, 255, 255, 0.85);
 }
@@ -471,7 +472,29 @@ body {
 
 .news-det {
   font-size: 9px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
+}
+
+.news-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.news-open2 {
+  position: relative;
+  z-index: 2;   /* above the stretched OPEN link */
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.news-open2:hover {
+  border-bottom-color: var(--navy);
 }
 
 .news-open {
@@ -485,10 +508,11 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
 }
 
-.news-card.is-link:focus-within {
-  outline: 2px solid var(--accent);
+.news-card.is-link:has(.news-open:focus-visible) {
+  outline: 2px solid var(--navy);
   outline-offset: 2px;
 }
 
@@ -496,8 +520,13 @@ body {
   outline: none;
 }
 
+.news-open2:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
 .news-open.is-empty {
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   font-weight: 500;
 }
 
@@ -551,22 +580,545 @@ body {
   }
 }
 
+/* Short iframes — Google Sites scales an embed's height with its width, so a
+   400px embed can be ~150–250px tall on a phone. Drop the photo and English
+   line, tighten spacing, keep date · tag · title · link. */
+@media (max-height: 330px) {
+  .adam-toolbar { padding-top: 8px; }
+  .news-row { margin: 4px 8px 6px; }
+  .news-track { padding: 12px 2px 4px; }
+  .news-side-nav { padding: 12px 0 4px; }
+  .news-side-nav button { height: 34px; }
+  .news-card { gap: 4px; padding: 8px 10px; }
+  .news-photo, .news-en, .news-det { display: none; }
+  .news-title { -webkit-line-clamp: 2; font-size: 13px; }
+}
+@media (max-height: 210px) {
+  .news-rule { display: none; }
+  .news-title { -webkit-line-clamp: 2; font-size: 12.5px; line-height: 1.35; }
+  .news-node { display: none; }
+  .news-track { padding-top: 6px; }
+}
+
   </style>
 </head>
 <body>
   <div id="adam-news"></div>
   <script>
-    window.ADAM_NEWS_CSV_URL = "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw/gviz/tq?tqx=out:csv&sheet=news";
-    window.ADAM_NEWS_FALLBACK_URL = "";
-    window.ADAM_NEWS_ITEMS = [{"date":"2026-08-21","title_ko":"박현석, 한국CDE학회 2026 하계학술대회 우수포스터상","title_en":"H. Park received the Excellent Poster Award at the CDE 2026 summer conference.","tag":"Award","link":"https://me.pusan.ac.kr/new/sub05/sub02.php?db=hakbunews&seq=1075&page_mode=view","image":""},{"date":"2026-08-20","title_ko":"박현석·문광민, 한국CDE학회 2026 하계학술대회 포스터 발표","title_en":"Lab members presented posters at the CDE 2026 summer conference.","tag":"Event","link":"","image":""},{"date":"2026-08-01","title_ko":"Ragul Gandhi 박사, 박사후연구원으로 합류","title_en":"Dr. Ragul Gandhi joined ADAM Lab as a postdoctoral researcher.","tag":"Member","link":"","image":""},{"date":"2026-07-15","title_ko":"IJPEM 논문 게재 승인 (JCR 상위 23.6%)","title_en":"A paper was accepted in the International Journal of Precision Engineering and Manufacturing.","tag":"Paper","link":"https://doi.org/10.1007/s12541-026-01592-8","image":""},{"date":"2026-07-15","title_ko":"Advanced Engineering Informatics 논문 게재 승인 (JCR 상위 2%)","title_en":"A paper was accepted in Advanced Engineering Informatics.","tag":"Paper","link":"https://doi.org/10.1016/j.aei.2026.105085","image":""},{"date":"2026-05-29","title_ko":"박현석, 대한기계학회 생산 및 설계공학부문 춘계학술대회 구두 발표","title_en":"H. Park gave an oral presentation at the KSME Production and Design Engineering spring conference.","tag":"Event","link":"","image":""},{"date":"2026-05-07","title_ko":"김보성 학사과정, 학부연구생으로 합류","title_en":"김보성 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":""},{"date":"2026-05-01","title_ko":"삼성중공업 산학 과제 착수 — 전장 최적배치 원가 산출","title_en":"Industry project with Samsung Heavy Industries on cost estimation for optimal electrical layout (2026.05–2026.10).","tag":"Project","link":"","image":""},{"date":"2026-04-01","title_ko":"박우준 학사과정, 학부연구생으로 합류","title_en":"박우준 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":""},{"date":"2026-03-18","title_ko":"예브게니 유가이 학사과정, 학부연구생으로 합류","title_en":"예브게니 유가이 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":""},{"date":"2026-03-18","title_ko":"심현수 학사과정, 학부연구생으로 합류","title_en":"심현수 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":""},{"date":"2026-03-13","title_ko":"한국연구재단 신진연구(유형B) 선정 — 적층제조 자율 재설계","title_en":"Selected for an NRF Early-Career Grant (Type B) on autonomous redesign for additive manufacturing (2026.03–2030.02).","tag":"Project","link":"https://sites.google.com/view/adam-pnu/research","image":""},{"date":"2026-03-10","title_ko":"문광민 학사과정, 학부연구생으로 합류","title_en":"문광민 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":""},{"date":"2026-03-04","title_ko":"김동빈 학사과정, 학부연구생으로 합류","title_en":"김동빈 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":""},{"date":"2026-03-03","title_ko":"부산대학교 ADAM Lab(자율 설계 연구실) 개소","title_en":"ADAM Lab opened at Pusan National University.","tag":"Event","link":"https://sites.google.com/view/adam-pnu","image":""},{"date":"2026-02-10","title_ko":"권순조 교수·김군찬, 한국CDE학회 2026 동계학술대회 가헌학술상","title_en":"Prof. Kwon and Kunchan received the Gahun Academic Award at the CDE 2026 winter conference.","tag":"Award","link":"https://www.etnews.com/20260213000212","image":""},{"date":"2026-02-10","title_ko":"전예성·박현석, CDE DX Awards 2025 금상","title_en":"Yeseong and H. Park won gold at the CDE DX Awards 2025.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=553137","image":""},{"date":"2025-12-12","title_ko":"이초빈, 적층제조 융합설계 워크숍 혁신설계 우수상","title_en":"Innovative Design Award at the KSME additive-manufacturing convergence design workshop.","tag":"Award","link":"","image":""},{"date":"2025-11-28","title_ko":"이초빈, 적층제조 융합설계 경진대회 협의회장상","title_en":"Council chair award at the COSS Folding Chair additive-manufacturing design contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=555695","image":""},{"date":"2025-11-21","title_ko":"전예성·이초빈, 제10회 3D프린팅 BIZCON 우수상","title_en":"Excellence award in the driving category at the 10th 3D Printing BIZCON.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=550495","image":""},{"date":"2025-11-11","title_ko":"전예성, 2025 DfAM 경진대회 산업부문 대상","title_en":"Grand prize in the industry category at the 2025 Design for Additive Manufacturing contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=545499","image":""},{"date":"2025-09-30","title_ko":"KIMM Cyber Lab 활용 경진대회 최우수상","title_en":"Top prize at the 4th KIMM Cyber Lab virtual-engineering software contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=541105","image":""},{"date":"2025-08-22","title_ko":"김군찬·이초빈, 한국CDE학회 2025 하계학술대회 우수포스터상","title_en":"Excellent Poster Award at the CDE 2025 summer conference.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=536622","image":""},{"date":"2025-08-12","title_ko":"연구실 금오산 등반","title_en":"Lab members hiked Geumo Mountain.","tag":"Event","link":"","image":""},{"date":"2025-02-21","title_ko":"한서희, 한국CDE학회 2025 동계학술대회 우수포스터상","title_en":"Seohee received the Excellent Poster Award at the CDE 2025 winter conference.","tag":"Award","link":"","image":""}];
+    window.ADAM_ROOT = "https://soonjokwon.github.io/adam-lab-widgets/";
+    window.ADAM_INLINE = { "news": [{"date":"2026-08-21","title_ko":"박현석, 한국CDE학회 2026 하계학술대회 우수포스터상","title_en":"H. Park received the Excellent Poster Award at the CDE 2026 summer conference.","tag":"Award","link":"https://me.pusan.ac.kr/new/sub05/sub02.php?db=hakbunews&seq=1075&page_mode=view","image":"","link2":""},{"date":"2026-08-20","title_ko":"박현석·문광민, 한국CDE학회 2026 하계학술대회 포스터 발표","title_en":"Lab members presented posters at the CDE 2026 summer conference.","tag":"Event","link":"","image":"","link2":""},{"date":"2026-08-01","title_ko":"Ragul Gandhi 박사, 박사후연구원으로 합류","title_en":"Dr. Ragul Gandhi joined ADAM Lab as a postdoctoral researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-07-15","title_ko":"IJPEM 논문 게재 승인 (JCR 상위 23.6%)","title_en":"A paper was accepted in the International Journal of Precision Engineering and Manufacturing.","tag":"Paper","link":"https://doi.org/10.1007/s12541-026-01592-8","image":"","link2":""},{"date":"2026-07-15","title_ko":"Advanced Engineering Informatics 논문 게재 승인 (JCR 상위 2%)","title_en":"A paper was accepted in Advanced Engineering Informatics.","tag":"Paper","link":"https://doi.org/10.1016/j.aei.2026.105085","image":"","link2":""},{"date":"2026-05-29","title_ko":"박현석, 대한기계학회 생산 및 설계공학부문 춘계학술대회 구두 발표","title_en":"H. Park gave an oral presentation at the KSME Production and Design Engineering spring conference.","tag":"Event","link":"","image":"","link2":""},{"date":"2026-05-07","title_ko":"김보성 학사과정, 학부연구생으로 합류","title_en":"김보성 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-05-01","title_ko":"삼성중공업 산학 과제 착수 — 전장 최적배치 원가 산출","title_en":"Industry project with Samsung Heavy Industries on cost estimation for optimal electrical layout (2026.05–2026.10).","tag":"Project","link":"","image":"","link2":""},{"date":"2026-04-01","title_ko":"박우준 학사과정, 학부연구생으로 합류","title_en":"박우준 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-03-18","title_ko":"예브게니 유가이 학사과정, 학부연구생으로 합류","title_en":"예브게니 유가이 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-03-18","title_ko":"심현수 학사과정, 학부연구생으로 합류","title_en":"심현수 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-03-13","title_ko":"한국연구재단 신진연구(유형B) 선정 — 적층제조 자율 재설계","title_en":"Selected for an NRF Early-Career Grant (Type B) on autonomous redesign for additive manufacturing (2026.03–2030.02).","tag":"Project","link":"https://sites.google.com/view/adam-pnu/research","image":"","link2":""},{"date":"2026-03-10","title_ko":"문광민 학사과정, 학부연구생으로 합류","title_en":"문광민 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-03-04","title_ko":"김동빈 학사과정, 학부연구생으로 합류","title_en":"김동빈 joined ADAM Lab as an undergraduate researcher.","tag":"Member","link":"","image":"","link2":""},{"date":"2026-03-03","title_ko":"부산대학교 ADAM Lab(자율 설계 연구실) 개소","title_en":"ADAM Lab opened at Pusan National University.","tag":"Event","link":"https://sites.google.com/view/adam-pnu","image":"","link2":""},{"date":"2026-02-10","title_ko":"권순조 교수·김군찬, 한국CDE학회 2026 동계학술대회 가헌학술상","title_en":"Prof. Kwon and Kunchan received the Gahun Academic Award at the CDE 2026 winter conference.","tag":"Award","link":"https://www.etnews.com/20260213000212","image":"","link2":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=553190"},{"date":"2026-02-10","title_ko":"전예성·박현석, CDE DX Awards 2025 금상","title_en":"Yeseong and H. Park won gold at the CDE DX Awards 2025.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=553137","image":"","link2":""},{"date":"2025-12-12","title_ko":"이초빈, 적층제조 융합설계 워크숍 혁신설계 우수상","title_en":"Innovative Design Award at the KSME additive-manufacturing convergence design workshop.","tag":"Award","link":"","image":"","link2":""},{"date":"2025-11-28","title_ko":"이초빈, 적층제조 융합설계 경진대회 협의회장상","title_en":"Council chair award at the COSS Folding Chair additive-manufacturing design contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=555695","image":"","link2":""},{"date":"2025-11-21","title_ko":"전예성·이초빈, 제10회 3D프린팅 BIZCON 우수상","title_en":"Excellence award in the driving category at the 10th 3D Printing BIZCON.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=550495","image":"","link2":""},{"date":"2025-11-11","title_ko":"전예성, 2025 DfAM 경진대회 산업부문 대상","title_en":"Grand prize in the industry category at the 2025 Design for Additive Manufacturing contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=545499","image":"","link2":""},{"date":"2025-09-30","title_ko":"KIMM Cyber Lab 활용 경진대회 최우수상","title_en":"Top prize at the 4th KIMM Cyber Lab virtual-engineering software contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=541105","image":"","link2":""},{"date":"2025-08-22","title_ko":"김군찬·이초빈, 한국CDE학회 2025 하계학술대회 우수포스터상","title_en":"Excellent Poster Award at the CDE 2025 summer conference.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=536622","image":"","link2":""},{"date":"2025-08-12","title_ko":"연구실 금오산 등반","title_en":"Lab members hiked Geumo Mountain.","tag":"Event","link":"","image":"","link2":""},{"date":"2025-02-21","title_ko":"한서희, 한국CDE학회 2025 동계학술대회 우수포스터상","title_en":"Seohee received the Excellent Poster Award at the CDE 2025 winter conference.","tag":"Award","link":"","image":"","link2":""},{"date":"2024-11-08","title_ko":"전예성, 사용자 중심 융합설계연구회 2024 첨단 융합설계 워크숍 우수 융합설계상","title_en":"Yeseong won the Excellent Convergence Design Award at the 2024 Advanced Convergence Design Workshop of the User-Centered Convergence Design Research Group, hosted by the Production and Design Engineering Division of the KSME.","tag":"Award","link":"","image":"","link2":""},{"date":"2024-11-07","title_ko":"권순조 교수, KSME Annual Meeting 2024 우수논문상","title_en":"Prof. Kwon won the Excellent Paper Award at the KSME Annual Meeting 2024.","tag":"Award","link":"","image":"","link2":""},{"date":"2024-10-19","title_ko":"LIG Nex1-LCMS-DADI Lab 공동팀, 제9회 3D프린팅 BIZCON 구동 부문 최우수상","title_en":"LIG Nex1-LCMS-DADI Lab. joint team won the Best Award at the 9th 3D printing BIZCON contest (Driving category).","tag":"Award","link":"","image":"","link2":""},{"date":"2024-08-22","title_ko":"한서희, 한국CDE학회 2024 하계학술대회 우수포스터상","title_en":"Seohee won the Excellent Poster Award at the 2024 Summer Conference of Society for CDE.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=498533","image":"","link2":""},{"date":"2024-05-31","title_ko":"권순조 교수, ICMDT 2023 우수논문상","title_en":"Prof. Kwon won the Excellent Paper Award at ICMDT 2023.","tag":"Award","link":"","image":"","link2":""},{"date":"2024-04-12","title_ko":"김군찬, 한국기계가공학회 2024 춘계학술대회 특별상","title_en":"Kunchan won the Special Award at the KSMPE 2024 Spring Conference.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=485122","image":"","link2":""},{"date":"2024-04-02","title_ko":"DADI Lab 멤버들, 해 진 뒤 벚꽃 구경","title_en":"DADI Lab. members went out to see cherry blossoms after sunset.","tag":"Event","link":"","image":"","link2":""},{"date":"2024-01-31","title_ko":"고민석 우수논문상·전예성 우수포스터상, 한국CDE학회 2024 동계학술대회","title_en":"Minseok won the Excellent Paper Award and Yeseong won the Excellent Poster Award at the 2024 Winter Conference of Society for CDE.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=474338","image":"","link2":""},{"date":"2023-12-22","title_ko":"고민석, AeroNDT 2023 우수논문상","title_en":"Minseok won the Best Paper Award at AeroNDT 2023.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=471564","image":"","link2":""},{"date":"2023-10-26","title_ko":"김재연, LS e-Mobility Solutions 제1회 BDU 3D 경진대회 1위","title_en":"Jaeyeon won the 1st place at the 1st BDU 3D Contest hosted by LS e-Mobility Solutions.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=468762","image":"","link2":""},{"date":"2023-08-25","title_ko":"고민석·김재연·윤영준, 한국CDE학회 2023 하계학술대회 우수논문상","title_en":"Minseok, Jaeyeon, and Yeongjun won the Excellent Paper Award for each presentation at the 2023 Summer Conference of Society for CDE.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=463131","image":"","link2":""},{"date":"2023-08-18","title_ko":"고민석·김군찬·이상명·윤영준, 2023 Autodesk Fusion 360 Design for 3D Printing Contest 대상","title_en":"Minseok, Kunchan, Sangmyeong, and Yeongjun won the Grand prize (1st place) at the 2023 Autodesk Fusion 360 Design for 3D Printing Contest.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=460704&article.offset=0&articleLimit=9","image":"","link2":""},{"date":"2023-02-10","title_ko":"김재연·윤영준, 한국CDE학회 2023 동계학술대회 우수포스터상","title_en":"Jaeyeon and Yeongjun won the Excellent Poster Award for each poster at the 2023 Winter Conference of Society for CDE.","tag":"Award","link":"https://cde.or.kr/Board/board.asp?b_code=2844&Action=content&GotoPage=1&B_CATE=BBS1","image":"","link2":""},{"date":"2022-08-25","title_ko":"김현식·노태환, 한국CDE학회 2022 하계학술대회 우수포스터상","title_en":"Hyunsik and Taehwan won the Excellent Poster Award at the 2022 Summer Conference of Society for CDE.","tag":"Award","link":"http://cde.or.kr/Board/board.asp?b_code=2821&Action=content&GotoPage=1&B_CATE=BBS1","image":"","link2":""},{"date":"2021-12-22","title_ko":"김현식·이주은, 경기도 2021 보조기기 아이디어 공모전 금상","title_en":"Hyunsik and Jueun won the Grand prize (1st place) at the 2021 Assistive Device Idea Contest hosted by Gyeonggi province.","tag":"Award","link":"https://www.kumoh.ac.kr/ko/sub01_05_02.do?mode=view&articleNo=339885","image":"","link2":""},{"date":"2021-11-20","title_ko":"노태환·김재연, 제6회 3D프린팅 BIZCON 국방 부문 우수상","title_en":"Taehwan and Jaeyeon won the Excellence Award at the 6th 3D printing BIZCON contest (Defense category).","tag":"Award","link":"","image":"","link2":""},{"date":"2020-09-01","title_ko":"DADI Lab@KIT 개소","title_en":"DADI Lab@KIT opened!","tag":"Event","link":"","image":"","link2":""}] };
   </script>
   <script>
-/* Latest News timeline. Vanilla, no dependencies.
-   Load order:
-   1) window.ADAM_NEWS_CSV_URL (or ADAM_SHEETS.news) → published Sheet CSV
-   2) window.ADAM_NEWS_ITEMS (paste embed fallback)
-   3) fetch window.ADAM_NEWS_FALLBACK_URL / data/news.json
-   Hosted /news/ never bakes items in; content updates need no rebuild when CSV is set. */
+/* ADAM Lab workbook → one tab per widget, read through gviz CSV.
+   Sheet: https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw
+   (공유: 링크가 있는 모든 사용자 = 뷰어). 탭 이름은 아래 키와 정확히 같아야 합니다.
+   A tab that does not exist yet (or is empty / has the wrong header) falls
+   back to the bundled data/<tab>.json automatically — nothing to change here
+   when a tab is added later. Set a value to "" to always use the JSON. */
+window.ADAM_SHEET_ID = "1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw";
+
+(function () {
+  function gviz(tab) {
+    return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+      "/gviz/tq?tqx=out:csv&headers=1&sheet=" + tab;
+  }
+  window.ADAM_SHEETS = {
+    /* date,title_ko,title_en,tag,link,image,link2   (Home · Latest News)
+       tag: Paper | Award | Project | Event | Member   link2: optional second link */
+    news: gviz("news"),
+    /* type,no,year,authors,title,topics,venue,details,date,presentation,status,link,note,extra_label,extra_link
+       type: journal-intl | journal-kr | conf-intl | conf-kr | in-prep   (anything else → "기타", see ?debug=1)
+       topics: "am; rl" (ids: cad assembly am kg llm mesh rl edu design dt lca routing safety ship std) */
+    publications: gviz("publications"),
+    /* no,title,topics,status,number,date,link,note   status: registered | filed   topics: as publications */
+    patents: gviz("patents"),
+    /* date,category,award,recipients,title,event,organizer,link
+       category: paper | presentation | competition */
+    awards: gviz("awards"),
+    /* name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
+       role: professor | postdoc | researcher | phd | ms-phd | ms | undergrad   status: current | alumni */
+    members: gviz("members"),
+    /* title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link
+       group: PNU | KIT   status: (blank=auto) | ongoing | completed
+       recruit: Y = 모집 중 (projects/?recruit=1)   hidden: Y = 숨김
+       start/end: 2026.03 · 26.03 · 2026 · 26.XX (연도만 → 진행 막대 없음) */
+    projects: gviz("projects"),
+    /* date,title,venue,location,link */
+    talks: gviz("talks"),
+    /* date,caption,image,group,link   group: PNU | KIT   image: assets/gallery/… (권장) */
+    gallery: gviz("gallery")
+  };
+})();
+
+
+/* ADAM Lab widgets — shared Google Sheet loader (vanilla, no deps).
+
+   ADAM.load(tab, { required: ["col", ...], onUpdate: fn }) — see below:
+   cache-first (localStorage, refreshed in the background), then the Sheet
+   (gviz CSV, header checked), then the bundled data/<tab>.json.
+   ?debug=1 shows source / detected tab / dropped rows; ADAM.track(tab)
+   lets each widget report rows it dropped or values it did not recognise.
+   Paste builds (dist/*-embed.html) set window.ADAM_ROOT (absolute Pages URL,
+   for assets/…) and window.ADAM_INLINE[tab] (rows baked in instead of JSON).
+
+   Also exposes helpers shared by every widget: parseCsv, normalizeDate
+   (accepts '2026-08-21', '2026. 8. 21', '26.08.21'), normalizeMonth,
+   safeUrl, asset (repo-relative paths, Google Drive share links), el, debounce. */
+(function () {
+  var ADAM = window.ADAM = window.ADAM || {};
+
+  var script = document.currentScript ||
+    Array.prototype.slice.call(document.scripts).filter(function (s) {
+      return /sheet-loader\.js/.test(s.src);
+    })[0];
+  /* Repo root (…/adam-lab-widgets/) = parent of /shared/. */
+  ADAM.root = window.ADAM_ROOT ||
+    (script && script.src ? new URL("../", script.src).href : new URL("./", location.href).href);
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+
+  ADAM.normalizeDate = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var iso = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})/);
+    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
+    var short = s.match(/^(\d{2})[.\-/](\d{1,2})[.\-/](\d{1,2})$/);
+    if (short) return "20" + short[1] + "-" + pad(short[2]) + "-" + pad(short[3]);
+    /* gviz "Date(2026,7,21)" (month is 0-based) */
+    var gv = s.match(/^Date\((\d{4}),(\d{1,2}),(\d{1,2})/);
+    if (gv) return gv[1] + "-" + pad(+gv[2] + 1) + "-" + pad(gv[3]);
+    return "";
+  };
+
+  /* '2026-03', '2026. 3', '2026.03', '26.03', '2026. 3. 1' → '2026-03';
+     '2026', '26.XX', '2026.XX', '2026년' → '2026' (year only = month unknown). */
+  ADAM.normalizeMonth = function (value) {
+    var s = String(value == null ? "" : value).trim().replace(/\.$/, "");
+    if (!s) return "";
+    var d = ADAM.normalizeDate(s);
+    if (d) return d.slice(0, 7);
+    var m = s.match(/^(\d{4})\s*[.\-/년]\s*(\d{1,2})(?!\d)/);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{2})\.(\d{1,2})$/);
+    if (m && +m[2] >= 1 && +m[2] <= 12) return "20" + m[1] + "-" + pad(m[2]);
+    m = s.match(/^(\d{4})/);
+    if (m) return m[1];
+    m = s.match(/^(\d{2})\s*[.\-/]\s*(?:[xX?]{1,2}|00)$/);
+    return m ? "20" + m[1] : "";
+  };
+
+  ADAM.safeUrl = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    try {
+      var url = new URL(raw, ADAM.root);
+      if (url.protocol === "http:" || url.protocol === "https:" || url.protocol === "mailto:") return url.href;
+    } catch (err) { /* ignore */ }
+    return "";
+  };
+
+  /* Image cell → URL. Repo paths (assets/…) resolve against the Pages root;
+     Drive share links (…/file/d/<id>/view or open?id=<id>) become direct images. */
+  ADAM.asset = function (value) {
+    var raw = String(value || "").trim();
+    if (!raw) return "";
+    var id = raw.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=\w+&)?id=)([\w-]{10,})/);
+    if (id) return "https://lh3.googleusercontent.com/d/" + id[1] + "=w800";
+    return ADAM.safeUrl(raw);
+  };
+
+  ADAM.parseCsv = function (text) {
+    var rows = [], row = [], cell = "", quoted = false;
+    var s = String(text || "").replace(/^\uFEFF/, "");
+    for (var i = 0; i < s.length; i++) {
+      var ch = s[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (s[i + 1] === '"') { cell += '"'; i++; } else quoted = false;
+        } else cell += ch;
+        continue;
+      }
+      if (ch === '"') quoted = true;
+      else if (ch === ",") { row.push(cell); cell = ""; }
+      else if (ch === "\n") { row.push(cell); rows.push(row); row = []; cell = ""; }
+      else if (ch !== "\r") cell += ch;
+    }
+    if (cell.length || row.length) { row.push(cell); rows.push(row); }
+    if (!rows.length) return { header: [], rows: [] };
+    var header = rows[0].map(function (h) { return String(h || "").trim().toLowerCase(); });
+    var out = [];
+    for (var r = 1; r < rows.length; r++) {
+      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
+      var obj = {};
+      for (var c = 0; c < header.length; c++) {
+        if (header[c]) obj[header[c]] = rows[r][c] != null ? String(rows[r][c]).trim() : "";
+      }
+      out.push(obj);
+    }
+    return { header: header, rows: out };
+  };
+
+  function fetchTimeout(url, ms, opts) {
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, ms);
+    opts = opts || {};
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(timer); });
+  }
+
+  ADAM.sheetUrl = function (tab) {
+    var map = window.ADAM_SHEETS || {};
+    if (typeof map[tab] === "string") return map[tab].trim();
+    if (window.ADAM_SHEET_ID) {
+      return "https://docs.google.com/spreadsheets/d/" + window.ADAM_SHEET_ID +
+        "/gviz/tq?tqx=out:csv&headers=1&sheet=" + encodeURIComponent(tab);
+    }
+    return "";
+  };
+
+  ADAM.params = new URLSearchParams(location.search);
+  ADAM.debug = ADAM.params.get("debug") === "1";
+
+  /* Column signature of every tab — used to say which tab gviz actually
+     returned (a missing tab name silently yields the FIRST tab). */
+  var SIGNATURES = {
+    news: ["date", "title_ko", "tag"],
+    publications: ["type", "title", "venue"],
+    patents: ["title", "status", "number"],
+    awards: ["award", "recipients", "category"],
+    members: ["name_ko", "role", "status"],
+    projects: ["title", "funder", "org_role"],
+    talks: ["date", "title", "venue", "location"],
+    gallery: ["caption", "image"]
+  };
+  function detectTab(header) {
+    var best = "";
+    Object.keys(SIGNATURES).forEach(function (t) {
+      if (!best && SIGNATURES[t].every(function (c) { return header.indexOf(c) !== -1; })) best = t;
+    });
+    return best;
+  }
+
+  /* ---------- diagnostics (?debug=1) ---------- */
+  ADAM.diag = {};
+  function diagFor(tab) {
+    return ADAM.diag[tab] || (ADAM.diag[tab] = { tab: tab, events: [], dropped: [], warnings: [] });
+  }
+  function logEvent(d, msg) {
+    d.events.push(new Date().toTimeString().slice(0, 8) + " " + msg);
+    if (window.console && console.info) console.info("[ADAM] " + d.tab + ": " + msg);
+    renderDebug();
+  }
+  /* Row tracker for widget normalizers: T.drop(i, why), T.warn(i, what), T.done(kept). */
+  ADAM.track = function (tab) {
+    var d = diagFor(tab);
+    function rowName(i) { return (d.source === "sheet" || d.source === "cache" ? "시트 " + (i + 2) + "행" : "항목 " + (i + 1)); }
+    return {
+      reset: function () { d.dropped = []; d.warnings = []; },
+      drop: function (i, why) { d.dropped.push(rowName(i) + ": " + why); },
+      warn: function (i, what) { d.warnings.push(rowName(i) + ": " + what); },
+      done: function (kept) {
+        d.kept = kept;
+        if (window.console && (d.dropped.length || d.warnings.length) && console.warn) {
+          console.warn("[ADAM] " + tab + ": " + d.dropped.length + " dropped, " + d.warnings.length + " warnings", { dropped: d.dropped, warnings: d.warnings });
+        }
+        renderDebug();
+      }
+    };
+  };
+  var debugBox = null, debugTimer = null;
+  function renderDebug() {
+    if (!ADAM.debug) return;
+    clearTimeout(debugTimer);
+    debugTimer = setTimeout(function () {
+      if (!document.body) return;
+      if (!debugBox) {
+        debugBox = document.createElement("details");
+        debugBox.className = "adam-debug";
+        debugBox.open = true;
+        document.body.appendChild(debugBox);
+      }
+      var html = "<summary>ADAM debug</summary>";
+      Object.keys(ADAM.diag).forEach(function (t) {
+        var d = ADAM.diag[t];
+        var list = function (title, arr) {
+          if (!arr || !arr.length) return "";
+          return "<div><b>" + title + " (" + arr.length + ")</b><ul>" + arr.slice(0, 40).map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") +
+            (arr.length > 40 ? "<li>…</li>" : "") + "</ul></div>";
+        };
+        html += "<section><h4>" + esc(t) + "</h4><dl>" +
+          "<dt>source</dt><dd>" + esc(d.source || "…") + (d.refreshed ? " → sheet (refreshed)" : "") + "</dd>" +
+          "<dt>sheet tab</dt><dd>" + esc(d.detected ? d.detected + (d.detected === t ? " ✓" : " ✗ (탭 이름 확인)") : (d.sheetError ? "—" : "…")) + "</dd>" +
+          (d.header ? "<dt>header</dt><dd>" + esc(d.header.join(", ")) + "</dd>" : "") +
+          (d.sheetError ? "<dt>sheet</dt><dd>" + esc(d.sheetError) + "</dd>" : "") +
+          "<dt>rows</dt><dd>" + (d.rows != null ? d.rows : "…") + " loaded · " + (d.kept != null ? d.kept : "…") + " shown · " + d.dropped.length + " dropped</dd>" +
+          "</dl>" + list("dropped", d.dropped) + list("warnings", d.warnings) + list("log", d.events) + "</section>";
+      });
+      debugBox.innerHTML = html;
+    }, 30);
+  }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  if (ADAM.debug) {
+    var css = document.createElement("style");
+    css.textContent = ".adam-debug{position:fixed;right:8px;bottom:8px;z-index:9999;max-width:min(560px,calc(100vw - 16px));max-height:min(70vh,520px);overflow:auto;" +
+      "background:#fff;border:1px solid #102b86;box-shadow:0 8px 24px rgba(16,43,134,.18);font:11px/1.45 'IBM Plex Mono',ui-monospace,monospace;color:#161a2b;padding:6px 10px}" +
+      ".adam-debug summary{cursor:pointer;font-weight:600;color:#102b86}.adam-debug h4{margin:8px 0 2px;font-size:12px;color:#102b86}" +
+      ".adam-debug dl{display:grid;grid-template-columns:auto 1fr;gap:0 8px;margin:0}.adam-debug dt{color:#5a6378}.adam-debug dd{margin:0;word-break:break-all}" +
+      ".adam-debug ul{margin:2px 0 4px;padding-left:16px}.adam-debug section+section{border-top:1px dashed #d8dde8;margin-top:6px}";
+    document.head.appendChild(css);
+  }
+
+  /* ---------- cache (stale-while-revalidate) ---------- */
+  var CACHE_DAYS = 14;
+  function cacheKey(tab) { return "adam:" + tab + ":" + (ADAM.sheetUrl(tab) || "").length + ":v2"; }
+  function readCache(tab) {
+    try {
+      var c = JSON.parse(localStorage.getItem(cacheKey(tab)) || "null");
+      if (c && Array.isArray(c.rows) && Date.now() - c.t < CACHE_DAYS * 864e5) return c;
+    } catch (err) { /* private mode etc. */ }
+    return null;
+  }
+  function writeCache(tab, res) {
+    try { localStorage.setItem(cacheKey(tab), JSON.stringify({ t: Date.now(), header: res.header, rows: res.rows })); } catch (err) { /* quota */ }
+  }
+  function dropCache(tab) { try { localStorage.removeItem(cacheKey(tab)); } catch (err) { /* ignore */ } }
+
+  /* ADAM.load(tab, { required, onUpdate })
+       1) cached sheet rows (localStorage) → shown at once, sheet re-fetched in
+          the background; if it changed, onUpdate(res) re-renders
+       2) no cache → sheet (header checked against `required`; gviz returns
+          the FIRST tab for a missing name, so a wrong tab is rejected)
+       3) sheet slow (>2.5 s) → bundled data first, sheet result via onUpdate
+       4) sheet failed / wrong / empty → ADAM_INLINE[tab] → data/<tab>.json
+     Resolves { rows, source: "cache" | "sheet" | "inline" | "json", header }.
+     ?source=json skips the sheet, ?nocache=1 skips the cache. */
+  ADAM.load = function (tab, opts) {
+    opts = opts || {};
+    var d = diagFor(tab);
+    var required = (opts.required || []).map(function (c) { return c.toLowerCase(); });
+    var url = ADAM.sheetUrl(tab);
+    if (ADAM.params.get("source") === "json") url = "";
+    d.url = url;
+    var update = typeof opts.onUpdate === "function" ? opts.onUpdate : null;
+
+    function mark(res, how) {
+      d.source = res.source; d.rows = res.rows.length;
+      if (res.header) d.header = res.header;
+      logEvent(d, how || ("loaded from " + res.source + " (" + res.rows.length + " rows)"));
+      return res;
+    }
+
+    function fromJson() {
+      var inline = window.ADAM_INLINE && window.ADAM_INLINE[tab];
+      if (Array.isArray(inline) && inline.length) return Promise.resolve({ rows: inline, source: "inline" });
+      return fetchTimeout(ADAM.root + "data/" + tab + ".json", 8000, { cache: "no-cache" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("json " + res.status);
+          return res.json();
+        })
+        .then(function (data) {
+          var list = Array.isArray(data) ? data : (data && data.items) || [];
+          return { rows: list, source: "json", header: data && data.columns };
+        });
+    }
+
+    function fetchSheet() {
+      return fetchTimeout(url, 15000, { cache: "no-store", mode: "cors" })
+        .then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.text();
+        })
+        .then(function (text) {
+          var parsed = ADAM.parseCsv(text);
+          d.detected = detectTab(parsed.header) || "(알 수 없음)";
+          var missing = required.filter(function (c) { return parsed.header.indexOf(c) === -1; });
+          if (missing.length) {
+            var e = new Error("header에 " + missing.join(", ") + " 없음 — 받은 탭: " + d.detected + " (탭이 없으면 gviz는 첫 탭을 돌려줌)");
+            e.definitive = true; throw e;
+          }
+          if (!parsed.rows.length) { var e2 = new Error("탭이 비어 있음"); e2.definitive = true; throw e2; }
+          return { rows: parsed.rows, source: "sheet", header: parsed.header };
+        });
+    }
+
+    if (!ADAM.safeUrl(url)) return fromJson().then(function (r) { return mark(r); });
+
+    var sheet = fetchSheet();
+    sheet.then(function (res) { writeCache(tab, res); }, function (err) {
+      d.sheetError = err.message;
+      logEvent(d, "sheet failed: " + err.message);
+      if (err.definitive) dropCache(tab);
+    });
+
+    var cached = ADAM.params.get("nocache") === "1" ? null : readCache(tab);
+    if (cached) {
+      sheet.then(function (res) {
+        if (JSON.stringify(res.rows) !== JSON.stringify(cached.rows) && update) { d.refreshed = true; update(mark(res, "sheet changed → re-rendered")); }
+        else logEvent(d, "sheet checked — cache is current");
+      }, function (err) {
+        if (err.definitive && update) fromJson().then(function (r) { update(mark(r, "sheet rejected → bundled " + r.source)); });
+      });
+      return Promise.resolve(mark({ rows: cached.rows, source: "cache", header: cached.header },
+        "cache (" + Math.round((Date.now() - cached.t) / 60000) + " min old) shown; refreshing"));
+    }
+
+    return new Promise(function (resolve, reject) {
+      var settled = false;
+      function fallback() { return fromJson().then(function (r) { resolve(mark(r)); }, reject); }
+      var timer = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        logEvent(d, "sheet slow → bundled data first");
+        fallback();
+        sheet.then(function (res) { if (update) { d.refreshed = true; update(mark(res, "sheet arrived → re-rendered")); } }, function () {});
+      }, opts.wait || 2500);
+      sheet.then(function (res) {
+        if (settled) return;
+        settled = true; clearTimeout(timer); resolve(mark(res));
+      }, function () {
+        if (settled) return;
+        settled = true; clearTimeout(timer); fallback();
+      });
+    });
+  };
+
+  /* Tiny DOM helper: el("div", {class: "x", text: "…", onclick: fn}, [children]) */
+  ADAM.el = function (tag, attrs, children) {
+    var node = document.createElement(tag);
+    if (attrs) {
+      Object.keys(attrs).forEach(function (k) {
+        var v = attrs[k];
+        if (v == null || v === false) return;
+        if (k === "text") node.textContent = v;
+        else if (k === "html") node.innerHTML = v;
+        else if (k === "class") node.className = v;
+        else if (k.slice(0, 2) === "on" && typeof v === "function") node.addEventListener(k.slice(2), v);
+        else node.setAttribute(k, v === true ? "" : v);
+      });
+    }
+    (children || []).forEach(function (c) {
+      if (c == null || c === false) return;
+      node.appendChild(typeof c === "string" ? document.createTextNode(c) : c);
+    });
+    return node;
+  };
+
+  ADAM.debounce = function (fn, ms) {
+    var t;
+    return function () {
+      var args = arguments, self = this;
+      clearTimeout(t);
+      t = setTimeout(function () { fn.apply(self, args); }, ms);
+    };
+  };
+
+  /* Normalised text for search (case/space-insensitive, strips * + marks). */
+  ADAM.fold = function (s) {
+    return String(s || "").toLowerCase().replace(/[*+·]/g, "").replace(/\s+/g, " ");
+  };
+
+  /* Lab PI names to emphasise in author lists. */
+  ADAM.PI = ["S. Kwon", "권순조", "Soonjo Kwon"];
+  ADAM.authors = function (text) {
+    var frag = document.createDocumentFragment();
+    String(text || "").split(/,\s*/).forEach(function (name, i, arr) {
+      var clean = name.replace(/[*+]/g, "").trim();
+      var isPI = ADAM.PI.indexOf(clean) !== -1;
+      var span = ADAM.el("span", { class: isPI ? "au au-pi" : "au", text: name.trim() });
+      frag.appendChild(span);
+      if (i < arr.length - 1) frag.appendChild(document.createTextNode(", "));
+    });
+    return frag;
+  };
+
+  /* Research-topic vocabulary for publications/patents (`topics` column,
+     semicolon-separated). Cells may use the id, the English or the Korean
+     label; anything else is shown as a custom tag. Ids match scripts/tag_topics.py. */
+  ADAM.TOPICS = [
+    { id: "cad", en: "B-rep / CAD Modeling", ko: "B-rep·CAD 모델링", kos: "CAD 모델링" },
+    { id: "assembly", en: "Assembly & Mates", ko: "조립·메이트", kos: "조립·메이트" },
+    { id: "am", en: "Additive Manufacturing", ko: "적층제조", kos: "적층제조" },
+    { id: "kg", en: "Knowledge Graph / Ontology", ko: "지식 그래프·온톨로지", kos: "지식그래프" },
+    { id: "llm", en: "LLM / Generative AI", ko: "LLM·생성형 AI", kos: "LLM·생성형AI" },
+    { id: "mesh", en: "Mesh & Point Cloud", ko: "메쉬·점군", kos: "메쉬·점군" },
+    { id: "rl", en: "Reinforcement Learning", ko: "강화학습", kos: "강화학습" },
+    { id: "edu", en: "CAD Education / Grading", ko: "CAD 교육·자동 채점", kos: "CAD 교육" },
+    { id: "design", en: "Product Design", ko: "제품 설계", kos: "제품 설계" },
+    { id: "dt", en: "Digital Twin / Smart Manufacturing", ko: "디지털 트윈·스마트 제조", kos: "디지털 트윈" },
+    { id: "lca", en: "Sustainability / LCA", ko: "지속가능성·LCA", kos: "지속가능성" },
+    { id: "routing", en: "Cable Routing", ko: "케이블 라우팅", kos: "케이블 라우팅" },
+    { id: "safety", en: "Safety & Evacuation", ko: "안전·대피", kos: "안전·대피" },
+    { id: "ship", en: "Shipbuilding / Ocean", ko: "조선·해양", kos: "조선·해양" },
+    { id: "std", en: "Standards (ISO·STEP·AAS)", ko: "표준 (ISO·STEP·AAS)", kos: "표준" }
+  ];
+  function topicKey(s) { return String(s || "").toLowerCase().replace(/[\s·.\/&()_+-]+/g, ""); }
+  var TOPIC_BY = {};
+  ADAM.TOPICS.forEach(function (t, i) {
+    t.order = i;
+    [t.id, t.en, t.ko, t.kos].forEach(function (k) { TOPIC_BY[topicKey(k)] = t; });
+  });
+  TOPIC_BY[topicKey("B-rep")] = TOPIC_BY[topicKey("CAD")] = ADAM.TOPICS[0];
+  ["조립·체결", "적층 제조", "Additive Mfg.", "LLM · GenAI", "Knowledge Graph", "Mesh · Point Cloud", "CAD Modeling", "Assembly",
+   "CAD Education", "Digital Twin", "Sustainability", "Safety", "Ship · Ocean", "Standards"].forEach(function (k, i) {
+    var ids = ["assembly", "am", "am", "llm", "kg", "mesh", "cad", "assembly", "edu", "dt", "lca", "safety", "ship", "std"];
+    ADAM.TOPICS.forEach(function (t) { if (t.id === ids[i]) TOPIC_BY[topicKey(k)] = t; });
+  });
+  ADAM.topic = function (v) {
+    var raw = String(v || "").trim(), k = topicKey(raw);
+    if (!k) return null;
+    return TOPIC_BY[k] || { id: "x-" + k, en: raw, ko: raw, kos: raw, order: 900, custom: true };
+  };
+  ADAM.topics = function (cell) {
+    var out = [], seen = {};
+    String(cell || "").split(/[;,；\n]+/).forEach(function (part) {
+      var t = ADAM.topic(part);
+      if (t && !seen[t.id]) { seen[t.id] = 1; out.push(t); }
+    });
+    return out.sort(function (a, b) { return a.order - b.order; });
+  };
+  /* One clickable tag on an entry. */
+  ADAM.topicTag = function (t, active, onPick) {
+    var b = ADAM.el("button", { type: "button", class: "ax-tag", "aria-pressed": String(active),
+      title: t.custom ? t.en : t.ko + " · " + t.en, text: t.kos, lang: "ko" });
+    b.addEventListener("click", function () { onPick(t.id); });
+    return b;
+  };
+  /* Topic filter: a chip row (wide) + a select (narrow, CSS swaps them). */
+  ADAM.topicFilter = function (onPick) {
+    var el = ADAM.el;
+    var row = el("div", { class: "ax-topics", role: "group", "aria-label": "연구 주제 Topics" });
+    var sel = el("select", { class: "ax-select ax-topic-select", "aria-label": "연구 주제 Topics" });
+    sel.addEventListener("change", function () { onPick(sel.value); });
+    function update(present, counts, active) {
+      row.innerHTML = ""; sel.innerHTML = "";
+      row.hidden = sel.hidden = !present.length;
+      if (!present.length) return;
+      row.appendChild(el("span", { class: "ax-topics-lb", "aria-hidden": "true" }, [el("span", { class: "ko", text: "연구 주제" }), el("span", { text: "Topics" })]));
+      var list = [{ id: "all", kos: "전체", en: "All topics", ko: "전체" }].concat(present);
+      list.forEach(function (t) {
+        var n = counts[t.id] || 0, on = active === t.id;
+        var b = el("button", { type: "button", class: "ax-topic" + (t.id === "all" ? " all" : ""), "aria-pressed": String(on),
+          disabled: !n && !on, title: t.id === "all" ? "전체 주제" : t.ko + " · " + t.en }, [
+          el("span", { text: t.kos }), el("span", { class: "n", text: String(n) })
+        ]);
+        b.addEventListener("click", function () { onPick(on && t.id !== "all" ? "all" : t.id); });
+        row.appendChild(b);
+        sel.appendChild(el("option", { value: t.id, text: t.id === "all" ? "전체 주제 (" + n + ")" : "# " + t.kos + " (" + n + ")" }));
+      });
+      sel.value = active;
+    }
+    return { row: row, select: sel, update: update };
+  };
+
+  ADAM.status = function (mount, message, kind) {
+    mount.innerHTML = "";
+    mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
+  };
+})();
+
+/* Latest News timeline — sheet tab `news`. Vanilla, uses shared/sheet-loader.js.
+   Columns: date,title_ko,title_en,tag,link,image,link2   (tag: Paper | Award | Project | Event | Member)
+   Data: ADAM.load("news") — cache → Sheet (header must contain date,title_ko) → ADAM_INLINE.news → data/news.json. */
 (function () {
   var TAGS = ["Paper", "Award", "Project", "Event", "Member"];
   var TAG_KO = {
@@ -594,31 +1146,8 @@ body {
     return reduced ? "auto" : "smooth";
   }
 
-  function safeUrl(value) {
-    var raw = String(value || "").trim();
-    if (!raw) return "";
-    try {
-      var url = new URL(raw, window.location.href);
-      if (url.protocol === "http:" || url.protocol === "https:") return url.href;
-    } catch (err) {
-      if (/^https?:\/\//i.test(raw)) return raw;
-      return "";
-    }
-    return "";
-  }
-
-  function pad(n) {
-    return String(n).padStart(2, "0");
-  }
-
-  function normalizeDate(value) {
-    var s = String(value || "").trim().replace(/\.$/, "");
-    var iso = s.match(/^(\d{4})\s*[.\-/]\s*(\d{1,2})\s*[.\-/]\s*(\d{1,2})/);
-    if (iso) return iso[1] + "-" + pad(iso[2]) + "-" + pad(iso[3]);
-    var short = s.match(/^(\d{2})[.\-/](\d{2})[.\-/](\d{2})$/);
-    if (short) return "20" + short[1] + "-" + short[2] + "-" + short[3];
-    return "";
-  }
+  var A = window.ADAM;
+  function pad(n) { return String(n).padStart(2, "0"); }
 
   function displayDate(iso) {
     if (!iso) return "—";
@@ -634,100 +1163,30 @@ body {
     return raw;
   }
 
-  function normalizeItem(raw, index) {
-    if (!raw || typeof raw !== "object") return null;
-    var date = normalizeDate(raw.date);
-    var titleKo = String(raw.title_ko || raw.title || "").trim();
-    var titleEn = String(raw.title_en || "").trim();
-    if (!date || (!titleKo && !titleEn)) return null;
-    return {
-      date: date,
-      title_ko: titleKo || titleEn,
-      title_en: titleEn,
-      tag: canonTag(raw.tag),
-      link: safeUrl(raw.link),
-      image: safeUrl(raw.image),
-      order: index
-    };
-  }
-
+  var T = A.track("news");
   function normalizeList(list) {
     var items = [];
+    T.reset();
     (list || []).forEach(function (raw, index) {
-      var item = normalizeItem(raw, index);
-      if (item) items.push(item);
+      if (!raw || typeof raw !== "object") return;
+      var date = A.normalizeDate(raw.date);
+      var titleKo = String(raw.title_ko || raw.title || "").trim();
+      var titleEn = String(raw.title_en || "").trim();
+      if (!titleKo && !titleEn) { T.drop(index, "title_ko·title_en 비어 있음"); return; }
+      if (!date) { T.drop(index, titleKo.slice(0, 24) + ": date '" + (raw.date || "") + "' 날짜로 못 읽음"); return; }
+      var tag = canonTag(raw.tag);
+      if (tag && TAGS.indexOf(tag) === -1) T.warn(index, "tag '" + tag + "' 은 기본 분류가 아님 → 그대로 칩으로 표시");
+      items.push({
+        date: date, title_ko: titleKo || titleEn, title_en: titleEn, tag: tag,
+        link: A.safeUrl(raw.link), link2: A.safeUrl(raw.link2), image: A.asset(raw.image), order: index
+      });
     });
     items.sort(function (a, b) {
       if (a.date === b.date) return a.order - b.order;
       return a.date < b.date ? 1 : -1;
     });
+    T.done(items.length);
     return items;
-  }
-
-  function parseCsv(text) {
-    var rows = [];
-    var row = [];
-    var cell = "";
-    var quoted = false;
-    var s = String(text || "").replace(/^\uFEFF/, "");
-    for (var i = 0; i < s.length; i++) {
-      var ch = s[i];
-      if (quoted) {
-        if (ch === '"') {
-          if (s[i + 1] === '"') {
-            cell += '"';
-            i++;
-          } else {
-            quoted = false;
-          }
-        } else {
-          cell += ch;
-        }
-        continue;
-      }
-      if (ch === '"') {
-        quoted = true;
-      } else if (ch === ",") {
-        row.push(cell);
-        cell = "";
-      } else if (ch === "\n") {
-        row.push(cell);
-        rows.push(row);
-        row = [];
-        cell = "";
-      } else if (ch !== "\r") {
-        cell += ch;
-      }
-    }
-    if (cell.length || row.length) {
-      row.push(cell);
-      rows.push(row);
-    }
-    if (!rows.length) return [];
-    var header = rows[0].map(function (h) {
-      return String(h || "").trim().toLowerCase();
-    });
-    var out = [];
-    for (var r = 1; r < rows.length; r++) {
-      if (rows[r].every(function (c) { return !String(c || "").trim(); })) continue;
-      var obj = {};
-      for (var c = 0; c < header.length; c++) {
-        if (!header[c]) continue;
-        obj[header[c]] = rows[r][c] != null ? rows[r][c] : "";
-      }
-      out.push(obj);
-    }
-    return out;
-  }
-
-  function fetchTimeout(url, ms) {
-    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
-    var timer = setTimeout(function () {
-      if (ctrl) ctrl.abort();
-    }, ms);
-    var opts = { cache: "no-store", mode: "cors" };
-    if (ctrl) opts.signal = ctrl.signal;
-    return fetch(url, opts).finally(function () { clearTimeout(timer); });
   }
 
   function shell() {
@@ -831,7 +1290,7 @@ body {
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "adam-chip";
-      btn.textContent = tag === "All" ? "ALL" : tag;
+      btn.textContent = TAG_KO[tag] || tag;
       btn.setAttribute("aria-pressed", tag === state.filter ? "true" : "false");
       btn.setAttribute("aria-label", (TAG_KO[tag] || tag) + " 소식만 보기");
       btn.setAttribute("data-tag", tag);
@@ -840,14 +1299,11 @@ body {
   }
 
   function cardElement(item, index) {
-    var card = document.createElement(item.link ? "a" : "article");
+    /* <article> with a stretched primary link (OPEN ↗ covers the card) so a
+       second link (link2) can sit on top of it — no nested anchors. */
+    var card = document.createElement("article");
     card.className = "news-card" + (item.link ? " is-link" : "");
     card.setAttribute("data-tag", item.tag || "");
-    if (item.link) {
-      card.href = item.link;
-      card.target = "_blank";
-      card.rel = "noopener noreferrer";
-    }
 
     var node = document.createElement("span");
     node.className = "news-node";
@@ -858,6 +1314,7 @@ body {
       var img = document.createElement("img");
       img.className = "news-photo";
       img.alt = "";
+      img.loading = "lazy";
       img.src = item.image;
       img.addEventListener("error", function () { img.remove(); });
       card.appendChild(img);
@@ -904,11 +1361,31 @@ body {
     var det = document.createElement("span");
     det.className = "news-det";
     det.textContent = "DET " + pad(index + 1);
-    var open = document.createElement("span");
-    open.className = "news-open" + (item.link ? "" : " is-empty");
-    open.textContent = item.link ? "OPEN ↗" : "NO REF";
     foot.appendChild(det);
-    foot.appendChild(open);
+    var links = document.createElement("span");
+    links.className = "news-links";
+    if (item.link2) {
+      var two = document.createElement("a");
+      two.className = "news-open2";
+      two.href = item.link2; two.target = "_blank"; two.rel = "noopener";
+      two.textContent = "LINK 2 ↗";
+      two.setAttribute("aria-label", item.title_ko + " — 두 번째 링크");
+      links.appendChild(two);
+    }
+    var open;
+    if (item.link) {
+      open = document.createElement("a");
+      open.href = item.link; open.target = "_blank"; open.rel = "noopener";
+      open.className = "news-open";
+      open.textContent = item.link2 ? "LINK 1 ↗" : "OPEN ↗";
+      open.setAttribute("aria-label", item.title_ko + " — 링크 열기");
+    } else {
+      open = document.createElement("span");
+      open.className = "news-open is-empty";
+      open.textContent = "NO REF";
+    }
+    links.appendChild(open);
+    foot.appendChild(links);
     card.appendChild(foot);
     return card;
   }
@@ -1118,77 +1595,23 @@ body {
     });
   }
 
-  function embeddedItems() {
-    return Array.isArray(window.ADAM_NEWS_ITEMS) ? window.ADAM_NEWS_ITEMS : null;
-  }
-
-  function loadFallback() {
-    var inline = embeddedItems();
-    if (inline && inline.length) {
-      return Promise.resolve(normalizeList(inline));
-    }
-    var url = window.ADAM_NEWS_FALLBACK_URL || "../../data/news.json";
-    if (!url) return Promise.resolve([]);
-    return fetch(url, { cache: "no-store" }).then(function (res) {
-      if (!res.ok) throw new Error("news.json");
-      return res.json();
-    }).then(function (data) {
-      var list = Array.isArray(data) ? data : (data && data.items) || [];
-      return normalizeList(list);
-    });
-  }
-
-  function loadCsv(url) {
-    return fetchTimeout(url, 4500).then(function (res) {
-      if (!res.ok) throw new Error("csv");
-      return res.text();
-    }).then(function (text) {
-      return normalizeList(parseCsv(text));
-    });
-  }
-
   function boot() {
     shell();
     bind();
-    var csvUrl = String(
-      window.ADAM_NEWS_CSV_URL ||
-      (window.ADAM_SHEETS && window.ADAM_SHEETS.news) ||
-      ""
-    ).trim();
-    var inline = embeddedItems();
-
-    function useJson(items) {
-      state.items = items;
-      state.source = "JSON";
-      if (!items.length) {
-        showStatus("소식을 불러오지 못했습니다.");
-        return;
-      }
-      renderItems();
-    }
-
-    if (!safeUrl(csvUrl)) {
-      if (inline) {
-        useJson(normalizeList(inline));
-        return;
-      }
-      showLoading();
-      loadFallback().then(useJson).catch(function () {
-        showStatus("소식을 불러오지 못했습니다.");
-      });
-      return;
-    }
-
     showLoading();
-    loadCsv(csvUrl).then(function (items) {
-      if (!items.length) throw new Error("empty");
-      state.items = items;
-      state.source = "SHEET";
+    /* paste build (dist/news-embed.html) may still set ADAM_NEWS_ITEMS */
+    if (Array.isArray(window.ADAM_NEWS_ITEMS) && !(window.ADAM_INLINE && window.ADAM_INLINE.news)) {
+      window.ADAM_INLINE = window.ADAM_INLINE || {};
+      window.ADAM_INLINE.news = window.ADAM_NEWS_ITEMS;
+    }
+    function apply(res) {
+      state.items = normalizeList(res.rows);
+      state.source = res.source;
+      if (!state.items.length) { showStatus("소식을 불러오지 못했습니다."); return; }
       renderItems();
-    }).catch(function () {
-      loadFallback().then(useJson).catch(function () {
-        showStatus("소식을 불러오지 못했습니다.");
-      });
+    }
+    A.load("news", { required: ["date", "title_ko"], onUpdate: apply }).then(apply).catch(function () {
+      showStatus("소식을 불러오지 못했습니다.");
     });
   }
 

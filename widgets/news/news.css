@@ -95,7 +95,7 @@
   max-width: 100%;
   scroll-snap-align: start;
   height: calc(100% - 4px);
-  max-height: 100%;
+  max-height: min(100%, 340px);   /* tall iframes: cards stop growing */
   align-self: start;
   display: flex;
   flex-direction: column;
@@ -208,7 +208,7 @@
 }
 
 .news-tag[data-tag="Award"] {
-  color: var(--accent-deep);
+  color: var(--accent-ink);
   border-color: var(--accent);
   background: rgba(255, 255, 255, 0.85);
 }
@@ -288,7 +288,29 @@
 
 .news-det {
   font-size: 9px;
-  color: var(--ink-faint);
+  color: var(--ink-dim);
+}
+
+.news-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.news-open2 {
+  position: relative;
+  z-index: 2;   /* above the stretched OPEN link */
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--navy);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.news-open2:hover {
+  border-bottom-color: var(--navy);
 }
 
 .news-open {
@@ -302,10 +324,11 @@
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
 }
 
-.news-card.is-link:focus-within {
-  outline: 2px solid var(--accent);
+.news-card.is-link:has(.news-open:focus-visible) {
+  outline: 2px solid var(--navy);
   outline-offset: 2px;
 }
 
@@ -313,8 +336,13 @@
   outline: none;
 }
 
+.news-open2:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
 .news-open.is-empty {
-  color: var(--ink-faint);
+  color: var(--ink-dim);
   font-weight: 500;
 }
 
@@ -366,4 +394,24 @@
   .news-skel {
     --news-card-w: calc(100% - 36px);
   }
+}
+
+/* Short iframes — Google Sites scales an embed's height with its width, so a
+   400px embed can be ~150–250px tall on a phone. Drop the photo and English
+   line, tighten spacing, keep date · tag · title · link. */
+@media (max-height: 330px) {
+  .adam-toolbar { padding-top: 8px; }
+  .news-row { margin: 4px 8px 6px; }
+  .news-track { padding: 12px 2px 4px; }
+  .news-side-nav { padding: 12px 0 4px; }
+  .news-side-nav button { height: 34px; }
+  .news-card { gap: 4px; padding: 8px 10px; }
+  .news-photo, .news-en, .news-det { display: none; }
+  .news-title { -webkit-line-clamp: 2; font-size: 13px; }
+}
+@media (max-height: 210px) {
+  .news-rule { display: none; }
+  .news-title { -webkit-line-clamp: 2; font-size: 12.5px; line-height: 1.35; }
+  .news-node { display: none; }
+  .news-track { padding-top: 6px; }
 }

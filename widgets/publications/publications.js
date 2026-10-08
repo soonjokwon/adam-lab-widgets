@@ -12,6 +12,7 @@
     { id: "journal-kr", lb: "Korean Journal", ko: "국내 학술지", pre: "KJ" },
     { id: "conf-intl", lb: "Int'l Conf.", ko: "국제 학술대회", pre: "C" },
     { id: "conf-kr", lb: "Korean Conf.", ko: "국내 학술대회", pre: "KC" },
+    { id: "other", lb: "Other", ko: "기타(분류 확인)", pre: "" },
     { id: "in-prep", lb: "In Prep.", ko: "준비·심사 중", pre: "P" }
   ];
   var ALIAS = { journal: "journal-intl", international: "journal-intl", domestic: "journal-kr", "korean-journal": "journal-kr",
@@ -33,13 +34,16 @@
     return ALIAS[s] || "";
   }
 
+  var T = A.track("publications");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var type = canonType(r.type);
       var title = (r.title || "").trim();
-      if (!type || !title) return;
-      if (allowed.length && allowed.indexOf(type) === -1) return;
+      if (!title) { T.drop(i, "title 비어 있음"); return; }
+      if (!type) { T.warn(i, "type '" + (r.type || "") + "' 모름 → '기타' 묶음"); type = "other"; }
+      if (allowed.length && allowed.indexOf(type) === -1) return;   // ?types= filter, not an error
       var year = String(r.year || "").match(/\d{4}/);
       var date = A.normalizeDate(r.date);
       year = year ? year[0] : (date ? date.slice(0, 4) : "");
@@ -57,17 +61,20 @@
         hay: A.fold([title, r.authors, r.venue, r.details, r.note, year].concat(topics.map(function (t) { return t.en + " " + t.ko; })).join(" "))
       });
     });
+    /* in-prep last; otherwise year ↓, then category (J, KJ, C, KC, other), then number ↓
+       (journals have no dates, so dates are not used). */
     out.sort(function (a, b) {
-      var ya = a.year || "9999", yb = b.year || "9999";
+      var ya = a.year || "0000", yb = b.year || "0000";
       if (a.type === "in-prep" && b.type !== "in-prep") return 1;
       if (b.type === "in-prep" && a.type !== "in-prep") return -1;
       if (ya !== yb) return ya < yb ? 1 : -1;
-      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
       if (TYPE_BY[a.type].order !== TYPE_BY[b.type].order) return TYPE_BY[a.type].order - TYPE_BY[b.type].order;
-      var na = parseInt(a.no, 10) || 0, nb = parseInt(b.no, 10) || 0;
-      if (na !== nb) return nb - na;
+      var na = parseInt(a.no, 10), nb = parseInt(b.no, 10);
+      if (!isNaN(na) && !isNaN(nb) && na !== nb) return nb - na;
+      if (isNaN(na) !== isNaN(nb)) return isNaN(na) ? 1 : -1;
       return a.order - b.order;
     });
+    T.done(out.length);
     return out;
   }
 
@@ -160,7 +167,7 @@
     var ys = yearsAll();
     var cur = state.year;
     refs.year.innerHTML = "";
-    refs.year.appendChild(el("option", { value: "all", text: "ALL YEARS" }));
+    refs.year.appendChild(el("option", { value: "all", text: "전체 연도" }));
     ys.slice().reverse().forEach(function (y) { refs.year.appendChild(el("option", { value: y, text: y })); });
     refs.year.value = ys.indexOf(cur) !== -1 ? cur : "all";
     state.year = refs.year.value;
@@ -256,7 +263,7 @@
     if (it.extraLink) meta.appendChild(el("a", { class: "ax-link", href: it.extraLink, target: "_blank", rel: "noopener", text: it.extraLabel || "LINK" }));
     body.appendChild(meta);
 
-    var idx = it.no ? t.pre + it.no : "·";
+    var idx = it.no ? (t.pre || "#") + it.no : "·";
     return el("li", { class: "pub-item" }, [el("div", { class: "pub-idx", text: idx }), body]);
   }
 
@@ -299,7 +306,7 @@
   function boot() {
     shell();
     skeleton();
-    A.load("publications", { required: ["type", "title", "authors", "venue"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 논문이 없습니다."); return; }
       if (state.type !== "all" && !state.items.some(function (it) { return it.type === state.type; })) state.type = "all";
@@ -309,8 +316,11 @@
       refs.present = topicsPresent();
       var tp = A.topic(topicParam);
       if (tp && refs.present.some(function (t) { return t.id === tp.id; })) state.topic = tp.id;
+      topicParam = "";
+      if (state.topic !== "all" && !refs.present.some(function (t) { return t.id === state.topic; })) state.topic = "all";
       render();
-    }).catch(function () {
+    }
+    A.load("publications", { required: ["type", "title", "authors", "venue"], onUpdate: apply }).then(apply).catch(function () {
       A.status(refs.list, "논문 목록을 불러오지 못했습니다.");
     });
   }

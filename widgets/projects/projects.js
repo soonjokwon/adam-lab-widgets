@@ -1,16 +1,21 @@
 /* Research projects — sheet tab `projects`.
-   Columns: title,org_role,researcher_role,program,funder,start,end,group,status,logo,link
+   Columns: title,org_role,researcher_role,program,funder,start,end,group,status,recruit,hidden,logo,link
    status blank → automatic from start/end vs. today (ongoing / completed / upcoming).
-   URL params: ?status=ongoing|completed &group=PNU|KIT &compact=1 (no header/toolbar) */
+   recruit=Y → shown with ?recruit=1 (Team/Recruiting).  hidden=Y → never shown.
+   start/end: '2026-03' (bar drawn) · '2026' / '26.XX' (year only → no progress bar).
+   URL params: ?recruit=1 &status=ongoing|completed &group=PNU|KIT &compact=1 (no header/toolbar) */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-projects");
   if (!mount) return;
 
-  var GROUPS = { PNU: { t: "Projects @ PNU", ko: "부산대학교" }, KIT: { t: "Projects @ KIT", ko: "국립금오공과대학교" } };
+  var GROUPS = { PNU: { t: "Projects @ PNU", ko: "부산대학교" }, KIT: { t: "Projects @ KIT", ko: "국립금오공과대학교" },
+    OTHER: { t: "Projects", ko: "소속 미지정 (group 칸 확인)" } };
   var ST = { ongoing: { lb: "Ongoing", ko: "진행중" }, upcoming: { lb: "Upcoming", ko: "예정" }, completed: { lb: "Completed", ko: "종료" } };
   var p = A.params;
   var compact = p.get("compact") === "1";
+  var recruitOnly = p.get("recruit") === "1";
+  function yes(v) { return /^(y|yes|true|1|o|예|✓|v)$/i.test(String(v || "").trim()); }
   var lockGroup = (p.get("group") || "").toUpperCase();
   var state = { items: [], status: (p.get("status") || "all").toLowerCase(), group: lockGroup || "all" };
   var refs = {};
@@ -30,24 +35,39 @@
     return "ongoing";
   }
 
+  var T = A.track("projects");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var title = (r.title || "").trim();
-      if (!title) return;
+      if (!title) { T.drop(i, "title 비어 있음"); return; }
+      if (yes(r.hidden)) { T.drop(i, "hidden=Y (숨김)"); return; }
+      if (recruitOnly && !yes(r.recruit)) return;   // ?recruit=1 filter, not an error
       var start = A.normalizeMonth(r.start), end = A.normalizeMonth(r.end);
-      var st = String(r.status || "").trim().toLowerCase();
-      st = /진행|ongoing|active/.test(st) ? "ongoing" : /종료|완료|complete|done|finished/.test(st) ? "completed" : /예정|upcoming/.test(st) ? "upcoming" : autoStatus(start, end);
-      var group = String(r.group || "").trim().toUpperCase() || "PNU";
+      if (r.start && !start) T.warn(i, "start '" + r.start + "' 날짜로 못 읽음");
+      if (r.end && !end) T.warn(i, "end '" + r.end + "' 날짜로 못 읽음");
+      var raw = String(r.status || "").trim().toLowerCase();
+      var st = /진행|ongoing|active/.test(raw) ? "ongoing" : /종료|완료|complete|done|finished/.test(raw) ? "completed" : /예정|upcoming/.test(raw) ? "upcoming" : "";
+      if (raw && !st) T.warn(i, "status '" + r.status + "' 모름 → 기간으로 자동 계산");
+      st = st || autoStatus(start, end);
+      var group = String(r.group || "").trim().toUpperCase();
+      if (!group) { T.warn(i, "group 비어 있음 → '소속 미지정'"); group = "OTHER"; }
       if (lockGroup && group !== lockGroup) return;
+      /* progress bar only when both ends have a month */
+      var full = start.length === 7 && end.length === 7;
       var s = monthIndex(start), e = monthIndex(end, true), n = monthIndex(NOW);
-      var pct = (s != null && e != null && e > s) ? Math.max(0, Math.min(1, (n - s) / (e - s))) : (st === "completed" ? 1 : null);
+      var pct = full && e > s ? Math.max(0, Math.min(1, (n - s) / (e - s))) : null;
       out.push({ title: title, org: r.org_role || "", role: r.researcher_role || "", program: r.program || "", funder: r.funder || "",
-        start: start, end: end, group: group, status: st, pct: pct, logo: A.asset(r.logo), link: A.safeUrl(r.link), order: i });
+        start: start, end: end, startRaw: r.start || "", endRaw: r.end || "", group: group, status: st, pct: pct,
+        logo: A.asset(r.logo), link: A.safeUrl(r.link), order: i });
     });
+    T.done(out.length);
     var rank = { ongoing: 0, upcoming: 1, completed: 2 };
     out.sort(function (a, b) {
-      if (a.group !== b.group) return a.group === "PNU" ? -1 : b.group === "PNU" ? 1 : (a.group < b.group ? -1 : 1);
+      var ga = a.group === "PNU" ? 0 : a.group === "OTHER" ? 2 : 1, gb = b.group === "PNU" ? 0 : b.group === "OTHER" ? 2 : 1;
+      if (ga !== gb) return ga - gb;
+      if (a.group !== b.group) return a.group < b.group ? -1 : 1;
       return a.order - b.order;
     });
     out.forEach(function (it) { it.rank = rank[it.status]; });
@@ -65,7 +85,11 @@
     for (var i = 0; i < 3; i++) refs.list.appendChild(el("div", { class: "ax-skel", style: "height:150px", "aria-hidden": "true" }));
   }
 
-  function fmt(ym) { return ym ? ym.replace("-", ".") : "—"; }
+  function fmt(ym, raw) {
+    if (ym.length === 7) return ym.replace("-", ".");
+    if (ym) return /x|\?/i.test(raw) ? ym + ".?" : ym;
+    return raw || "—";
+  }
 
   function card(it) {
     var st = ST[it.status];
@@ -87,9 +111,10 @@
       it.role ? el("span", { class: "ax-badge ko", text: it.role }) : null
     ]);
     var period = el("div", { class: "pj-period" });
-    var dates = el("div", { class: "pj-dates" }, [el("span", { text: fmt(it.start) + " — " + fmt(it.end) })]);
+    var dates = el("div", { class: "pj-dates" }, [el("span", { text: fmt(it.start, it.startRaw) + " — " + fmt(it.end, it.endRaw) })]);
     if (it.status === "ongoing" && it.pct != null) dates.appendChild(el("span", { class: "pct", text: Math.round(it.pct * 100) + "%" }));
     period.appendChild(dates);
+    if (it.pct == null) period.classList.add("no-bar");
     if (it.pct != null) {
       var track = el("div", { class: "pj-track", role: "img", "aria-label": "진행률 " + Math.round(it.pct * 100) + "%" }, [
         el("span", { class: "pj-fill", style: "width:" + (it.pct * 100).toFixed(1) + "%" })
@@ -136,7 +161,9 @@
     var groups = [];
     state.items.forEach(function (it) { if (groups.indexOf(it.group) === -1) groups.push(it.group); });
     var gc = function (g) { return state.items.filter(function (it) { return matches(it, "group") && (g === "all" || it.group === g); }).length; };
-    chipRow(refs.gchips, [{ id: "all", lb: "All", n: gc("all") }].concat(groups.map(function (g) { return { id: g, lb: "@" + g, n: gc(g) }; })), "group");
+    chipRow(refs.gchips, [{ id: "all", ko: "전체", n: gc("all") }].concat(groups.map(function (g) {
+      return g === "OTHER" ? { id: g, ko: "소속 미지정", n: gc(g) } : { id: g, lb: "@" + g, n: gc(g) };
+    })), "group");
     refs.gchips.hidden = groups.length < 2;
 
     refs.list.innerHTML = "";
@@ -158,11 +185,12 @@
 
   function boot() {
     shell();
-    A.load("projects", { required: ["title", "funder", "org_role"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 과제가 없습니다."); return; }
       render();
-    }).catch(function () { A.status(refs.list, "과제 목록을 불러오지 못했습니다."); });
+    }
+    A.load("projects", { required: ["title", "funder", "org_role"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "과제 목록을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

@@ -9,7 +9,8 @@
 
   var STATUS = {
     registered: { lb: "Registered", ko: "등록", num: "등록번호" },
-    filed: { lb: "Filed", ko: "출원", num: "출원번호" }
+    filed: { lb: "Filed", ko: "출원", num: "출원번호" },
+    other: { lb: "Status?", ko: "상태 확인", num: "번호" }
   };
   var ALIAS = { "등록": "registered", granted: "registered", registration: "registered", "출원": "filed", pending: "filed", application: "filed" };
   var state = { items: [], status: (A.params.get("status") || "all").toLowerCase(), q: "", topic: "all" };
@@ -21,14 +22,18 @@
     return STATUS[s] ? s : (ALIAS[s] || ALIAS[String(v || "").trim()] || "");
   }
 
+  var T = A.track("patents");
   function normalize(rows) {
     var out = [];
+    T.reset();
     rows.forEach(function (r, i) {
       var title = (r.title || "").trim();
-      if (!title) return;
+      if (!title) { T.drop(i, "title 비어 있음"); return; }
+      var st = canon(r.status);
+      if (!st) { T.warn(i, "status '" + (r.status || "") + "' 모름 → '상태 확인'"); st = "other"; }
       var date = A.normalizeDate(r.date);
       var topics = A.topics(r.topics);
-      out.push({ topics: topics, topicIds: topics.map(function (t) { return t.id; }), no: String(r.no || "").replace(/\.0$/, ""), title: title, status: canon(r.status) || "filed",
+      out.push({ topics: topics, topicIds: topics.map(function (t) { return t.id; }), no: String(r.no || "").replace(/\.0$/, ""), title: title, status: st,
         number: r.number || "", date: date, link: A.safeUrl(r.link), note: r.note || "", order: i,
         hay: A.fold([title, r.number, r.note, date].concat(topics.map(function (t) { return t.en + " " + t.ko; })).join(" ")) });
     });
@@ -36,6 +41,7 @@
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;
       return (parseInt(b.no, 10) || 0) - (parseInt(a.no, 10) || 0);
     });
+    T.done(out.length);
     return out;
   }
 
@@ -79,10 +85,12 @@
   }
 
   function render() {
-    var counts = { all: 0, registered: 0, filed: 0 };
+    var counts = { all: 0, registered: 0, filed: 0, other: 0 };
     state.items.forEach(function (it) { if (matches(it, true)) { counts.all++; counts[it.status]++; } });
     refs.tiles.innerHTML = "";
+    var hasOther = state.items.some(function (it) { return it.status === "other"; });
     [{ id: "all", lb: "All", ko: "전체" }, { id: "registered", lb: "Registered", ko: "등록 특허" }, { id: "filed", lb: "Filed", ko: "출원 특허" }]
+      .concat(hasOther ? [{ id: "other", lb: "Status?", ko: "상태 확인" }] : [])
       .forEach(function (t) {
         var b = el("button", { type: "button", class: "pub-tile", "aria-pressed": String(state.status === t.id) }, [
           el("span", { class: "lb", text: t.lb }), el("span", { class: "num", text: String(counts[t.id]) }), el("span", { class: "ko", text: t.ko })
@@ -120,7 +128,7 @@
           el("span", { class: "dt", text: st.num + " " + (it.number || "—") + (it.date ? " · " + it.date.replace(/-/g, ".") : "") })
         ]);
         var meta = el("div", { class: "pub-meta" }, [
-          el("span", { class: "ax-badge ko " + (it.status === "registered" ? "solid" : "dash"), text: st.ko + " · " + st.lb.toUpperCase() }),
+          el("span", { class: "ax-badge ko " + (it.status === "registered" ? "solid" : it.status === "filed" ? "dash" : ""), text: st.ko + " · " + st.lb.toUpperCase() }),
           it.note ? el("span", { class: "ax-badge ko navy", text: it.note }) : null,
           it.topics.length ? el("span", { class: "pub-tags" }, it.topics.map(function (tp) {
             return A.topicTag(tp, state.topic === tp.id, function (id) { pickTopic(state.topic === id ? "all" : id, true); });
@@ -140,7 +148,7 @@
 
   function boot() {
     shell();
-    A.load("patents", { required: ["title", "status", "number"] }).then(function (res) {
+    function apply(res) {
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.list, "표시할 특허가 없습니다."); return; }
       var by = {};
@@ -148,8 +156,11 @@
       refs.present = Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return a.order - b.order; });
       var tp = A.topic(topicParam);
       if (tp && by[tp.id]) state.topic = tp.id;
+      topicParam = "";
+      if (state.topic !== "all" && !by[state.topic]) state.topic = "all";
       render();
-    }).catch(function () { A.status(refs.list, "특허 목록을 불러오지 못했습니다."); });
+    }
+    A.load("patents", { required: ["title", "status", "number"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.list, "특허 목록을 불러오지 못했습니다."); });
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();

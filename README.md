@@ -97,7 +97,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | publications | `?types=`(보여 줄 분류만, 쉼표) · `?type=` · `?year=` · `?topic=`(주제 ID) · `?q=`(검색어) | 학술지만: `/publications/?types=journal-intl,journal-kr` |
 | patents | `?status=registered` 또는 `filed` · `?topic=` | |
 | awards | `?category=paper` / `presentation` / `competition` | |
-| gallery | `?group=PNU` 또는 `KIT` | |
+| gallery | `?group=PNU` 또는 `KIT` · `?photo=photo-03`(그 사진을 크게 연 상태로 시작 — 낮은 폰 박스의 ↗ 버튼이 이 주소로 새 탭을 엶) | |
 | sections | `?block=`(블록 이름, 쉼표로 여러 개) | `/sections/?block=professor` |
 | 공통 | `?debug=1` 점검 창 (6장) · `?pe=1`/`?pe=0` 폰 전용 모양 강제 켜기/끄기 · `?full=1` 새 탭 전체 화면 보기(제목 줄 표시) | |
 

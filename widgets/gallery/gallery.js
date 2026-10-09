@@ -1,7 +1,10 @@
 /* Photo gallery — sheet tab `gallery`. Columns: date,caption,image,group,link
    image: repo path (assets/gallery/…, recommended) or a public image URL / Google Drive share link (unofficial).
    Repo photos get a 480px 4:3 thumbnail (assets/gallery/thumbs/<name>-480.jpg, scripts/make_thumbs.py).
-   Grid is row-wise by date (newest first). URL params: ?group=PNU|KIT */
+   Grid is row-wise by date (newest first). URL params: ?group=PNU|KIT · ?photo=photo-03 (open that photo)
+   Lightbox: the image is fitted (object-fit) into the space left by the top bar and the caption, so the caption is
+   never covered; a long caption scrolls inside its own area. In a short Sites box (< 480px tall) a ↗ button opens
+   the photo in the new-tab full view. */
 (function () {
   var A = window.ADAM, el = A.el;
   var mount = document.getElementById("adam-gallery");
@@ -13,6 +16,7 @@
   var ICON = {
     prev: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M10.2 2.4 4.6 8l5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
     next: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M5.8 2.4 11.4 8l-5.6 5.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>',
+    full: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M9 2.5h4.5V7M13.5 2.5 7.5 8.5M6.5 3.5h-4v10h10v-4" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
     close: '<svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="m3 3 10 10M13 3 3 13" stroke="currentColor" stroke-width="1.6"/></svg>'
   };
 
@@ -108,8 +112,14 @@
     var prev = el("button", { type: "button", class: "gl-btn gl-prev", "aria-label": "이전 사진", html: ICON.prev });
     var next = el("button", { type: "button", class: "gl-btn gl-next", "aria-label": "다음 사진", html: ICON.next });
     var close = el("button", { type: "button", class: "gl-btn", "aria-label": "닫기", html: ICON.close });
+    var full = null;
+    if (inFrame() && window.innerHeight < 480 && !A.full) {   /* short Sites box → offer the big view in a new tab */
+      var u = new URL(A.fullUrl("gallery"));
+      u.searchParams.set("photo", photoKey(it.image));
+      full = el("a", { class: "gl-btn gl-full", href: u.href, target: "_blank", rel: "noopener", "aria-label": "새 탭에서 크게 보기", title: "새 탭에서 크게 보기", html: ICON.full });
+    }
     refs.box = el("div", { class: "gl-box", role: "dialog", "aria-modal": "true", "aria-label": it.caption || "사진" }, [
-      el("div", { class: "gl-box-top" }, [el("span", { class: "ax-mono", text: (i + 1) + " / " + state.shown.length }), close]),
+      el("div", { class: "gl-box-top" }, [el("span", { class: "ax-mono", text: (i + 1) + " / " + state.shown.length }), el("span", { class: "gl-box-acts" }, [full, close])]),
       el("div", { class: "gl-box-stage" }, [img, prev, next]),
       el("div", { class: "gl-box-cap" }, [el("span", { class: "d", text: disp(it.date) }), it.caption,
         it.link ? el("a", { href: it.link, target: "_blank", rel: "noopener", class: "ax-link", style: "margin-left:10px", text: "LINK" }) : null])
@@ -117,10 +127,22 @@
     prev.addEventListener("click", function () { step(-1); });
     next.addEventListener("click", function () { step(1); });
     close.addEventListener("click", closeBox);
-    refs.box.addEventListener("click", function (e) { if (e.target === refs.box || e.target.classList.contains("gl-box-stage")) closeBox(); });
+    refs.box.addEventListener("click", function (e) {
+      if (e.target === refs.box || e.target.classList.contains("gl-box-stage") || (e.target === img && outsidePicture(img, e))) closeBox();
+    });
     document.body.appendChild(refs.box);
     document.documentElement.classList.add("gl-locked");
     close.focus();
+  }
+  function inFrame() { try { return window.self !== window.top; } catch (err) { return true; } }
+  function photoKey(url) { var m = String(url).match(/([^\/?#]+?)(\.[a-z0-9]+)?(?:[?#].*)?$/i); return m ? m[1] : ""; }
+  /* the <img> fills the stage and letterboxes the photo (object-fit) — a tap on the empty band closes like the backdrop */
+  function outsidePicture(img, e) {
+    var r = img.getBoundingClientRect(), nw = img.naturalWidth, nh = img.naturalHeight;
+    if (!nw || !nh) return false;
+    var k = Math.min(1, r.width / nw, r.height / nh), w = nw * k, h = nh * k;
+    var x = r.left + (r.width - w) / 2, y = r.top + (r.height - h) / 2;
+    return e.clientX < x || e.clientX > x + w || e.clientY < y || e.clientY > y + h;
   }
   function step(d) { var n = state.shown.length; openBox((state.open + d + n) % n); }
   function removeBox() { if (refs.box) { refs.box.remove(); refs.box = null; } }
@@ -149,6 +171,11 @@
       state.items = normalize(res.rows);
       if (!state.items.length) { A.status(refs.grid, "표시할 사진이 없습니다."); return; }
       render();
+      var want = A.params.get("photo");
+      if (want && !state.deepOpened) {   /* ↗ from a short box: open the same photo here */
+        state.deepOpened = true;
+        for (var k = 0; k < state.shown.length; k++) if (photoKey(state.shown[k].image) === want) { openBox(k); break; }
+      }
     }
     A.load("gallery", { required: ["date", "caption", "image"], onUpdate: apply }).then(apply).catch(function () { A.status(refs.grid, "사진을 불러오지 못했습니다."); });
   }

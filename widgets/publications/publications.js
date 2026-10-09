@@ -8,9 +8,9 @@
   if (!mount) return;
 
   var TYPES = [
-    { id: "journal-intl", lb: "Int'l Journal", ko: "국제 학술지", pre: "J" },
+    { id: "journal-intl", lb: "Int'l Journal", ko: "국제 학술지", pre: "IJ" },
     { id: "journal-kr", lb: "Korean Journal", ko: "국내 학술지", pre: "KJ" },
-    { id: "conf-intl", lb: "Int'l Conf.", ko: "국제 학술대회", pre: "C" },
+    { id: "conf-intl", lb: "Int'l Conf.", ko: "국제 학술대회", pre: "IC" },
     { id: "conf-kr", lb: "Korean Conf.", ko: "국내 학술대회", pre: "KC" },
     { id: "other", lb: "Other", ko: "기타(분류 확인)", pre: "" },
     { id: "in-prep", lb: "In Prep.", ko: "준비·심사 중", pre: "P" }
@@ -26,6 +26,12 @@
   var state = { items: [], type: canonType(A.params.get("type")) || "all", year: A.params.get("year") || "all",
     q: A.params.get("q") || "", award: false, limit: PAGE, topic: "all" };
   var topicParam = A.params.get("topic") || "";
+
+  /* sheet `no` is numeric only; the IJ/KJ/IC/KC/P prefix comes from TYPES.pre.
+     Strip any leading letters typed into the sheet (e.g. "J34", "IJ-34") so they never double. */
+  function cleanNo(v) {
+    return String(v == null ? "" : v).replace(/\.0$/, "").trim().replace(/^[A-Za-z]+[\s.\-#]*(?=\d)/, "");
+  }
 
   function canonType(v) {
     var s = String(v || "").trim().toLowerCase().replace(/[\s_]+/g, "-");
@@ -50,7 +56,7 @@
       var note = (r.note || "").split(/\s*;\s*/).filter(Boolean);
       var topics = A.topics(r.topics);
       out.push({
-        type: type, no: String(r.no || "").replace(/\.0$/, "").trim(), year: year, date: date,
+        type: type, no: cleanNo(r.no), year: year, date: date,
         authors: r.authors || "", title: title, venue: r.venue || "", details: r.details || "",
         presentation: (r.presentation || "").toLowerCase(), status: (r.status || "").toLowerCase().replace(/\s+/g, "-"),
         link: A.safeUrl(r.link), notes: note,
@@ -61,7 +67,7 @@
         hay: A.fold([title, r.authors, r.venue, r.details, r.note, year].concat(topics.map(function (t) { return t.en + " " + t.ko; })).join(" "))
       });
     });
-    /* in-prep last; otherwise year ↓, then category (J, KJ, C, KC, other), then number ↓
+    /* in-prep last; otherwise year ↓, then category (IJ, KJ, IC, KC, other), then number ↓
        (journals have no dates, so dates are not used). */
     out.sort(function (a, b) {
       var ya = a.year || "0000", yb = b.year || "0000";

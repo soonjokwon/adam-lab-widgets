@@ -28,40 +28,40 @@
 
 - 행 2 · 준비중 · Digital Twin-Oriented Simplification of CAD Assemblies Through Deep Reinforcement Learning — 함께: 조립·메이트, 강화학습, 디지털 트윈
 - 행 3 · 준비중 · MPF-Net: Machining Process Classification and Feature Recognition via Multi-Task Learning
-- 행 7 · J34 · Image2Feature: A Framework for Local Machining Feature Recognition in 3D CAD Models via Learning-Based Object Detection from 2D Images
-- 행 19 · J22 · Simplification of 3D CAD Model in Voxel Form for Mechanical Parts Using Generative Adversarial Networks
-- 행 24 · J17 · Feasibility study for an automated engineering change process
-- 행 26 · J15 · Downstream Computer-Aided Design, Engineering, and Manufacturing Integration Using Exchangeable Persistent Identifiers in Neutral Re-imported Computer-Aided Design Models
-- 행 27 · J14 · Multiobjective evolutionary optimization for feature-based simplification of 3D boundary representation models
-- 행 29 · J12 · Feature-based translation of CAD models with macro-parametric approach: issues of feature mapping, persistent naming, and constraint translation
-- 행 30 · J11 · Semantics-aware adaptive simplification for lightweighting diverse 3D CAD models in industrial plants
-- 행 31 · J10 · Point-Oriented Persistent Identification of Entities for Exchanging Parametric CAD Data
-- 행 32 · J9 · Assembly Solving for Neutral Re-Imported Product Models — 함께: 조립·메이트
-- 행 33 · J8 · B-rep model simplification using selective and iterative volume decomposition to obtain finer multi-resolution models
-- 행 34 · J7 · User-assisted integrated method for controlling level-of-detail of large-scale B-rep assembly models — 함께: 조립·메이트
-- 행 36 · J5 · Determination of appropriate level of detail of a three-dimensional computer-aided design model from a permissible dissimilarity for fully automated simplification
-- 행 37 · J4 · Feature shape complexity: a new criterion for the simplification of feature-based 3D CAD models
-- 행 38 · J3 · Enhancement of equipment information sharing using three-dimensional computer-aided design simplification and digital catalog techniques in the plant industry
-- 행 39 · J2 · Graph-Based Simplification of Feature-Based Three-Dimensional Computer-Aided Design Models for Preserving Connectivity
-- 행 40 · J1 · Simplification of feature-based 3D CAD assembly data of ship and offshore plant equipment using quantitative evaluation metrics — 함께: 조립·메이트, 조선·해양
+- 행 7 · IJ34 · Image2Feature: A Framework for Local Machining Feature Recognition in 3D CAD Models via Learning-Based Object Detection from 2D Images
+- 행 19 · IJ22 · Simplification of 3D CAD Model in Voxel Form for Mechanical Parts Using Generative Adversarial Networks
+- 행 24 · IJ17 · Feasibility study for an automated engineering change process
+- 행 26 · IJ15 · Downstream Computer-Aided Design, Engineering, and Manufacturing Integration Using Exchangeable Persistent Identifiers in Neutral Re-imported Computer-Aided Design Models
+- 행 27 · IJ14 · Multiobjective evolutionary optimization for feature-based simplification of 3D boundary representation models
+- 행 29 · IJ12 · Feature-based translation of CAD models with macro-parametric approach: issues of feature mapping, persistent naming, and constraint translation
+- 행 30 · IJ11 · Semantics-aware adaptive simplification for lightweighting diverse 3D CAD models in industrial plants
+- 행 31 · IJ10 · Point-Oriented Persistent Identification of Entities for Exchanging Parametric CAD Data
+- 행 32 · IJ9 · Assembly Solving for Neutral Re-Imported Product Models — 함께: 조립·메이트
+- 행 33 · IJ8 · B-rep model simplification using selective and iterative volume decomposition to obtain finer multi-resolution models
+- 행 34 · IJ7 · User-assisted integrated method for controlling level-of-detail of large-scale B-rep assembly models — 함께: 조립·메이트
+- 행 36 · IJ5 · Determination of appropriate level of detail of a three-dimensional computer-aided design model from a permissible dissimilarity for fully automated simplification
+- 행 37 · IJ4 · Feature shape complexity: a new criterion for the simplification of feature-based 3D CAD models
+- 행 38 · IJ3 · Enhancement of equipment information sharing using three-dimensional computer-aided design simplification and digital catalog techniques in the plant industry
+- 행 39 · IJ2 · Graph-Based Simplification of Feature-Based Three-Dimensional Computer-Aided Design Models for Preserving Connectivity
+- 행 40 · IJ1 · Simplification of feature-based 3D CAD assembly data of ship and offshore plant equipment using quantitative evaluation metrics — 함께: 조립·메이트, 조선·해양
 - 행 51 · KJ11 · 디지털 트윈 구축을 위한 메쉬 기반 CAD 조립품 모델 최적화에서 군집화의 적용 — 함께: 조립·메이트, 메쉬·점군, 디지털 트윈
 - 행 57 · KJ5 · 허용 가능한 LOD의 상하한을 고려한 특징형상 3D CAD 조립체 모델의 단순화 — 함께: 조립·메이트
 - 행 58 · KJ4 · 플랜트의 3 차원 설계를 지원하는 중립 모델 기반 카탈로그 생성 시스템 개발
 - 행 60 · KJ2 · 특징형상 기반 기자재 3D CAD 조립체 데이터 간략화 시스템 개발 — 함께: 조립·메이트
 - 행 61 · KJ1 · 조선해양 기자재 3D CAD 단품 데이터 간략화 시스템 개발 — 함께: 조선·해양
-- 행 72 · C17 · Levels of semantics for a 3D CAD model from the viewpoint of the simplification
-- 행 73 · C16 · Point-oriented Identification for Exchanging Parametric CAD Data
-- 행 74 · C15 · Integration of Neutral/Re-Imported Models for Assembly Update — 함께: 조립·메이트
-- 행 75 · C14 · A web-based solution for collaborative design supporting multiple CAD systems
-- 행 76 · C13 · A study on improving the shape distribution
-- 행 77 · C12 · TransCAD: A translator of history-based CAD data based on the macro-parametrics approach
-- 행 78 · C11 · A method to integrate 3D shape, specifications, and ports to create catalog data for plant 3D design
-- 행 79 · C10 · An algorithm to suggest optimal level-of-detail of a 3D CAD model for the simplification
-- 행 80 · C9 · Web-based framework for the exchange between heterogeneous procedural 3D CAD models using TransCAD and X3DOM
-- 행 84 · C5 · Connectivity-preserving Simplification of Feature-based 3D CAD Part Models
-- 행 86 · C3 · Simplification of equipment 3D CAD assembly data using quantitative metrics for prioritizing the features — 함께: 조립·메이트
-- 행 87 · C2 · Metrics to evaluate the importance of features for the simplification of equipment 3D CAD assembly data — 함께: 조립·메이트
-- 행 88 · C1 · Architecture of 3D CAD part data simplification system for ship and offshore plant equipment — 함께: 조선·해양
+- 행 72 · IC17 · Levels of semantics for a 3D CAD model from the viewpoint of the simplification
+- 행 73 · IC16 · Point-oriented Identification for Exchanging Parametric CAD Data
+- 행 74 · IC15 · Integration of Neutral/Re-Imported Models for Assembly Update — 함께: 조립·메이트
+- 행 75 · IC14 · A web-based solution for collaborative design supporting multiple CAD systems
+- 행 76 · IC13 · A study on improving the shape distribution
+- 행 77 · IC12 · TransCAD: A translator of history-based CAD data based on the macro-parametrics approach
+- 행 78 · IC11 · A method to integrate 3D shape, specifications, and ports to create catalog data for plant 3D design
+- 행 79 · IC10 · An algorithm to suggest optimal level-of-detail of a 3D CAD model for the simplification
+- 행 80 · IC9 · Web-based framework for the exchange between heterogeneous procedural 3D CAD models using TransCAD and X3DOM
+- 행 84 · IC5 · Connectivity-preserving Simplification of Feature-based 3D CAD Part Models
+- 행 86 · IC3 · Simplification of equipment 3D CAD assembly data using quantitative metrics for prioritizing the features — 함께: 조립·메이트
+- 행 87 · IC2 · Metrics to evaluate the importance of features for the simplification of equipment 3D CAD assembly data — 함께: 조립·메이트
+- 행 88 · IC1 · Architecture of 3D CAD part data simplification system for ship and offshore plant equipment — 함께: 조선·해양
 - 행 92 · KC102 · 비수밀 CAD 데이터의 내부 형상 제거를 위한 NeuS 가이드 하이브리드 레이캐스팅 기법
 - 행 95 · KC99 · 이미지 기반 RAG-LLM을 활용한 3D CAD 모델링 명령어 추천 — 함께: LLM·생성형AI
 - 행 97 · KC97 · CAD 조립품 메쉬 모델 경량화를 위한 강화학습 기반 반복적 군집화 및 단순화 방법 — 함께: 조립·메이트, 메쉬·점군, 강화학습
@@ -113,18 +113,18 @@
 **논문** (26)
 
 - 행 2 · 준비중 · Digital Twin-Oriented Simplification of CAD Assemblies Through Deep Reinforcement Learning — 함께: CAD 모델링, 강화학습, 디지털 트윈
-- 행 25 · J16 · Part decomposition and evaluation based on standard design guidelines for additive manufacturability and assemblability — 함께: 적층제조, 표준
-- 행 32 · J9 · Assembly Solving for Neutral Re-Imported Product Models — 함께: CAD 모델링
-- 행 34 · J7 · User-assisted integrated method for controlling level-of-detail of large-scale B-rep assembly models — 함께: CAD 모델링
-- 행 40 · J1 · Simplification of feature-based 3D CAD assembly data of ship and offshore plant equipment using quantitative evaluation metrics — 함께: CAD 모델링, 조선·해양
+- 행 25 · IJ16 · Part decomposition and evaluation based on standard design guidelines for additive manufacturability and assemblability — 함께: 적층제조, 표준
+- 행 32 · IJ9 · Assembly Solving for Neutral Re-Imported Product Models — 함께: CAD 모델링
+- 행 34 · IJ7 · User-assisted integrated method for controlling level-of-detail of large-scale B-rep assembly models — 함께: CAD 모델링
+- 행 40 · IJ1 · Simplification of feature-based 3D CAD assembly data of ship and offshore plant equipment using quantitative evaluation metrics — 함께: CAD 모델링, 조선·해양
 - 행 51 · KJ11 · 디지털 트윈 구축을 위한 메쉬 기반 CAD 조립품 모델 최적화에서 군집화의 적용 — 함께: CAD 모델링, 메쉬·점군, 디지털 트윈
 - 행 54 · KJ8 · 3D 프린팅을 활용한 모듈형 커스텀 제품의 효율적 제작을 위한 분할 자동화 및 조립 방식 연구 — 함께: 적층제조
 - 행 55 · KJ7 · 3D 프린팅 공정 변수와 체결 방식에 따른 부품 간 체결 강도 비교를 위한 실험적 연구 — 함께: 적층제조
 - 행 57 · KJ5 · 허용 가능한 LOD의 상하한을 고려한 특징형상 3D CAD 조립체 모델의 단순화 — 함께: CAD 모델링
 - 행 60 · KJ2 · 특징형상 기반 기자재 3D CAD 조립체 데이터 간략화 시스템 개발 — 함께: CAD 모델링
-- 행 74 · C15 · Integration of Neutral/Re-Imported Models for Assembly Update — 함께: CAD 모델링
-- 행 86 · C3 · Simplification of equipment 3D CAD assembly data using quantitative metrics for prioritizing the features — 함께: CAD 모델링
-- 행 87 · C2 · Metrics to evaluate the importance of features for the simplification of equipment 3D CAD assembly data — 함께: CAD 모델링
+- 행 74 · IC15 · Integration of Neutral/Re-Imported Models for Assembly Update — 함께: CAD 모델링
+- 행 86 · IC3 · Simplification of equipment 3D CAD assembly data using quantitative metrics for prioritizing the features — 함께: CAD 모델링
+- 행 87 · IC2 · Metrics to evaluate the importance of features for the simplification of equipment 3D CAD assembly data — 함께: CAD 모델링
 - 행 97 · KC97 · CAD 조립품 메쉬 모델 경량화를 위한 강화학습 기반 반복적 군집화 및 단순화 방법 — 함께: CAD 모델링, 메쉬·점군, 강화학습
 - 행 129 · KC65 · 메쉬 기반 CAD 조립품 모델 경량화를 위한 부품 군집화를 고려한 강화학습 적용 — 함께: CAD 모델링, 메쉬·점군, 강화학습
 - 행 158 · KC36 · 3D 프린팅을 활용한 커스텀 제품의 모듈화 및 조립 방식 연구 — 함께: 적층제조
@@ -149,20 +149,20 @@
 **논문** (46)
 
 - 행 4 · 준비중 · Learning to Decompose Parts for Additive Manufacturing Guided by Semantics and Printability
-- 행 9 · J32 · Part consolidation and decomposition in redesign for additive manufacturing (RfAM): A taxonomy and review
-- 행 11 · J30 · D-ECOmposer: Sustainable part decomposition for additive manufacturing using machine learning based life cycle assessment — 함께: 지속가능성
-- 행 13 · J28 · Optimization of Production Scheduling for the Additive Manufacturing of Ship Models Using a Hybrid Method — 함께: 조선·해양
-- 행 15 · J26 · Modular production of small ship models using 3D printing for model tests — 함께: 조선·해양
-- 행 18 · J23 · Optimal process planning for hybrid additive–subtractive manufacturing using recursive volume decomposition with decision criteria
-- 행 23 · J18 · Neural network-based build time estimation for additive manufacturing: a performance comparison
-- 행 25 · J16 · Part decomposition and evaluation based on standard design guidelines for additive manufacturability and assemblability — 함께: 조립·메이트, 표준
+- 행 9 · IJ32 · Part consolidation and decomposition in redesign for additive manufacturing (RfAM): A taxonomy and review
+- 행 11 · IJ30 · D-ECOmposer: Sustainable part decomposition for additive manufacturing using machine learning based life cycle assessment — 함께: 지속가능성
+- 행 13 · IJ28 · Optimization of Production Scheduling for the Additive Manufacturing of Ship Models Using a Hybrid Method — 함께: 조선·해양
+- 행 15 · IJ26 · Modular production of small ship models using 3D printing for model tests — 함께: 조선·해양
+- 행 18 · IJ23 · Optimal process planning for hybrid additive–subtractive manufacturing using recursive volume decomposition with decision criteria
+- 행 23 · IJ18 · Neural network-based build time estimation for additive manufacturing: a performance comparison
+- 행 25 · IJ16 · Part decomposition and evaluation based on standard design guidelines for additive manufacturability and assemblability — 함께: 조립·메이트, 표준
 - 행 45 · KJ17 · 금속 적층 제조 기반 격자 구조를 적용한 유도 미사일 조종 날개의 경량화 설계
 - 행 48 · KJ14 · 적층 제조를 고려한 부품 통합 기반 승강기 권상기 받침대의 재설계
 - 행 52 · KJ10 · 적층 제조 고려 설계에 기반한 연질 소재 유도탄 보호덮개 설계 및 제작
 - 행 54 · KJ8 · 3D 프린팅을 활용한 모듈형 커스텀 제품의 효율적 제작을 위한 분할 자동화 및 조립 방식 연구 — 함께: 조립·메이트
 - 행 55 · KJ7 · 3D 프린팅 공정 변수와 체결 방식에 따른 부품 간 체결 강도 비교를 위한 실험적 연구 — 함께: 조립·메이트
-- 행 63 · C26 · Semantic-Aware Part Decomposition for Additive Manufacturing via Reinforcement Learning — 함께: 강화학습
-- 행 67 · C22 · Reducing the Environmental Impact in Additive Manufacturing Through Part Decomposition Based on Lifecycle Assessment — 함께: 지속가능성
+- 행 63 · IC26 · Semantic-Aware Part Decomposition for Additive Manufacturing via Reinforcement Learning — 함께: 강화학습
+- 행 67 · IC22 · Reducing the Environmental Impact in Additive Manufacturing Through Part Decomposition Based on Lifecycle Assessment — 함께: 지속가능성
 - 행 91 · KC103 · 적층 제조를 고려한 강화학습 기반 부품 분할에서 단일 루프 평면 절단 알고리즘의 영향 분석 — 함께: 강화학습
 - 행 93 · KC101 · 강화학습을 활용한 적층 제조를 위한 의미론적 부품 분할 — 함께: 강화학습
 - 행 101 · KC93 · 금속 적층 제조 기반 미사일 조종 날개 제조 공정 시뮬레이션
@@ -205,14 +205,14 @@
 
 **논문** (2)
 
-- 행 22 · J19 · A New Implementation of OntoSTEP: Flexible Generation of Ontology and Knowledge Graphs of EXPRESS-Driven Data — 함께: 표준
-- 행 28 · J13 · Enriching standards-based digital thread by fusing as-designed and as-inspected data using knowledge graphs — 함께: 디지털 트윈, 표준
+- 행 22 · IJ19 · A New Implementation of OntoSTEP: Flexible Generation of Ontology and Knowledge Graphs of EXPRESS-Driven Data — 함께: 표준
+- 행 28 · IJ13 · Enriching standards-based digital thread by fusing as-designed and as-inspected data using knowledge graphs — 함께: 디지털 트윈, 표준
 
 ## LLM·생성형AI (`llm`)
 
 **논문** (7)
 
-- 행 62 · C27 · Leveraging Large Language Model for Sustainable Manufacturing Process Recommendation — 함께: 지속가능성
+- 행 62 · IC27 · Leveraging Large Language Model for Sustainable Manufacturing Process Recommendation — 함께: 지속가능성
 - 행 89 · KC105 · 3차원 모델 기반 적합 제조 공정 선택을 위한 멀티 에이전트 LLM의 활용
 - 행 95 · KC99 · 이미지 기반 RAG-LLM을 활용한 3D CAD 모델링 명령어 추천 — 함께: CAD 모델링
 - 행 98 · KC96 · 기계 학습 및 LLM 기반 지속가능 제조 공정 추천 프레임워크 — 함께: 지속가능성
@@ -229,12 +229,12 @@
 **논문** (13)
 
 - 행 6 · 준비중 · Recovering Simplified Meshes: A Backpropagation-Driven Surface Mesh Optimization with Differentiable Renderers
-- 행 12 · J29 · Denoise yourself: Self-supervised point cloud upsampling with pretrained denoising
-- 행 16 · J25 · Deep learning-based point cloud upsampling: a review of recent trends
-- 행 17 · J24 · Point cloud upsampling using deep self-sampling with point saliency
+- 행 12 · IJ29 · Denoise yourself: Self-supervised point cloud upsampling with pretrained denoising
+- 행 16 · IJ25 · Deep learning-based point cloud upsampling: a review of recent trends
+- 행 17 · IJ24 · Point cloud upsampling using deep self-sampling with point saliency
 - 행 50 · KJ12 · 간략화 메쉬의 품질 향상을 위한 역전파 기반 최적화 방법
 - 행 51 · KJ11 · 디지털 트윈 구축을 위한 메쉬 기반 CAD 조립품 모델 최적화에서 군집화의 적용 — 함께: CAD 모델링, 조립·메이트, 디지털 트윈
-- 행 68 · C21 · Saliency-Aware Point Cloud Upsampling Approach for Edge Consolidation
+- 행 68 · IC21 · Saliency-Aware Point Cloud Upsampling Approach for Edge Consolidation
 - 행 97 · KC97 · CAD 조립품 메쉬 모델 경량화를 위한 강화학습 기반 반복적 군집화 및 단순화 방법 — 함께: CAD 모델링, 조립·메이트, 강화학습
 - 행 121 · KC73 · 점군 업샘플링을 위한 자기 지도학습 적용
 - 행 122 · KC72 · 그래프 신경망 적용 심층 강화학습을 활용한 3D CAD 메쉬 모델 단순화 — 함께: CAD 모델링, 강화학습
@@ -248,10 +248,10 @@
 
 - 행 2 · 준비중 · Digital Twin-Oriented Simplification of CAD Assemblies Through Deep Reinforcement Learning — 함께: CAD 모델링, 조립·메이트, 디지털 트윈
 - 행 5 · 준비중 · Knowledge-Guided Reinforcement Learning for Interference Validation in Early-Stage Industrial Design
-- 행 8 · J33 · Reinforcement learning-based dynamic evacuation guidance for fire emergencies: Toward safety digital twins — 함께: 디지털 트윈, 안전·대피
+- 행 8 · IJ33 · Reinforcement learning-based dynamic evacuation guidance for fire emergencies: Toward safety digital twins — 함께: 디지털 트윈, 안전·대피
 - 행 47 · KJ15 · 심층 강화학습을 활용한 3D 전기 패널의 자동 케이블 라우팅 — 함께: 케이블 라우팅
-- 행 63 · C26 · Semantic-Aware Part Decomposition for Additive Manufacturing via Reinforcement Learning — 함께: 적층제조
-- 행 64 · C25 · Deep Reinforcement Learning-Based Pathfinding for Cable Auto-Routing — 함께: 케이블 라우팅
+- 행 63 · IC26 · Semantic-Aware Part Decomposition for Additive Manufacturing via Reinforcement Learning — 함께: 적층제조
+- 행 64 · IC25 · Deep Reinforcement Learning-Based Pathfinding for Cable Auto-Routing — 함께: 케이블 라우팅
 - 행 90 · KC104 · 산업 디자인 초기 단계에서의 간섭 검증을 위한 지식 기반 강화 학습
 - 행 91 · KC103 · 적층 제조를 고려한 강화학습 기반 부품 분할에서 단일 루프 평면 절단 알고리즘의 영향 분석 — 함께: 적층제조
 - 행 93 · KC101 · 강화학습을 활용한 적층 제조를 위한 의미론적 부품 분할 — 함께: 적층제조
@@ -274,9 +274,9 @@
 
 **논문** (7)
 
-- 행 10 · J31 · CADuBoost: Enhancing Education in Mechanical 3D CAD Modeling Through Automated Grading and Feedback System
+- 행 10 · IJ31 · CADuBoost: Enhancing Education in Mechanical 3D CAD Modeling Through Automated Grading and Feedback System
 - 행 49 · KJ13 · 기계 공학에서 3D CAD 모델링 교육을 위한 자동 채점 시스템 개발
-- 행 69 · C20 · Requirement Analysis for the Automatic Assessment of 3D Drawings in Mechanical Engineering Education
+- 행 69 · IC20 · Requirement Analysis for the Automatic Assessment of 3D Drawings in Mechanical Engineering Education
 - 행 99 · KC95 · CADviser: RAG-LLM을 활용한 3D CAD 모델링 교육용 맞춤형 피드백 시스템 개발 — 함께: LLM·생성형AI
 - 행 114 · KC80 · LLM을 활용한 3D CAD 모델링 교육용 맞춤형 피드백 생성 — 함께: LLM·생성형AI
 - 행 125 · KC69 · 기계 3D CAD 모델링 교육을 위한 웹 기반 피드백 시스템 개발
@@ -306,8 +306,8 @@
 **논문** (5)
 
 - 행 2 · 준비중 · Digital Twin-Oriented Simplification of CAD Assemblies Through Deep Reinforcement Learning — 함께: CAD 모델링, 조립·메이트, 강화학습
-- 행 8 · J33 · Reinforcement learning-based dynamic evacuation guidance for fire emergencies: Toward safety digital twins — 함께: 강화학습, 안전·대피
-- 행 28 · J13 · Enriching standards-based digital thread by fusing as-designed and as-inspected data using knowledge graphs — 함께: 지식그래프, 표준
+- 행 8 · IJ33 · Reinforcement learning-based dynamic evacuation guidance for fire emergencies: Toward safety digital twins — 함께: 강화학습, 안전·대피
+- 행 28 · IJ13 · Enriching standards-based digital thread by fusing as-designed and as-inspected data using knowledge graphs — 함께: 지식그래프, 표준
 - 행 51 · KJ11 · 디지털 트윈 구축을 위한 메쉬 기반 CAD 조립품 모델 최적화에서 군집화의 적용 — 함께: CAD 모델링, 조립·메이트, 메쉬·점군
 - 행 138 · KC56 · 3D 프린팅 품질 및 상태 관찰을 위한 웹 기반 디지털 트윈 구현 — 함께: 적층제조
 
@@ -315,14 +315,14 @@
 
 **논문** (14)
 
-- 행 11 · J30 · D-ECOmposer: Sustainable part decomposition for additive manufacturing using machine learning based life cycle assessment — 함께: 적층제조
+- 행 11 · IJ30 · D-ECOmposer: Sustainable part decomposition for additive manufacturing using machine learning based life cycle assessment — 함께: 적층제조
 - 행 41 · KJ21 · 기계 학습 기반 전과정평가를 활용한 사출성형 부품의 탄소발자국 예측
-- 행 62 · C27 · Leveraging Large Language Model for Sustainable Manufacturing Process Recommendation — 함께: LLM·생성형AI
-- 행 65 · C24 · AI-Driven Framework for Sustainable Manufacturing Process Selection
-- 행 66 · C23 · A Review of Lifecycle Assessment (LCA) Cases in the Shipbuilding Industry — 함께: 조선·해양
-- 행 67 · C22 · Reducing the Environmental Impact in Additive Manufacturing Through Part Decomposition Based on Lifecycle Assessment — 함께: 적층제조
-- 행 70 · C19 · Standardizing environmental performance evaluation of manufacturing systems through ISO 20140 — 함께: 표준
-- 행 71 · C18 · An automated workflow for integrating environmental sustainability assessment into parametric part design through standard reference models — 함께: 표준
+- 행 62 · IC27 · Leveraging Large Language Model for Sustainable Manufacturing Process Recommendation — 함께: LLM·생성형AI
+- 행 65 · IC24 · AI-Driven Framework for Sustainable Manufacturing Process Selection
+- 행 66 · IC23 · A Review of Lifecycle Assessment (LCA) Cases in the Shipbuilding Industry — 함께: 조선·해양
+- 행 67 · IC22 · Reducing the Environmental Impact in Additive Manufacturing Through Part Decomposition Based on Lifecycle Assessment — 함께: 적층제조
+- 행 70 · IC19 · Standardizing environmental performance evaluation of manufacturing systems through ISO 20140 — 함께: 표준
+- 행 71 · IC18 · An automated workflow for integrating environmental sustainability assessment into parametric part design through standard reference models — 함께: 표준
 - 행 98 · KC96 · 기계 학습 및 LLM 기반 지속가능 제조 공정 추천 프레임워크 — 함께: LLM·생성형AI
 - 행 127 · KC67 · 적층 제조에서 재활용성을 고려한 최적 부품 분할 및 병합 방법 — 함께: 적층제조
 - 행 132 · KC62 · 지속가능한 적층 제조를 위한 최적 모듈 분할 — 함께: 적층제조
@@ -338,9 +338,9 @@
 
 **논문** (12)
 
-- 행 14 · J27 · Automatic cable routing based on improved pathfinding algorithm and B-spline optimization for collision avoidance
+- 행 14 · IJ27 · Automatic cable routing based on improved pathfinding algorithm and B-spline optimization for collision avoidance
 - 행 47 · KJ15 · 심층 강화학습을 활용한 3D 전기 패널의 자동 케이블 라우팅 — 함께: 강화학습
-- 행 64 · C25 · Deep Reinforcement Learning-Based Pathfinding for Cable Auto-Routing — 함께: 강화학습
+- 행 64 · IC25 · Deep Reinforcement Learning-Based Pathfinding for Cable Auto-Routing — 함께: 강화학습
 - 행 110 · KC84 · 강화학습 기반 자동 케이블 라우팅에서 모방학습의 적용 — 함께: 강화학습
 - 행 112 · KC82 · 커리큘럼 학습 기반 강화학습을 적용한 케이블 자동 라우팅을 위한 경로 계획 — 함께: 강화학습
 - 행 123 · KC71 · 멀티 에이전트 강화학습 기반 케이블 라우팅 최적화 — 함께: 강화학습
@@ -355,8 +355,8 @@
 
 **논문** (11)
 
-- 행 8 · J33 · Reinforcement learning-based dynamic evacuation guidance for fire emergencies: Toward safety digital twins — 함께: 강화학습, 디지털 트윈
-- 행 20 · J21 · Evacuation analysis of a passenger ship with an inclined passage considering the coupled effect of trim and heel — 함께: 조선·해양
+- 행 8 · IJ33 · Reinforcement learning-based dynamic evacuation guidance for fire emergencies: Toward safety digital twins — 함께: 강화학습, 디지털 트윈
+- 행 20 · IJ21 · Evacuation analysis of a passenger ship with an inclined passage considering the coupled effect of trim and heel — 함께: 조선·해양
 - 행 42 · KJ20 · 열차 무정차 통과는 역사 군중 밀집을 얼마나 완화하는가: 10·29 참사 당일 이태원역의 시뮬레이션 기반 재구성과 정량 평가
 - 행 44 · KJ18 · AI 기반 산업 기계 끼임 사고 위험도 평가 시스템
 - 행 53 · KJ9 · 군중 밀집 위험도 시뮬레이션 기반의 인파 관리 안전대책 수립
@@ -375,13 +375,13 @@
 
 **논문** (11)
 
-- 행 13 · J28 · Optimization of Production Scheduling for the Additive Manufacturing of Ship Models Using a Hybrid Method — 함께: 적층제조
-- 행 15 · J26 · Modular production of small ship models using 3D printing for model tests — 함께: 적층제조
-- 행 20 · J21 · Evacuation analysis of a passenger ship with an inclined passage considering the coupled effect of trim and heel — 함께: 안전·대피
-- 행 40 · J1 · Simplification of feature-based 3D CAD assembly data of ship and offshore plant equipment using quantitative evaluation metrics — 함께: CAD 모델링, 조립·메이트
+- 행 13 · IJ28 · Optimization of Production Scheduling for the Additive Manufacturing of Ship Models Using a Hybrid Method — 함께: 적층제조
+- 행 15 · IJ26 · Modular production of small ship models using 3D printing for model tests — 함께: 적층제조
+- 행 20 · IJ21 · Evacuation analysis of a passenger ship with an inclined passage considering the coupled effect of trim and heel — 함께: 안전·대피
+- 행 40 · IJ1 · Simplification of feature-based 3D CAD assembly data of ship and offshore plant equipment using quantitative evaluation metrics — 함께: CAD 모델링, 조립·메이트
 - 행 61 · KJ1 · 조선해양 기자재 3D CAD 단품 데이터 간략화 시스템 개발 — 함께: CAD 모델링
-- 행 66 · C23 · A Review of Lifecycle Assessment (LCA) Cases in the Shipbuilding Industry — 함께: 지속가능성
-- 행 88 · C1 · Architecture of 3D CAD part data simplification system for ship and offshore plant equipment — 함께: CAD 모델링
+- 행 66 · IC23 · A Review of Lifecycle Assessment (LCA) Cases in the Shipbuilding Industry — 함께: 지속가능성
+- 행 88 · IC1 · Architecture of 3D CAD part data simplification system for ship and offshore plant equipment — 함께: CAD 모델링
 - 행 160 · KC34 · 3D프린팅을 활용한 모듈 기반의 경제적 모형선 제작 방법론 제안 — 함께: 적층제조
 - 행 183 · KC11 · 조선 해양 기자재 3D CAD 조립체 데이터의 간략화를 위한 다기준 평가 척도 — 함께: CAD 모델링, 조립·메이트
 - 행 189 · KC5 · 플랜트·조선 기자재 카탈로그 구축을 위한 기자재 3차원 형상 간략화 기술 — 함께: CAD 모델링
@@ -395,18 +395,18 @@
 
 **논문** (16)
 
-- 행 21 · J20 · Visualizing Standardized Model-based Design and Inspection Data in Augmented Reality
-- 행 22 · J19 · A New Implementation of OntoSTEP: Flexible Generation of Ontology and Knowledge Graphs of EXPRESS-Driven Data — 함께: 지식그래프
-- 행 25 · J16 · Part decomposition and evaluation based on standard design guidelines for additive manufacturability and assemblability — 함께: 조립·메이트, 적층제조
-- 행 28 · J13 · Enriching standards-based digital thread by fusing as-designed and as-inspected data using knowledge graphs — 함께: 지식그래프, 디지털 트윈
-- 행 35 · J6 · Standardized exchange of plant equipment and materials data based on ISO 15926 methodology in nuclear power plants
+- 행 21 · IJ20 · Visualizing Standardized Model-based Design and Inspection Data in Augmented Reality
+- 행 22 · IJ19 · A New Implementation of OntoSTEP: Flexible Generation of Ontology and Knowledge Graphs of EXPRESS-Driven Data — 함께: 지식그래프
+- 행 25 · IJ16 · Part decomposition and evaluation based on standard design guidelines for additive manufacturability and assemblability — 함께: 조립·메이트, 적층제조
+- 행 28 · IJ13 · Enriching standards-based digital thread by fusing as-designed and as-inspected data using knowledge graphs — 함께: 지식그래프, 디지털 트윈
+- 행 35 · IJ6 · Standardized exchange of plant equipment and materials data based on ISO 15926 methodology in nuclear power plants
 - 행 59 · KJ3 · iRINGTools를 활용한 ISO 15926 기반 기자재 참조 데이터 서버의 구축과 활용
-- 행 70 · C19 · Standardizing environmental performance evaluation of manufacturing systems through ISO 20140 — 함께: 지속가능성
-- 행 71 · C18 · An automated workflow for integrating environmental sustainability assessment into parametric part design through standard reference models — 함께: 지속가능성
-- 행 81 · C8 · Exchange of equipment and materials' specifications data using iRINGTools for nuclear power plants
-- 행 82 · C7 · Equipment Data Management of Korean Nuclear Power Plant based on Standard Handover Specification with Class Mapping
-- 행 83 · C6 · Extension of Equipment Classifications based on Property Sets and ISO Standards in Nuclear Industry
-- 행 85 · C4 · A Study on Plant Life Cycle Information Management using Information Model and Reference Data Library
+- 행 70 · IC19 · Standardizing environmental performance evaluation of manufacturing systems through ISO 20140 — 함께: 지속가능성
+- 행 71 · IC18 · An automated workflow for integrating environmental sustainability assessment into parametric part design through standard reference models — 함께: 지속가능성
+- 행 81 · IC8 · Exchange of equipment and materials' specifications data using iRINGTools for nuclear power plants
+- 행 82 · IC7 · Equipment Data Management of Korean Nuclear Power Plant based on Standard Handover Specification with Class Mapping
+- 행 83 · IC6 · Extension of Equipment Classifications based on Property Sets and ISO Standards in Nuclear Industry
+- 행 85 · IC4 · A Study on Plant Life Cycle Information Management using Information Model and Reference Data Library
 - 행 173 · KC21 · 원자력 발전소의 효과적인 설비 BOM 관리를 위한 자재 참조 데이터 라이브러리 구축
 - 행 175 · KC19 · 핸드오버 표준화 CFIHOS와 그 응용
 - 행 185 · KC9 · 원전 생애주기 정보 관리를 위한 원자력 발전소 분류체계 및 국제 표준 기반 참조 데이터 라이브러리의 구축에 관한 연구

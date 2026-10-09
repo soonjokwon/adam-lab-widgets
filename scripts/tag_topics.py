@@ -85,7 +85,7 @@ def process(tab, force=False):
     return rows
 
 
-PREFIX = {"journal-intl": "J", "journal-kr": "KJ", "conf-intl": "C", "conf-kr": "KC", "in-prep": "P"}
+PREFIX = {"journal-intl": "IJ", "journal-kr": "KJ", "conf-intl": "IC", "conf-kr": "KC", "in-prep": "P"}
 REPO = "https://github.com/soonjokwon/adam-lab-widgets/blob/main/"
 
 

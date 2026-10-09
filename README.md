@@ -198,7 +198,7 @@ Sites는 삽입 박스를 `padding-top: (PC 높이 ÷ PC 폭)%` 비율 상자로
 | 칸 | 내용 | 예 |
 | --- | --- | --- |
 | `type` | 분류 (필수) | `journal-intl`(국제 학술지) `journal-kr`(국내 학술지) `conf-intl`(국제 학술대회) `conf-kr`(국내 학술대회) `in-prep`(준비·심사 중) |
-| `no` | 사이트 번호 | `34` → `J34`, `KJ21`, `C27`, `KC105` |
+| `no` | 사이트 번호 | 숫자만 (`34` → `IJ34`, `KJ21`, `IC27`, `KC105` — 접두어는 type에서 자동) |
 | `year` | 연도 | `2026` |
 | `authors` | 저자 (쉼표, `*` 교신, `+` 공동 1저자) | `Y. Jeon, K. Kim, H. Kim*, S. Kwon*` |
 | `title` | 제목 (필수) | |

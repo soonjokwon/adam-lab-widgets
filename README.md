@@ -27,6 +27,7 @@ Sites 편집 화면 → **삽입 → 삽입(Embed) → URL**에 아래 주소를
 | Awards | `https://soonjokwon.github.io/adam-lab-widgets/awards/` | `awards` | 950px |
 | Publications · 논문 | `https://soonjokwon.github.io/adam-lab-widgets/publications/` | `publications` | 1000px |
 | Publications · 특허 | `https://soonjokwon.github.io/adam-lab-widgets/patents/` | `patents` | 650px |
+| Board · 소식 목록 (예시 3종, 아직 미적용) | `…/news/?view=list` · `?view=timeline` · `?view=table` (→ `/newslist/`) | `news` | 560px |
 | Board · Photos | `https://soonjokwon.github.io/adam-lab-widgets/gallery/` | `gallery` | 820px |
 
 - **휴대폰에서는 Sites가 PC 박스의 가로:세로 비율을 그대로 유지한 채 폭만 화면에 맞춥니다** (1-1 참고). PC 박스 폭은 1185px이므로
@@ -37,6 +38,7 @@ Sites 편집 화면 → **삽입 → 삽입(Embed) → URL**에 아래 주소를
 - 위젯 안의 스크롤이 답답하면 **박스를 세로로 더 길게** 잡으세요(1-1의 권장 높이). 폭은 그대로 두는 것이 좋습니다.
 - 같은 페이지의 위젯은 같은 디자인입니다(예: Publications 페이지의 논문·특허). 페이지 제목은 Sites의 제목 블록을 그대로 쓰세요.
 - 위젯 안의 링크는 모두 **새 탭**으로 열립니다.
+- **소식 목록형(Board 예시)**: 같은 `news` 탭을 카드 대신 목록으로 보여 줍니다. `view=list`(게시판: 번호·날짜·분류·제목+영문 한 줄, 8개씩 쪽 번호), `view=timeline`(연도별 세로선·점, 7개 뒤 “이전 소식 더 보기”), `view=table`(날짜·분류·제목 표, 행을 누르면 영문 요약·사진·링크가 펼쳐짐, 10개씩). `&tag=Award`로 처음 분류, `&per=12`로 쪽당 개수를 바꿀 수 있습니다. `view` 없는 `/news/`(Home 카드)는 그대로입니다.
 - Recruiting 주소는 `projects` 탭에서 `recruit` 칸이 `Y`인 과제만 보여 줍니다(3장 참고). 모집 과제가 바뀌면 시트의 `Y`만 옮기면 됩니다.
 
 ### 1-1. 휴대폰에서의 박스 크기 (측정값, 2026-10-09)

@@ -2,6 +2,14 @@
    Columns: date,title_ko,title_en,tag,link,image,link2   (tag: Paper | Award | Project | Event | Member)
    Data: ADAM.load("news") — cache → Sheet (header must contain date,title_ko) → ADAM_INLINE.news → data/news.json. */
 (function () {
+  /* list-style views live in /newslist/ (Board page examples): /news/?view=list|timeline|table → there */
+  try {
+    var view = new URLSearchParams(location.search).get("view");
+    if (view && /^(list|timeline|table)$/.test(view) && /\/news\/(index\.html)?$/.test(location.pathname)) {
+      location.replace(location.pathname.replace(/news\/(index\.html)?$/, "newslist/") + location.search + location.hash);
+      return;
+    }
+  } catch (err) { /* old browsers: stay on the cards */ }
   var TAGS = ["Paper", "Award", "Project", "Event", "Member"];
   var TAG_KO = {
     All: "전체",

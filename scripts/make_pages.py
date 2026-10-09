@@ -28,6 +28,7 @@ WIDGETS = {
     "projects": ("Research Projects", ["shared/base.css", "widgets/projects/projects.css"], "widgets/projects/projects.js"),
     "talks": ("Invited Talks", ["shared/base.css", "widgets/talks/talks.css"], "widgets/talks/talks.js"),
     "gallery": ("Photos", ["shared/base.css", "widgets/gallery/gallery.css"], "widgets/gallery/gallery.js"),
+    "newslist": ("News list", ["shared/base.css", "widgets/newslist/newslist.css"], "widgets/newslist/newslist.js"),
     "sections": ("Text blocks", ["shared/base.css", "widgets/sections/sections.css"], "widgets/sections/sections.js"),
 }
 NEWS_STYLE = """  <style>

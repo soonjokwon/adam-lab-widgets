@@ -595,4 +595,47 @@
     mount.innerHTML = "";
     mount.appendChild(ADAM.el("p", { class: "adam-state " + (kind || ""), text: message }));
   };
+
+  /* Optional height reporter for non-Sites parents (e.g. GitHub Pages shell).
+     Posts {type:'adam-widget-height', height} to parent. Google Sites keeps its
+     own fixed-ratio embed boxes and ignores this message — safe/backward compatible. */
+  (function heightReporter() {
+    if (!inFrame) return;
+    var last = 0;
+    function post() {
+      var doc = document.documentElement;
+      var body = document.body;
+      var h = Math.ceil(Math.max(
+        doc ? doc.scrollHeight : 0,
+        doc ? doc.offsetHeight : 0,
+        body ? body.scrollHeight : 0,
+        body ? body.offsetHeight : 0
+      ));
+      if (!h || Math.abs(h - last) < 2) return;
+      last = h;
+      try {
+        window.parent.postMessage({ type: "adam-widget-height", height: h }, "*");
+      } catch (err) { /* ignore */ }
+    }
+    ADAM.reportHeight = post;
+    var debounced = ADAM.debounce(post, 80);
+    function observeBody() {
+      if (!document.body || typeof MutationObserver === "undefined") return;
+      try {
+        new MutationObserver(debounced).observe(document.body, {
+          childList: true, subtree: true, attributes: true
+        });
+      } catch (err) { /* ignore */ }
+    }
+    window.addEventListener("load", post);
+    window.addEventListener("resize", debounced);
+    if (typeof ResizeObserver !== "undefined") {
+      try { new ResizeObserver(debounced).observe(document.documentElement); } catch (err) { /* ignore */ }
+    }
+    if (document.body) observeBody();
+    else document.addEventListener("DOMContentLoaded", observeBody);
+    setTimeout(post, 120);
+    setTimeout(post, 600);
+    setTimeout(post, 1600);
+  })();
 })();

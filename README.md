@@ -13,6 +13,12 @@ Home 히어로 애니메이션, 페이지 제목, 파란 띠 제목(예: Researc
 
 ---
 
+## 0-1. GitHub Pages 부모 페이지용 높이 맞춤 (선택)
+
+위젯이 iframe 안에서 열리면 `window.parent.postMessage({ type: "adam-widget-height", height }, "*")` 를
+리사이즈·내용 변경 시 보냅니다. [adam-lab-site](https://github.com/soonjokwon/adam-lab-site) 같은 부모 페이지가
+이 메시지를 받아 iframe 높이를 맞춥니다. Google Sites는 자체 비율 박스를 쓰므로 이 메시지를 무시해도 됩니다.
+
 ## 1. Sites에 넣을 주소와 높이
 
 Sites 편집 화면 → **삽입 → 삽입(Embed) → URL**에 아래 주소를 넣고, **“전체 페이지”가 아닌 “삽입된 콘텐츠”** 로 선택한 뒤 박스 높이를 맞춥니다.

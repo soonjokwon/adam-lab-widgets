@@ -1,6 +1,6 @@
 ﻿name_ko,name_en,role,position,start,end,status,photo,email,link,affiliation,history,lab
 권순조,Soonjo Kwon,professor,조교수,2026-03,,current,assets/members/member-01.jpg,soonjo.kwon@pusan.ac.kr,https://sites.google.com/view/adam-pnu/team/professor,부산대학교 기계공학부 (지능형제조시스템전공),,ADAM Lab@PNU
-,Dr. Ragul Gandhi,postdoc,박사후연구원,2026-08,,current,assets/members/member-02.jpg,,,,,ADAM Lab@PNU
+,Dr. Ragul Gandhi,postdoc,박사후연구원,2026-08,,current,assets/members/member-02.jpg,,https://www.linkedin.com/in/ragulgandhi1990/,,,ADAM Lab@PNU
 전예성,,ms,석사과정(금오공대),2025-03,,current,assets/members/member-03.jpg,,,,,ADAM Lab@PNU
 박현석,,ms-phd,석박사통합과정,2026-09,,current,assets/members/member-04.jpg,,,,,ADAM Lab@PNU
 김정현,,ms,석사과정,2026-09,,current,assets/members/member-05.jpg,,,,,ADAM Lab@PNU
@@ -10,8 +10,11 @@
 심현수,,undergrad,학사과정,2026-03,,current,assets/members/member-09.jpg,,,,,ADAM Lab@PNU
 박우준,,undergrad,학사과정,2026-04,,current,assets/members/member-10.jpg,,,,,ADAM Lab@PNU
 김보성,,undergrad,학사과정,2026-05,,current,assets/members/member-11.jpg,,,,,ADAM Lab@PNU
+류경호,,undergrad,학사과정,2026-11,,current,assets/members/member-12.jpg,,,,,ADAM Lab@PNU
+김호건,,undergrad,학사과정,2026-11,,current,assets/members/member-13.jpg,,,,,ADAM Lab@PNU
+이화정,,undergrad,학사과정,2026-11,,current,assets/members/member-14.jpg,,,,,ADAM Lab@PNU
 김군찬,,ms,석사 졸업,2023-03,2026-02,alumni,,,,(주)나비프라,"학부 연구생 (2023.03 ~ 2024.02), 석사 졸업 (2024.03 ~ 2026.02)",DADI Lab@KIT
-고민석,,ms,석사 졸업,2022-08,2025-02,alumni,,,,한화오션(주) 설계정보팀,"학부 연구생 (2022.08 ~ 2023.02), 석사 졸업 (2023.03 ~ 2025.02)",DADI Lab@KIT
+고민석,,ms,석사 졸업,2022-08,2025-02,alumni,,,,HD한국조선해양 차세대통합플랫폼개발부,"학부 연구생 (2022.08 ~ 2023.02), 석사 졸업 (2023.03 ~ 2025.02)",DADI Lab@KIT
 윤영준,,ms,석사과정,2022-02,2024-08,alumni,,,,한국화낙(주),"학부 연구생 (2022.02 ~ 2024.02), 석사과정 (2024.03 ~ 2024.08)",DADI Lab@KIT
 한혜련,,ms,석사과정,2022-09,2023-08,alumni,,,,,석사과정 (2022.09 ~ 2023.08),DADI Lab@KIT
 이초빈,,undergrad,학부 연구생,2025-01,2026-02,alumni,,,,,학부 연구생 (2025.01 ~ 2026.02),DADI Lab@KIT

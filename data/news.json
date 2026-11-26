@@ -1,9 +1,54 @@
 {
  "lab": "ADAM Lab@PNU",
- "source": "https://sites.google.com/view/adam-pnu",
- "extracted": "2026-10-08",
+ "source": "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw",
+ "extracted": "2026-11-26 12:36",
  "note": "Home Latest News + Board · News (all 42 items, 2020-09 → 2026-08). Korean titles are short headlines; for 2020–2024 items title_en is the Board's own English sentence. link2 = second link on the Board item.",
  "items": [
+  {
+   "date": "2026-11-13",
+   "title_ko": "권순조 교수, 2025년 대한기계학회 논문상",
+   "title_en": "Prof. Kwon received the 2025 KSME Paper Award.",
+   "tag": "Award",
+   "link": "https://doi.org/10.3795/KSME-C.2025.13.2.145",
+   "image": "",
+   "link2": ""
+  },
+  {
+   "date": "2026-11-12",
+   "title_ko": "김동빈·박우준·문광민·예브게니 유가이, 대한기계학회 2026년 학술대회 발표",
+   "title_en": "Lab members presented three posters and an oral talk at the KSME 2026 Annual Conference in Jeju.",
+   "tag": "Event",
+   "link": "",
+   "image": "",
+   "link2": ""
+  },
+  {
+   "date": "2026-11-02",
+   "title_ko": "류경호 학사과정, 학부연구생으로 합류",
+   "title_en": "류경호 joined ADAM Lab as an undergraduate researcher.",
+   "tag": "Member",
+   "link": "",
+   "image": "",
+   "link2": ""
+  },
+  {
+   "date": "2026-11-01",
+   "title_ko": "김호건 학사과정, 학부연구생으로 합류",
+   "title_en": "김호건 joined ADAM Lab as an undergraduate researcher.",
+   "tag": "Member",
+   "link": "",
+   "image": "",
+   "link2": ""
+  },
+  {
+   "date": "2026-11-01",
+   "title_ko": "이화정 학사과정, 학부연구생으로 합류",
+   "title_en": "이화정 joined ADAM Lab as an undergraduate researcher.",
+   "tag": "Member",
+   "link": "",
+   "image": "",
+   "link2": ""
+  },
   {
    "date": "2026-08-21",
    "title_ko": "박현석, 한국CDE학회 2026 하계학술대회 우수포스터상",

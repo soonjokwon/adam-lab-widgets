@@ -1,9 +1,18 @@
 {
  "lab": "ADAM Lab@PNU",
  "source": "https://docs.google.com/spreadsheets/d/1bmfsOkVl16OJ2KWzWJG6NtV5Ds98fXKnSiRtxKxgzlw",
- "extracted": "2026-11-26 12:36",
+ "extracted": "2026-11-26 13:04",
  "note": "Home Latest News + Board · News (all 42 items, 2020-09 → 2026-08). Korean titles are short headlines; for 2020–2024 items title_en is the Board's own English sentence. link2 = second link on the Board item.",
  "items": [
+  {
+   "date": "2026-11-30",
+   "title_ko": "김호건·이화정 학사과정, 학부연구생으로 합류",
+   "title_en": "김호건 and 이화정 joined ADAM Lab as undergraduate researchers.",
+   "tag": "Member",
+   "link": "",
+   "image": "",
+   "link2": ""
+  },
   {
    "date": "2026-11-13",
    "title_ko": "권순조 교수, 2025년 대한기계학회 논문상",
@@ -26,24 +35,6 @@
    "date": "2026-11-02",
    "title_ko": "류경호 학사과정, 학부연구생으로 합류",
    "title_en": "류경호 joined ADAM Lab as an undergraduate researcher.",
-   "tag": "Member",
-   "link": "",
-   "image": "",
-   "link2": ""
-  },
-  {
-   "date": "2026-11-01",
-   "title_ko": "김호건 학사과정, 학부연구생으로 합류",
-   "title_en": "김호건 joined ADAM Lab as an undergraduate researcher.",
-   "tag": "Member",
-   "link": "",
-   "image": "",
-   "link2": ""
-  },
-  {
-   "date": "2026-11-01",
-   "title_ko": "이화정 학사과정, 학부연구생으로 합류",
-   "title_en": "이화정 joined ADAM Lab as an undergraduate researcher.",
    "tag": "Member",
    "link": "",
    "image": "",

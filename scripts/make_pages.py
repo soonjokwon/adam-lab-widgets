@@ -21,7 +21,7 @@ FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
 # name: (title, [css under repo root], js under repo root)
 WIDGETS = {
     "news": ("Latest News", ["shared/sheet.css", "widgets/news/news.css"], "widgets/news/news.js"),
-    "publications": ("Publications", ["shared/base.css", "shared/page-publications.css"], "widgets/publications/publications.js"),
+    "publications": ("Publications", ["shared/base.css", "shared/page-publications.css", "shared/cite.css"], ["widgets/publications/cite-harvard.js", "widgets/publications/publications.js"]),
     "patents": ("Patents", ["shared/base.css", "shared/page-publications.css"], "widgets/patents/patents.js"),
     "awards": ("Awards", ["shared/base.css", "widgets/awards/awards.css"], "widgets/awards/awards.js"),
     "members": ("Team", ["shared/base.css", "widgets/members/members.css"], "widgets/members/members.js"),
@@ -45,8 +45,9 @@ def ver(rel, src_root):
 
 def page(name, title, css, js, up, src_root, head_js=""):
     links = "\n  ".join(f'<link rel="stylesheet" href="{up}{c}?v={ver(c, src_root)}">' for c in ["shared/tokens.css"] + css)
+    js_list = list(js) if isinstance(js, (list, tuple)) else [js]
     scripts = "\n  ".join(f'<script src="{up}{s}?v={ver(s, src_root)}"></script>'
-                          for s in ["config/sheets.js", "shared/sheet-loader.js", js])
+                          for s in ["config/sheets.js", "shared/sheet-loader.js"] + js_list)
     extra = NEWS_STYLE if name == "news" else ""
     if head_js:
         scripts = f"<script>{head_js}</script>\n  " + scripts

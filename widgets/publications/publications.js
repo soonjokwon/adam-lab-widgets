@@ -271,7 +271,11 @@
     body.appendChild(meta);
 
     var idx = it.no ? (t.pre || "#") + it.no : "·";
-    return el("li", { class: "pub-item" }, [el("div", { class: "pub-idx", text: idx }), body]);
+    var li = el("li", { class: "pub-item" }, [el("div", { class: "pub-idx", text: idx }), body]);
+    if (window.ADAMCite && typeof window.ADAMCite.attach === "function") {
+      window.ADAMCite.attach(li, it, body, meta);
+    }
+    return li;
   }
 
   function render() {
